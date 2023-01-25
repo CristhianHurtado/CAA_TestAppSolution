@@ -79,6 +79,18 @@ namespace CAA_TestApp.Data
                     });
                     context.SaveChanges();
                 }
+                if (!context.Events.Any())
+                {
+                    context.Events.AddRange(
+                        new Event
+                        {
+                            Name = "Charity",
+                            Date = DateTime.Now,
+                            EventLocation = "Welland",
+                            Notes = ""
+                        });
+                    context.SaveChanges();
+                }
             }
             catch (Exception ex)
             {

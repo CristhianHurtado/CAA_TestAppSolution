@@ -2,7 +2,7 @@
 Update-Database -Context ApplicationDbContext
 -------------------------------------------------------------------------------
 Add-Migration -Context CaaContext -o Data\CaaMigrations Initial
-Update-Database -Context ApplicationDbContext
+Update-Database -Context CaaContext
 
 ExtraMigration.Steps(migrationBuilder);
 

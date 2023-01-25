@@ -18,13 +18,13 @@
 
         public int InventoryID { get; set; }
 
-        public ICollection<Inventory> ItemsInEvent { get; set; }
+        //public ICollection<Inventory> ItemsInEvent { get; set; }
 
-        //public string InventoryName { get; set; }
+        public string InventoryName { get; set; }
 
-        //public int InventoryQuantity { get; set; }
+        public int InventoryQuantity { get; set; }
 
-        //public Inventory Inventory { get; set; }
+        public Inventory Inventory { get; set; }
 
 
     }

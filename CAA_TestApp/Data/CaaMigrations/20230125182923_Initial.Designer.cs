@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAA_TestApp.Data.CaaMigrations
 {
     [DbContext(typeof(CaaContext))]
-    [Migration("20230125170532_Initial")]
+    [Migration("20230125182923_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,6 +52,12 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<string>("EventLocation")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("InventoryName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("InventoryQuantity")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
@@ -86,6 +92,9 @@ namespace CAA_TestApp.Data.CaaMigrations
 
                     b.HasKey("InventoryID", "ID");
 
+                    b.HasIndex("InventoryID")
+                        .IsUnique();
+
                     b.ToTable("Events", "CAA");
                 });
 
@@ -110,6 +119,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<int>("EventID")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ISBN")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("LocationID")
                         .HasColumnType("INTEGER");
 
@@ -128,19 +140,11 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<DateTime>("UpdatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("eventID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("eventInventoryID")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("ID");
 
                     b.HasIndex("CategoryID");
 
                     b.HasIndex("LocationID");
-
-                    b.HasIndex("eventInventoryID", "eventID");
 
                     b.ToTable("Inventories", "CAA");
                 });
@@ -210,6 +214,17 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.ToTable("Locations", "CAA");
                 });
 
+            modelBuilder.Entity("CAA_TestApp.Models.Event", b =>
+                {
+                    b.HasOne("CAA_TestApp.Models.Inventory", "Inventory")
+                        .WithOne("Event")
+                        .HasForeignKey("CAA_TestApp.Models.Event", "InventoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Inventory");
+                });
+
             modelBuilder.Entity("CAA_TestApp.Models.Inventory", b =>
                 {
                     b.HasOne("CAA_TestApp.Models.Category", "Category")
@@ -224,17 +239,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CAA_TestApp.Models.Event", "event")
-                        .WithMany("ItemsInEvent")
-                        .HasForeignKey("eventInventoryID", "eventID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Category");
 
                     b.Navigation("Location");
-
-                    b.Navigation("event");
                 });
 
             modelBuilder.Entity("CAA_TestApp.Models.ItemPhoto", b =>
@@ -264,13 +271,10 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Navigation("Inventories");
                 });
 
-            modelBuilder.Entity("CAA_TestApp.Models.Event", b =>
-                {
-                    b.Navigation("ItemsInEvent");
-                });
-
             modelBuilder.Entity("CAA_TestApp.Models.Inventory", b =>
                 {
+                    b.Navigation("Event");
+
                     b.Navigation("ItemPhoto");
 
                     b.Navigation("ItemThumbnail");
