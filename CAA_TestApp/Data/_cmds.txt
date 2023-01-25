@@ -6,4 +6,3 @@ Update-Database -Context ApplicationDbContext
 
 ExtraMigration.Steps(migrationBuilder);
 
-changes
