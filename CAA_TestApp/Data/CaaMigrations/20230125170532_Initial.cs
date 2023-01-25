@@ -203,7 +203,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                 column: "Name",
                 unique: true);
 
-            ExtraMigrations.Steps(migrationBuilder);
+        //    ExtraMigrations.Steps(migrationBuilder);
 
         }
 
