@@ -5,3 +5,5 @@ Add-Migration -Context CaaContext -o Data\CaaMigrations Initial
 Update-Database -Context ApplicationDbContext
 
 ExtraMigration.Steps(migrationBuilder);
+
+changes
