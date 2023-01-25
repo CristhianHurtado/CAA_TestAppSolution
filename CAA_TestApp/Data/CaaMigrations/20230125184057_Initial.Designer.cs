@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAA_TestApp.Data.CaaMigrations
 {
     [DbContext(typeof(CaaContext))]
-    [Migration("20230125182923_Initial")]
+    [Migration("20230125184057_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,9 +52,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<string>("EventLocation")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("InventoryName")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("InventoryQuantity")
                         .HasColumnType("INTEGER");
 
@@ -92,9 +89,6 @@ namespace CAA_TestApp.Data.CaaMigrations
 
                     b.HasKey("InventoryID", "ID");
 
-                    b.HasIndex("InventoryID")
-                        .IsUnique();
-
                     b.ToTable("Events", "CAA");
                 });
 
@@ -116,7 +110,10 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("EventID")
+                    b.Property<int?>("EventID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("EventInventoryID")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ISBN")
@@ -145,6 +142,8 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.HasIndex("CategoryID");
 
                     b.HasIndex("LocationID");
+
+                    b.HasIndex("EventInventoryID", "EventID");
 
                     b.ToTable("Inventories", "CAA");
                 });
@@ -217,8 +216,8 @@ namespace CAA_TestApp.Data.CaaMigrations
             modelBuilder.Entity("CAA_TestApp.Models.Event", b =>
                 {
                     b.HasOne("CAA_TestApp.Models.Inventory", "Inventory")
-                        .WithOne("Event")
-                        .HasForeignKey("CAA_TestApp.Models.Event", "InventoryID")
+                        .WithMany()
+                        .HasForeignKey("InventoryID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -238,6 +237,10 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .HasForeignKey("LocationID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("CAA_TestApp.Models.Event", null)
+                        .WithMany("ItemsInEvent")
+                        .HasForeignKey("EventInventoryID", "EventID");
 
                     b.Navigation("Category");
 
@@ -271,10 +274,13 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Navigation("Inventories");
                 });
 
+            modelBuilder.Entity("CAA_TestApp.Models.Event", b =>
+                {
+                    b.Navigation("ItemsInEvent");
+                });
+
             modelBuilder.Entity("CAA_TestApp.Models.Inventory", b =>
                 {
-                    b.Navigation("Event");
-
                     b.Navigation("ItemPhoto");
 
                     b.Navigation("ItemThumbnail");

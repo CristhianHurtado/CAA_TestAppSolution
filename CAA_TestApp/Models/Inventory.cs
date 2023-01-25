@@ -40,12 +40,6 @@ namespace CAA_TestApp.Models
         [Display(Name = "Location")]
         public Location Location { get; set; }
 
-        [Display(Name = "Event")]
-        public int EventID { get; set; }
-
-        [Display(Name = "Event")]
-        public Event Event { get; set; }
-
         public ItemPhoto ItemPhoto { get; set; }
 
         public ItemThumbnail ItemThumbnail { get; set; }

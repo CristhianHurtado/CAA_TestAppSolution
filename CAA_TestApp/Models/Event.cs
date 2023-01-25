@@ -12,20 +12,13 @@
 
         public string Notes { get; set; }
 
-        //public string RemovedBy { get; set; }
-
-        //public string ReturnedBy { get; set; }
-
         public int InventoryID { get; set; }
-
-        //public ICollection<Inventory> ItemsInEvent { get; set; }
-
-        public string InventoryName { get; set; }
 
         public int InventoryQuantity { get; set; }
 
         public Inventory Inventory { get; set; }
 
+        public ICollection<Inventory> ItemsInEvent { get; set; }
 
     }
 }
