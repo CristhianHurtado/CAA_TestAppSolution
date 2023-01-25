@@ -53,6 +53,7 @@ namespace CAA_TestApp.Data
                     {
                         Name = "iPad Mini",
                         Quantity = 1,
+                        ISBN = "978006154236",
                         Description = "64GB, Midnight Blue",
                         Cost = 499.99,
                         DateReceived = DateTime.Now,
@@ -66,6 +67,7 @@ namespace CAA_TestApp.Data
                     {
                         Name = "Garmin Smart Watch",
                         Description = "6th Generation, Black",
+                        ISBN = "97800557894654",
                         Cost = 299.99,
                         DateReceived = DateTime.Now,
                         Quantity = 1,

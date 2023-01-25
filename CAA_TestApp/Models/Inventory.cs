@@ -5,6 +5,8 @@ namespace CAA_TestApp.Models
     public class Inventory
     {
         public int ID { get; set; }
+        
+        public string ISBN { get; set; }
 
         [Display(Name = "Item")]
         public string Name { get; set; }
