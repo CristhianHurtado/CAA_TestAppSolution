@@ -44,7 +44,7 @@ namespace CAA_TestApp.Models
         public int EventID { get; set; }
 
         [Display(Name = "Event")]
-        public Event @event { get; set; }
+        public Event Event { get; set; }
 
         public ItemPhoto ItemPhoto { get; set; }
 
