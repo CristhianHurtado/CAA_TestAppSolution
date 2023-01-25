@@ -8,5 +8,10 @@
         DateTime? TookOn { get; set; }
         string ReturnedBy { get; set; }
         DateTime? ReturnedOn { get; set; }
+        string LocationChangedBy { get; set; }
+        string LastLocation { get; set; }
+        DateTime? LocationchangedOn { get; set; }
+        string ShelfMoveBy { get; set; }
+        DateTime? ShelfMoveOn { get;}
     }
 }

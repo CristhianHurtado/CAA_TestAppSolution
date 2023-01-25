@@ -26,6 +26,24 @@ namespace CAA_TestApp.Models
         public DateTime? ReturnedOn { get; set; }
 
         [ScaffoldColumn(false)]
+        [StringLength(256)]
+        public string ShelfMoveBy { get; set; }
+
+        [ScaffoldColumn(false)]
+        public DateTime? ShelfMoveOn { get; set; }
+
+        [ScaffoldColumn(false)]
+        [StringLength(256)]
+        public string LocationChangedBy { get; set; }
+
+        [ScaffoldColumn(false)]
+        [StringLength(256)]
+        public string LastLocation { get; set; }
+
+        [ScaffoldColumn(false)]
+        public DateTime? LocationchangedOn { get; set; }
+
+        [ScaffoldColumn(false)]
         [Timestamp]
         public Byte[] RowVersion { get; set; }//Added for concurrency
     }
