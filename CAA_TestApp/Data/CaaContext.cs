@@ -10,6 +10,7 @@ namespace CAA_TestApp.Data
         {
         }
 
+        public DbSet<Product> Products { get; set; }
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Location> Locations { get; set; }
@@ -21,10 +22,9 @@ namespace CAA_TestApp.Data
         {
             modelBuilder.HasDefaultSchema("CAA");
 
-
             //add other foreign key to product table
             modelBuilder.Entity<Category>()
-                .HasMany<Inventory>(i => i.Inventories)
+                .HasMany<Product>(i => i.Products)
                 .WithOne(i => i.Category)
                 .HasForeignKey(i => i.CategoryID)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -50,10 +50,10 @@ namespace CAA_TestApp.Data
                 .HasForeignKey<ItemThumbnail>(i => i.invID);
 
             //add foreign key to inventory table
-            //modelBuilder.Entity<Product>()
-            //    .HasMany<Inventory>(i => i.Inventories)
-            //    .WithOne(i => i.Product)
-            //    .HasForeignKey(i => i.ProductID);
+            modelBuilder.Entity<Product>()
+                .HasMany<Inventory>(i => i.Inventories)
+                .WithOne(i => i.Product)
+                .HasForeignKey(i => i.ProductID);
 
             //unique index for location
             modelBuilder.Entity<Location>()

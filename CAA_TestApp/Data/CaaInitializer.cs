@@ -45,40 +45,53 @@ namespace CAA_TestApp.Data
                     context.SaveChanges();
                 }
 
-                //seed products if there aren't any
+                if (!context.Products.Any())
+                {
+                    context.Products.AddRange(
+                    new Product
+                    {
+                        Name = "iPad Mini",
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Tech")).ID
+                    },
+                    new Product
+                    {
+                        Name = "Garmin Smart Watch",
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Tech")).ID,
+                    });
+                    context.SaveChanges();
+                }
+
+                //seed inventory if there aren't any
                 if (!context.Inventories.Any())
                 {
                     context.Inventories.AddRange(
                     new Inventory
                     {
-                        Name = "iPad Mini",
                         Quantity = 1,
                         ISBN = "978006154236",
-                        Description = "64GB, Midnight Blue",
                         Cost = 499.99,
                         DateReceived = DateTime.Now,
                         ShelfOn = "S001-01",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
-                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Tech")).ID,
-                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("St. Catharines")).ID
+                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("St. Catharines")).ID,
+                        ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("iPad Mini")).ID
                     },
                     new Inventory
                     {
-                        Name = "Garmin Smart Watch",
-                        Description = "6th Generation, Black",
                         ISBN = "97800557894654",
                         Cost = 299.99,
                         DateReceived = DateTime.Now,
                         Quantity = 1,
                         ShelfOn = "S001-02",
                         /*UpdatedBy = "Scott",
-                        UpdatedOn = DateTime.Now,*/
-                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Tech")).ID,
-                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("St. Catharines")).ID
+                        UpdatedOn = DateTime.Now,*/                        
+                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("St. Catharines")).ID,
+                        ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Garmin Smart Watch")).ID
                     });
                     context.SaveChanges();
                 }
+
                 if (!context.Events.Any())
                 {
                     context.Events.AddRange(

@@ -12,5 +12,7 @@
         }
 
         public ICollection<Inventory> Inventories { get; set; }
+
+        public ICollection<Product> Products { get; set; }
     }
 }

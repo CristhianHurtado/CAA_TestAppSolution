@@ -22,7 +22,7 @@ namespace CAA_TestApp.Controllers
         // GET: Inventories
         public async Task<IActionResult> Index()
         {
-            var caaContext = _context.Inventories.Include(i => i.Category).Include(i => i.Location);
+            var caaContext = _context.Inventories.Include(i => i.Location).Include(i => i.Product);
             return View(await caaContext.ToListAsync());
         }
 
@@ -35,8 +35,8 @@ namespace CAA_TestApp.Controllers
             }
 
             var inventory = await _context.Inventories
-                .Include(i => i.Category)
                 .Include(i => i.Location)
+                .Include(i => i.Product)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (inventory == null)
             {
@@ -49,8 +49,8 @@ namespace CAA_TestApp.Controllers
         // GET: Inventories/Create
         public IActionResult Create()
         {
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "ID");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID");
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "ID");
             return View();
         }
 
@@ -59,7 +59,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Quantity,Description,Cost,DateReceived,UpdatedBy,UpdatedOn,CategoryID,LocationID")] Inventory inventory)
+        public async Task<IActionResult> Create([Bind("ID,ISBN,Quantity,Notes,ShelfOn,Cost,DateReceived,LocationID,ProductID")] Inventory inventory)
         {
             if (ModelState.IsValid)
             {
@@ -67,8 +67,8 @@ namespace CAA_TestApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "ID", inventory.CategoryID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", inventory.LocationID);
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "ID", inventory.ProductID);
             return View(inventory);
         }
 
@@ -85,8 +85,8 @@ namespace CAA_TestApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "ID", inventory.CategoryID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", inventory.LocationID);
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "ID", inventory.ProductID);
             return View(inventory);
         }
 
@@ -95,7 +95,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Quantity,Description,Cost,DateReceived,UpdatedBy,UpdatedOn,CategoryID,LocationID")] Inventory inventory)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,ISBN,Quantity,Notes,ShelfOn,Cost,DateReceived,LocationID,ProductID")] Inventory inventory)
         {
             if (id != inventory.ID)
             {
@@ -122,8 +122,8 @@ namespace CAA_TestApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "ID", inventory.CategoryID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", inventory.LocationID);
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "ID", inventory.ProductID);
             return View(inventory);
         }
 
@@ -136,8 +136,8 @@ namespace CAA_TestApp.Controllers
             }
 
             var inventory = await _context.Inventories
-                .Include(i => i.Category)
                 .Include(i => i.Location)
+                .Include(i => i.Product)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (inventory == null)
             {
