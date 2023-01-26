@@ -58,6 +58,17 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<int>("InventoryQuantity")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("LastLocation")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LocationChangedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LocationchangedOn")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
@@ -82,6 +93,13 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
+
+                    b.Property<string>("ShelfMoveBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ShelfMoveOn")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("TookBy")
                         .HasMaxLength(256)
@@ -119,8 +137,19 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<string>("ISBN")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("LastLocation")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LocationChangedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("LocationID")
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("LocationchangedOn")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Notes")
                         .HasColumnType("TEXT");
@@ -149,6 +178,13 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
+
+                    b.Property<string>("ShelfMoveBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("ShelfMoveOn")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ShelfOn")
                         .HasColumnType("TEXT");

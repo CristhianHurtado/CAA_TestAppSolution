@@ -9,6 +9,16 @@
 <div>
     <h4>Inventory</h4>
     <hr />
+        @{
+        if (Model.ItemPhoto?.Content != null)
+        {
+            @:<div>
+                string imageBase64 = Convert.ToBase64String(Model.ItemPhoto.Content);
+                string imageSrc = string.Format("data:" + Model.ItemPhoto.MimeType + ";base64,{0}", imageBase64);
+                <img src="@imageSrc" alt="Profile Picture of @Model.ISBN" title="Profile Picture of @Model.ISBN" class="img-fluid rounded" />
+            @:</div><hr />
+        }
+    }
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ISBN)

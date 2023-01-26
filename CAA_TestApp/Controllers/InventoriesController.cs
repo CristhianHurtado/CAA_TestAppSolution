@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CAA_TestApp.Data;
 using CAA_TestApp.Models;
+using CAA_TestApp.Utilities;
 
 namespace CAA_TestApp.Controllers
 {
@@ -22,7 +23,10 @@ namespace CAA_TestApp.Controllers
         // GET: Inventories
         public async Task<IActionResult> Index()
         {
-            var caaContext = _context.Inventories.Include(i => i.Location).Include(i => i.Product);
+            var caaContext = _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .Include(i => i.ItemThumbnail) ;
             return View(await caaContext.ToListAsync());
         }
 
@@ -37,6 +41,7 @@ namespace CAA_TestApp.Controllers
             var inventory = await _context.Inventories
                 .Include(i => i.Location)
                 .Include(i => i.Product)
+                .Include(i => i.ItemPhoto)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (inventory == null)
             {
@@ -59,10 +64,12 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,ISBN,Quantity,Notes,ShelfOn,Cost,DateReceived,LocationID,ProductID")] Inventory inventory)
+        public async Task<IActionResult> Create([Bind("ID,ISBN,Quantity,Notes,ShelfOn,Cost,DateReceived," +
+            "LocationID,ProductID")] Inventory inventory, IFormFile thePicture)
         {
             if (ModelState.IsValid)
             {
+                await AddPicture(inventory, thePicture);
                 _context.Add(inventory);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -80,7 +87,9 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            var inventory = await _context.Inventories.FindAsync(id);
+            var inventory = await _context.Inventories
+                .Include(i => i.ItemPhoto)
+                .FirstOrDefaultAsync(i => i.ID == id);
             if (inventory == null)
             {
                 return NotFound();
@@ -95,17 +104,34 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,ISBN,Quantity,Notes,ShelfOn,Cost,DateReceived,LocationID,ProductID")] Inventory inventory)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,ISBN,Quantity,Notes,ShelfOn,Cost,DateReceived," +
+            "LocationID,ProductID")] Inventory inventory, string chkRemoveImage, IFormFile thePicture)
         {
             if (id != inventory.ID)
             {
                 return NotFound();
             }
 
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    //For the image
+                    if (chkRemoveImage != null)
+                    {
+                        //If we are just deleting the two versions of the photo, we need to make sure the Change Tracker knows
+                        //about them both so go get the Thumbnail since we did not include it.
+                        inventory.ItemThumbnail = _context.ItemsThumbnails.Where(p => p.invID == inventory.ID).FirstOrDefault();
+                        //Then, setting them to null will cause them to be deleted from the database.
+                        inventory.ItemPhoto = null;
+                        inventory.ItemThumbnail = null;
+                    }
+                    else
+                    {
+                        await AddPicture(inventory, thePicture);
+                    }
+
                     _context.Update(inventory);
                     await _context.SaveChangesAsync();
                 }
@@ -169,6 +195,49 @@ namespace CAA_TestApp.Controllers
         private bool InventoryExists(int id)
         {
           return _context.Inventories.Any(e => e.ID == id);
+        }
+
+        private async Task AddPicture(Inventory inventory, IFormFile thePicture)
+        {
+            //Get the picture and save it with the Patient (2 sizes)
+            if (thePicture != null)
+            {
+                string mimeType = thePicture.ContentType;
+                long fileLength = thePicture.Length;
+                if (!(mimeType == "" || fileLength == 0))//Looks like we have a file!!!
+                {
+                    if (mimeType.Contains("image"))
+                    {
+                        using var memoryStream = new MemoryStream();
+                        await thePicture.CopyToAsync(memoryStream);
+                        var pictureArray = memoryStream.ToArray();//Gives us the Byte[]
+
+                        //Check if we are replacing or creating new
+                        if (inventory.ItemPhoto != null)
+                        {
+                            //We already have pictures so just replace the Byte[]
+                            inventory.ItemPhoto.Content = ResizeImage.shrinkImageWebp(pictureArray, 500, 600);
+
+                            //Get the Thumbnail so we can update it.  Remember we didn't include it
+                            inventory.ItemThumbnail = _context.ItemsThumbnails.Where(p => p.invID == inventory.ID).FirstOrDefault();
+                            inventory.ItemThumbnail.Content = ResizeImage.shrinkImageWebp(pictureArray, 100, 120);
+                        }
+                        else //No pictures saved so start new
+                        {
+                            inventory.ItemPhoto = new ItemPhoto
+                            {
+                                Content = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
+                                MimeType = "image/webp"
+                            };
+                            inventory.ItemThumbnail = new ItemThumbnail
+                            {
+                                Content = ResizeImage.shrinkImageWebp(pictureArray, 100, 120),
+                                MimeType = "image/webp"
+                            };
+                        }
+                    }
+                }
+            }
         }
     }
 }

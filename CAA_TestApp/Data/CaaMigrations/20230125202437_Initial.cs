@@ -81,6 +81,11 @@ namespace CAA_TestApp.Data.CaaMigrations
                     TookOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     ReturnedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     ReturnedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    ShelfMoveBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    ShelfMoveOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    LocationChangedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    LastLocation = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    LocationchangedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
@@ -112,6 +117,11 @@ namespace CAA_TestApp.Data.CaaMigrations
                     TookOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     ReturnedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     ReturnedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    ShelfMoveBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    ShelfMoveOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    LocationChangedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    LastLocation = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    LocationchangedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
@@ -273,8 +283,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                 principalTable: "Inventories",
                 principalColumn: "ID",
                 onDelete: ReferentialAction.Cascade);
-
-            ExtraMigrations.Steps(migrationBuilder);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

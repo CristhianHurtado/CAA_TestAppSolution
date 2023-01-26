@@ -12,6 +12,7 @@
 <table class="table">
     <thead>
         <tr>
+            <th></th>
             <th>
                 @Html.DisplayNameFor(model => model.ISBN)
             </th>
@@ -42,6 +43,17 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+                  <td>
+                    @{
+                        if (item.ItemThumbnail?.Content != null)
+                        {
+                            string imageBase64 = Convert.ToBase64String(item.ItemThumbnail.Content);
+                            string imageSrc = string.Format("data:" + item.ItemThumbnail.MimeType + ";base64,{0}", imageBase64);
+                            <img src="@imageSrc" alt="Profile Picture of @item.ISBN" title="Profile Picture of @item.ISBN" class="img-fluid rounded" />
+                        }
+                    }
+                    </td>
+
             <td>
                 @Html.DisplayFor(modelItem => item.ISBN)
             </td>
