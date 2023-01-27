@@ -18,11 +18,19 @@ namespace CAA_TestApp.Data
                     context.Categories.AddRange(
                         new Category
                         {
-                            Name = "Tech"
+                            Name = "Equipment"
                         },
                         new Category
                         {
-                            Name = "Clothes"
+                            Name = "SWAG"
+                        },
+                        new Category
+                        {
+                            Name = "Printed"
+                        },
+                        new Category
+                        {
+                            Name = "Event Material"
                         });
                     context.SaveChanges();
                 }
@@ -41,6 +49,18 @@ namespace CAA_TestApp.Data
                         new Location
                         {
                             Name = "Niagara Falls"
+                        },
+                        new Location
+                        {
+                            Name = "Welland"
+                        },
+                        new Location
+                        {
+                            Name = "Thorold"
+                        },
+                        new Location
+                        {
+                            Name = "Grimsby"
                         });
                     context.SaveChanges();
                 }
@@ -51,12 +71,41 @@ namespace CAA_TestApp.Data
                     new Product
                     {
                         Name = "iPad Mini",
-                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Tech")).ID
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Equipment")).ID
                     },
                     new Product
                     {
                         Name = "Garmin Smart Watch",
-                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Tech")).ID,
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Equipment")).ID,
+                    },
+                    new Product
+                    {
+                        Name = "Bracelets",
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("SWAG")).ID
+                    }, new Product
+                    {
+                        Name = "Cap",
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("SWAG")).ID
+                    }, new Product
+                    {
+                        Name = "Brochure",
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Printed")).ID
+                    }, new Product
+                    {
+                        Name = "Poster",
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Printed")).ID
+                    }, new Product
+                    {
+                        Name = "Foldable table",
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Event Material")).ID
+                    }, new Product
+                    {
+                        Name = "Chair",
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Event Material")).ID
+                    }, new Product
+                    {
+                        Name = "Walkie Talkie",
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Equipment")).ID
                     });
                     context.SaveChanges();
                 }
@@ -71,6 +120,7 @@ namespace CAA_TestApp.Data
                         ISBN = "978006154236",
                         Cost = 499.99,
                         DateReceived = DateTime.Now,
+                        Notes ="Sit itur Ad astra",
                         ShelfOn = "S001-01",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
@@ -83,11 +133,73 @@ namespace CAA_TestApp.Data
                         Cost = 299.99,
                         DateReceived = DateTime.Now,
                         Quantity = 1,
+                        Notes = "Memoento mory",
                         ShelfOn = "S001-02",
                         /*UpdatedBy = "Scott",
                         UpdatedOn = DateTime.Now,*/                        
                         LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("St. Catharines")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Garmin Smart Watch")).ID
+                    },
+                    new Inventory
+                    {
+                        Quantity = 1,
+                        ISBN = "9780068984236",
+                        Cost = 100,
+                        DateReceived = DateTime.Now,
+                        Notes = "Love pascem",
+                        ShelfOn = "S002-01",
+                        /*UpdatedBy = "Brandon",
+                        UpdatedOn = DateTime.Now,*/
+                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Welland")).ID,
+                        ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Bracelet")).ID
+                    }, new Inventory
+                    {
+                        Quantity = 1,
+                        ISBN = "9784568795462",
+                        Cost = 250,
+                        DateReceived = DateTime.Now,
+                        Notes = "Si vis pacem para Belum",
+                        ShelfOn = "S002-02",
+                        /*UpdatedBy = "Brandon",
+                        UpdatedOn = DateTime.Now,*/
+                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Thorold")).ID,
+                        ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Cap")).ID
+                    }, new Inventory
+                    {
+                        Quantity = 1,
+                        ISBN = "978006598957894",
+                        Cost = 120,
+                        DateReceived = DateTime.Now,
+                        Notes = "Non perdidit",
+                        ShelfOn = "S003-01",
+                        /*UpdatedBy = "Brandon",
+                        UpdatedOn = DateTime.Now,*/
+                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Thorold")).ID,
+                        ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Brochure")).ID
+                    }, new Inventory
+                    {
+                        Quantity = 1,
+                        ISBN = "978006544121456",
+                        Cost = 110.99,
+                        DateReceived = DateTime.Now,
+                        Notes = "Vivandum, moriendum est",
+                        ShelfOn = "S003-02",
+                        /*UpdatedBy = "Brandon",
+                        UpdatedOn = DateTime.Now,*/
+                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Grimsby")).ID,
+                        ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Poster")).ID
+                    }, new Inventory
+                    {
+                        Quantity = 1,
+                        ISBN = "9784561238552",
+                        Cost = 99.99,
+                        DateReceived = DateTime.Now,
+                        Notes = "Quid pro quo",
+                        ShelfOn = "S004-01",
+                        /*UpdatedBy = "Brandon",
+                        UpdatedOn = DateTime.Now,*/
+                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Niagara Falls")).ID,
+                        ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Chair")).ID
                     });
                     context.SaveChanges();
                 }

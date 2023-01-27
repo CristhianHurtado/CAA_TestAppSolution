@@ -42,20 +42,32 @@ namespace CAA_TestApp.Data.CaaMigrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Products",
+                name: "Product",
                 schema: "CAA",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
-                    CategoryID = table.Column<int>(type: "INTEGER", nullable: false)
+                    CategoryID = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrderedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    OrderedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    TookBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    TookOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    ReturnedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    ReturnedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    ShelfMoveBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    ShelfMoveOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    LocationChangedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    LastLocation = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    LocationchangedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.ID);
+                    table.PrimaryKey("PK_Product", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Products_Categories_CategoryID",
+                        name: "FK_Product_Categories_CategoryID",
                         column: x => x.CategoryID,
                         principalSchema: "CAA",
                         principalTable: "Categories",
@@ -147,10 +159,10 @@ namespace CAA_TestApp.Data.CaaMigrations
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Inventories_Products_ProductID",
+                        name: "FK_Inventories_Product_ProductID",
                         column: x => x.ProductID,
                         principalSchema: "CAA",
-                        principalTable: "Products",
+                        principalTable: "Product",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -194,6 +206,27 @@ namespace CAA_TestApp.Data.CaaMigrations
                     table.PrimaryKey("PK_ItemsThumbnails", x => x.ID);
                     table.ForeignKey(
                         name: "FK_ItemsThumbnails_Inventories_invID",
+                        column: x => x.invID,
+                        principalSchema: "CAA",
+                        principalTable: "Inventories",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QrImage",
+                schema: "CAA",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    invID = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QrImage", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_QrImage_Inventories_invID",
                         column: x => x.invID,
                         principalSchema: "CAA",
                         principalTable: "Inventories",
@@ -260,18 +293,25 @@ namespace CAA_TestApp.Data.CaaMigrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_CategoryID",
+                name: "IX_Product_CategoryID",
                 schema: "CAA",
-                table: "Products",
+                table: "Product",
                 column: "CategoryID");
 
+            migrationBuilder.CreateIndex(
+                name: "IX_QrImage_invID",
+                schema: "CAA",
+                table: "QrImage",
+                column: "invID",
+                unique: true);
+
             migrationBuilder.AddForeignKey(
-                name: "FK_Categories_Products_ProductID",
+                name: "FK_Categories_Product_ProductID",
                 schema: "CAA",
                 table: "Categories",
                 column: "ProductID",
                 principalSchema: "CAA",
-                principalTable: "Products",
+                principalTable: "Product",
                 principalColumn: "ID");
 
             migrationBuilder.AddForeignKey(
@@ -288,12 +328,12 @@ namespace CAA_TestApp.Data.CaaMigrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Categories_Products_ProductID",
+                name: "FK_Categories_Product_ProductID",
                 schema: "CAA",
                 table: "Categories");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Inventories_Products_ProductID",
+                name: "FK_Inventories_Product_ProductID",
                 schema: "CAA",
                 table: "Inventories");
 
@@ -311,7 +351,11 @@ namespace CAA_TestApp.Data.CaaMigrations
                 schema: "CAA");
 
             migrationBuilder.DropTable(
-                name: "Products",
+                name: "QrImage",
+                schema: "CAA");
+
+            migrationBuilder.DropTable(
+                name: "Product",
                 schema: "CAA");
 
             migrationBuilder.DropTable(

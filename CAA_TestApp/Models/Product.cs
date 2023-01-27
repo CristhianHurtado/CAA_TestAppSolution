@@ -3,7 +3,7 @@ using System.Xml.Linq;
 
 namespace CAA_TestApp.Models
 {
-    public class Product
+    public class Product : Auditable
     {
         public int ID { get; set; }
 

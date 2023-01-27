@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CAA_TestApp.Data;
 using CAA_TestApp.Models;
+using QRCoder;
+using System.Drawing.Imaging;
+using System.Drawing;
 using CAA_TestApp.Utilities;
 
 namespace CAA_TestApp.Controllers
@@ -21,13 +24,51 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Inventories
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchSearchStringName, string SearchStringISBN, int? CategoryID, int? LocationID, int? page, string actionButton, int? pageSizeID)
         {
+            PopulateDropDownListsCategories();
+            PopulateDropDownListsLocations();
+
+            ViewData["Filtering"] = "btn-outline-secondary";
+
             var caaContext = _context.Inventories
                 .Include(i => i.Location)
                 .Include(i => i.Product)
-                .Include(i => i.ItemThumbnail) ;
-            return View(await caaContext.ToListAsync());
+                .ThenInclude(c => c.Category)
+                .AsNoTracking();
+
+            if (CategoryID.HasValue)
+            {
+                caaContext = caaContext.Where(p => p.Product.CategoryID == CategoryID);
+                ViewData["Filtering"] = " btn-danger";
+            }
+            if (LocationID.HasValue)
+            {
+                caaContext = caaContext.Where(p => p.LocationID == LocationID);
+                ViewData["Filtering"] = " btn-danger";
+            }
+            if (!String.IsNullOrEmpty(SearchSearchStringName))
+            {
+                caaContext = caaContext.Where(p => p.Product.Name.ToUpper().Contains(SearchSearchStringName.ToUpper()));
+                ViewData["Filtering"] = " btn-danger";
+            }
+            if (!String.IsNullOrEmpty(SearchStringISBN))
+            {
+                caaContext = caaContext.Where(p => p.ISBN.ToUpper().Contains(SearchStringISBN.ToUpper()));
+                ViewData["Filtering"] = " btn-danger";
+            }
+
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1;
+            }
+
+            //int pageSize = 10;//Change as required
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<Inventory>.CreateAsync(caaContext.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
         }
 
         // GET: Inventories/Details/5
@@ -94,6 +135,9 @@ namespace CAA_TestApp.Controllers
             {
                 return NotFound();
             }
+
+            
+
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", inventory.LocationID);
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "ID", inventory.ProductID);
             return View(inventory);
@@ -190,6 +234,58 @@ namespace CAA_TestApp.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> GenerateQr(int? id)
+        {
+            //Random r = new Random();
+            //int isbn = r.Next(10, 50);
+
+            var inventory = await _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .FirstOrDefaultAsync(m => m.ID == id);
+            //string code = ViewData["ISBN"].ToString();
+
+            QRCodeGenerator qrCodeGen = new QRCodeGenerator();
+            QRCodeData qrData = qrCodeGen.CreateQrCode(inventory.ISBN, QRCodeGenerator.ECCLevel.Q);
+            QRCode qr = new QRCode(qrData);
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (Bitmap bitmap = qr.GetGraphic(20))
+                {
+                    bitmap.Save(ms, ImageFormat.Png);
+                    ViewBag.QRCodeImage = "data:image/png;base64" + Convert.ToBase64String(ms.ToArray());
+                }
+            }
+
+            return View(inventory);
+        }
+
+        private SelectList LocationSelectList(int? id)
+        {
+            var dQuery = from d in _context.Locations
+                         orderby d.Name
+                         select d;
+            return new SelectList(dQuery, "ID", "Name", id);
+        }
+
+        private SelectList CategorySelectList(int? id)
+        {
+            var dQuery = from d in _context.Categories
+                         orderby d.Name
+                         select d;
+            return new SelectList(dQuery, "ID", "Name", id);
+        }
+
+        private void PopulateDropDownListsLocations(Location location = null)
+        {
+            ViewData["LocationID"] = LocationSelectList(location?.ID);
+        }
+        private void PopulateDropDownListsCategories(Category category = null)
+        {
+            ViewData["CategoryID"] = CategorySelectList(category?.ID);
         }
 
         private bool InventoryExists(int id)

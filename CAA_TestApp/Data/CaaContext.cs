@@ -15,6 +15,7 @@ namespace CAA_TestApp.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<Product> products { get; set; }
         public DbSet<ItemPhoto> ItemsPhotos { get; set; }
         public DbSet<ItemThumbnail> ItemsThumbnails { get; set; }
 
@@ -64,6 +65,11 @@ namespace CAA_TestApp.Data
             modelBuilder.Entity<Category>()
                 .HasIndex(c => c.Name)
                 .IsUnique();
+
+            modelBuilder.Entity<Inventory>()
+               .HasOne(i => i.QRImage)
+               .WithOne(v => v.inventory)
+               .HasForeignKey<QrImage>(i => i.invID);
 
         }
 
