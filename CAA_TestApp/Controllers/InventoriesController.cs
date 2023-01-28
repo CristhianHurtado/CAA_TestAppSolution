@@ -293,6 +293,8 @@ namespace CAA_TestApp.Controllers
           return _context.Inventories.Any(e => e.ID == id);
         }
 
+
+
         private async Task AddPicture(Inventory inventory, IFormFile thePicture)
         {
             //Get the picture and save it with the Patient (2 sizes)
