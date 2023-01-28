@@ -6,4 +6,3 @@ Update-Database -Context CaaContext
 
 ExtraMigration.Steps(migrationBuilder);
 
-TEST

@@ -11,6 +11,8 @@ using QRCoder;
 using System.Drawing.Imaging;
 using System.Drawing;
 using CAA_TestApp.Utilities;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace CAA_TestApp.Controllers
 {
@@ -293,7 +295,86 @@ namespace CAA_TestApp.Controllers
           return _context.Inventories.Any(e => e.ID == id);
         }
 
+        public IActionResult DownloadInventories()
+        {
+            var intory = from a in _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .ThenInclude(c => c.Category)
+                         orderby a.Product descending
+                         select new
+                         {
+                             ISBN = a.ISBN,
+                             Quantity = a.Quantity,
+                             Notes = a.Notes,
+                             Shelf = a.ShelfOn,
+                             Cost = a.Cost,
+                             DateReceived = a.DateReceived.ToShortDateString(),
+                             Location = a.Location.Name,
+                             Product = a.Product.Name
+                         };
+            int numRows = intory.Count();
 
+            if (numRows > 0) //We have data
+            {
+                //Create a new spreadsheet from scratch.
+                using (ExcelPackage excel = new ExcelPackage())
+                {
+
+                    var workSheet = excel.Workbook.Worksheets.Add("Inventory");
+
+                    workSheet.Cells[3, 1].LoadFromCollection(intory, true);
+
+                    workSheet.Column(4).Style.Numberformat.Format = "###,##0.00";
+
+                    workSheet.Cells[4, 1, numRows + 4, 1].Style.Font.Bold = true;
+
+                    using (ExcelRange headings = workSheet.Cells[3, 1, 3, 8])
+                    {
+                        headings.Style.Font.Bold = true;
+                        var fill = headings.Style.Fill;
+                        fill.PatternType = ExcelFillStyle.Solid;
+                        fill.BackgroundColor.SetColor(Color.LightBlue);
+                    }
+
+                    workSheet.Cells.AutoFitColumns();
+
+                    workSheet.Cells[1, 1].Value = "Inventory Report";
+                    using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 8])
+                    {
+                        Rng.Merge = true; //Merge columns start and end range
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 18;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    }
+
+                    DateTime utcDate = DateTime.UtcNow;
+                    TimeZoneInfo esTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                    DateTime localDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, esTimeZone);
+                    using (ExcelRange Rng = workSheet.Cells[2, 8])
+                    {
+                        Rng.Value = "Created: " + localDate.ToShortTimeString() + " on " +
+                            localDate.ToShortDateString();
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 12;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+
+                    try
+                    {
+                        Byte[] theData = excel.GetAsByteArray();
+                        string filename = "Inventory.xlsx";
+                        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        return File(theData, mimeType, filename);
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest("Could not build and download the file.");
+                    }
+                }
+            }
+            return NotFound("No data. ");
+        }
 
         private async Task AddPicture(Inventory inventory, IFormFile thePicture)
         {
