@@ -26,14 +26,17 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Inventories
-        public async Task<IActionResult> Index(string SearchSearchStringName, string SearchStringISBN, int? CategoryID, int? LocationID, int? page, string actionButton, int? pageSizeID)
+        public async Task<IActionResult> Index(string sortDirectionCheck, string sortFieldID, string SearchName, int? CategoryID, int? LocationID, 
+            int? page, string actionButton, int? pageSizeID, string sortDirection = "asc", string sortField = "Inventory")
         {
             PopulateDropDownListsCategories();
             PopulateDropDownListsLocations();
 
             ViewData["Filtering"] = "btn-outline-secondary";
 
-            var caaContext = _context.Inventories
+            string[] sortOptions = new[] { "Product", "Quantity", "Cost", "Location" };
+
+            var inventories = _context.Inventories
                 .Include(i => i.Location)
                 .Include(i => i.Product)
                 .ThenInclude(c => c.Category)
@@ -41,34 +44,126 @@ namespace CAA_TestApp.Controllers
 
             if (CategoryID.HasValue)
             {
-                caaContext = caaContext.Where(p => p.Product.CategoryID == CategoryID);
+                inventories = inventories.Where(p => p.Product.CategoryID == CategoryID);
                 ViewData["Filtering"] = " btn-danger";
             }
             if (LocationID.HasValue)
             {
-                caaContext = caaContext.Where(p => p.LocationID == LocationID);
+                inventories = inventories.Where(p => p.LocationID == LocationID);
                 ViewData["Filtering"] = " btn-danger";
             }
-            if (!String.IsNullOrEmpty(SearchSearchStringName))
+            if (!String.IsNullOrEmpty(SearchName))
             {
-                caaContext = caaContext.Where(p => p.Product.Name.ToUpper().Contains(SearchSearchStringName.ToUpper()));
-                ViewData["Filtering"] = " btn-danger";
-            }
-            if (!String.IsNullOrEmpty(SearchStringISBN))
-            {
-                caaContext = caaContext.Where(p => p.ISBN.ToUpper().Contains(SearchStringISBN.ToUpper()));
+                inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()));
                 ViewData["Filtering"] = " btn-danger";
             }
 
+            //See if we have called for a change of filtering or sorting
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
-                page = 1;
-            }
+                page = 1; //Reset page to start
 
-            //int pageSize = 10;//Change as required
-            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
+                if (sortOptions.Contains(actionButton)) //Change of sort is requested
+                {
+                    if (actionButton == sortField)
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton; //sort by the button clicked
+                }
+                else
+                {
+                    sortDirection = String.IsNullOrEmpty(sortDirectionCheck) ? "asc" : "desc";
+                    sortField = sortFieldID;
+                }
+            }
+            //Now we know which field and direction to sort by
+            if (sortField == "Location")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Location.Name)
+                        .ThenBy(i => i.Product.Name);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Location.Name)
+                        .ThenBy(i => i.Product.Name);
+                }
+            }
+            else if (sortField == "Product")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Product.Name)
+                        .ThenBy(i => i.Location.Name);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Product.Name)
+                        .ThenByDescending(i => i.Location.Name);
+                }
+            }
+            else if (sortField == "Quantity")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Quantity)
+                        .ThenBy(i => i.Location.Name);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Quantity)
+                        .ThenBy(i => i.Location.Name);
+                }
+            }
+            else if (sortField == "Cost")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Cost)
+                        .ThenBy(i => i.Location.Name);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Cost)
+                        .ThenBy(i => i.Location.Name);
+                }
+            }
+            else if (sortField == "Category") //sort by category
+            {
+                if (sortDirection == "asc")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        inventories = inventories
+                            .OrderBy(i => i.Product.Category.Name);
+                    }
+                    else
+                    {
+                        inventories = inventories
+                            .OrderByDescending(i => i.Product.Category.Name);
+                    }
+                }
+            }
+            //Set sort for next time
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            //SelectList for sorting options
+            ViewBag.sortFieldID = new SelectList(sortOptions, sortField.ToString());
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "inventories");
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
-            var pagedData = await PaginatedList<Inventory>.CreateAsync(caaContext.AsNoTracking(), page ?? 1, pageSize);
+            var pagedData = await PaginatedList<Inventory>.CreateAsync(inventories.AsNoTracking(), page ?? 1, pageSize);
 
             return View(pagedData);
         }

@@ -59,20 +59,27 @@ namespace CAA_TestApp.Utilities
         /// <param name="httpContext">The HttpContext from the controller</param>
         /// <param name="pageSizeID">the pageSizeID value from the Request</param>
         /// <returns></returns>
-        public static int SetPageSize(HttpContext httpContext, int? pageSizeID)
+        public static int SetPageSize(HttpContext httpContext, int? pageSizeID, string ControllerName)
         {
             //
-            int pageSize;
+            int pageSize = 0;
             if (pageSizeID.HasValue)
             {
                 //Value selected from DDL so use and save it to Cookie
                 pageSize = pageSizeID.GetValueOrDefault();
-                CookieHelper.CookieSet(httpContext, "pageSizeValue", pageSize.ToString(), 30);
+                CookieHelper.CookieSet(httpContext, ControllerName + "pageSizeValue", pageSize.ToString(), 30);
+                //Set this value as the new default if a custom page size has not been set for a controller
+                CookieHelper.CookieSet(httpContext, "DefaultpageSizeValue", pageSize.ToString(), 30);
             }
             else
             {
                 //Not selected so see if it is in Cookie
-                pageSize = Convert.ToInt32(httpContext.Request.Cookies["pageSizeValue"]);
+                pageSize = Convert.ToInt32(httpContext.Request.Cookies[ControllerName + "pageSizeValue"]);
+            }
+            if (pageSize == 0)
+            {
+                //get the saved default if there is one
+                pageSize = Convert.ToInt32(httpContext.Request.Cookies["DefaultpageSizeValue"]);
             }
             return (pageSize == 0) ? 5 : pageSize;//Neither Selected or in Cookie so go with default
         }

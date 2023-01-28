@@ -19,15 +19,18 @@ namespace CAA_TestApp.Models
 
         public double Cost { get; set; }
 
+        [Display(Name = "Date Received")]
         public DateTime DateReceived { get; set; }
 
         [Display(Name = "Location")]
         public int LocationID { get; set; }
 
+        [Display(Name = "Product")]
         public int ProductID { get; set; }
 
         public Location Location { get; set; }
 
+        [Display(Name = "Product")]
         public Product Product { get; set; }
 
         public ItemPhoto ItemPhoto { get; set; }
