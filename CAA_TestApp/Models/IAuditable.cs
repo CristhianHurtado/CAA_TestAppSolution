@@ -1,7 +1,11 @@
 ﻿namespace CAA_TestApp.Models
 {
-    public interface IAuditable
+    internal interface IAuditable
     {
+        string CreatedBy { get; set; }
+        DateTime? CreatedOn { get; set; }
+        string UpdatedBy { get; set; }
+        DateTime? UpdatedOn { get; set; }
         string OrderedBy { get; set; }
         DateTime? OrderedOn { get; set; }
         string TookBy { get; set; }

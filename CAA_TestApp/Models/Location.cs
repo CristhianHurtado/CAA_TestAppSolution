@@ -1,4 +1,7 @@
-﻿namespace CAA_TestApp.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
+
+namespace CAA_TestApp.Models
 {
     public class Location
     {

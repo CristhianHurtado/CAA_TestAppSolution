@@ -2,7 +2,7 @@
 
 namespace CAA_TestApp.Data
 {
-    public class ExtraMigrations
+    public class ExtraMigration
     {
         public static void Steps(MigrationBuilder migrationBuilder)
         {
@@ -23,6 +23,26 @@ namespace CAA_TestApp.Data
                     AFTER INSERT ON Inventories
                     BEGIN
                         UPDATE Inventories
+                        SET RowVersion = randomblob(8)
+                        WHERE rowid = NEW.rowid;
+                    END
+                ");
+                migrationBuilder.Sql(
+    @"
+                    CREATE TRIGGER SetItemTimestampOnUpdate
+                    AFTER UPDATE ON Product
+                    BEGIN
+                        UPDATE Product
+                        SET RowVersion = randomblob(8)
+                        WHERE rowid = NEW.rowid;
+                    END
+                ");
+             migrationBuilder.Sql(
+    @"
+                    CREATE TRIGGER SetItemTimestampOnUpdate
+                    AFTER UPDATE ON Products
+                    BEGIN
+                        UPDATE Products
                         SET RowVersion = randomblob(8)
                         WHERE rowid = NEW.rowid;
                     END

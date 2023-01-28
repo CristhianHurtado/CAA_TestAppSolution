@@ -5,9 +5,30 @@ namespace CAA_TestApp.Data
 {
     public class CaaContext : DbContext 
     {
-        public CaaContext(DbContextOptions<CaaContext> options)
+        //To give access to IHttpContextAccessor for Audit Data with IAuditable
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        //Property to hold the UserName value
+        public string UserName
+        {
+            get; private set;
+        }
+
+        public CaaContext(DbContextOptions<CaaContext> options, IHttpContextAccessor httpContextAccessor)
             : base(options)
         {
+            _httpContextAccessor = httpContextAccessor;
+            if (_httpContextAccessor.HttpContext != null)
+            {
+                //We have a HttpContext, but there might not be anyone Authenticated
+                UserName = _httpContextAccessor.HttpContext?.User.Identity.Name;
+                UserName ??= "Unknown";
+            }
+            else
+            {
+                //No HttpContext so seeding data
+                UserName = "Seed Data";
+            }
         }
 
         public DbSet<Product> Products { get; set; }
@@ -75,7 +96,7 @@ namespace CAA_TestApp.Data
 
         //Code for for Tracking on logged user
 
-        /*public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             OnBeforeSaving();
             return base.SaveChanges(acceptAllChangesOnSuccess);
@@ -111,6 +132,6 @@ namespace CAA_TestApp.Data
                     }
                 }
             }
-        }*/
+        }
     }
 }

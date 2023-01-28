@@ -149,7 +149,7 @@ namespace CAA_TestApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,ISBN,Quantity,Notes,ShelfOn,Cost,DateReceived," +
-            "LocationID,ProductID")] Inventory inventory, string chkRemoveImage, IFormFile thePicture)
+            "LocationID,ProductID")] Inventory inventory, string chkRemoveImage, IFormFile thePicture, Byte[] RowVersion)
         {
             if (id != inventory.ID)
             {
@@ -187,14 +187,20 @@ namespace CAA_TestApp.Controllers
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError(string.Empty, "The record you attempted to edit "
+                            + "was modified by another user. Please go back and refresh.");
                     }
                 }
                 return RedirectToAction(nameof(Index));
             }
+            _context.Entry(inventory).Property("RowVersion").OriginalValue = RowVersion;
+            
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", inventory.LocationID);
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "ID", inventory.ProductID);
             return View(inventory);
+
+          
+
         }
 
         // GET: Inventories/Delete/5

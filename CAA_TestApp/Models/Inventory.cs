@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
 
 namespace CAA_TestApp.Models
 {
@@ -8,7 +9,11 @@ namespace CAA_TestApp.Models
         
         public string ISBN { get; set; }
 
-        [Display(Name = "Quantity")]
+               [ScaffoldColumn(false)]
+        [Timestamp]
+        public Byte[] RowVersion{ get; set; }//Added for concurrency
+
+        [Display(Name = "Quantity")]  
         public int Quantity { get; set; }
 
         [Display(Name = "Notes")]

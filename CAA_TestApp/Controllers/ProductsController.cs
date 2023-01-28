@@ -91,12 +91,15 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,CategoryID")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,CategoryID")] Product product, Byte[] RowVersion)
         {
             if (id != product.ID)
             {
                 return NotFound();
             }
+
+            //Put the original RowVersion value in the OriginalValues collection for the entity
+            _context.Entry(product).Property("RowVersion").OriginalValue = RowVersion;
 
             if (ModelState.IsValid)
             {
@@ -113,7 +116,8 @@ namespace CAA_TestApp.Controllers
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError(string.Empty, "The record you attempted to edit "
+                            + "was modified by another user. Please go back and refresh.");
                     }
                 }
                 return RedirectToAction(nameof(Index));

@@ -1,6 +1,9 @@
-﻿namespace CAA_TestApp.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
+
+namespace CAA_TestApp.Models
 {
-    public class Category
+    public class Category : Auditable
     {
         public int ID { get; set; }
 
