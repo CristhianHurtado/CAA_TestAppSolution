@@ -7,9 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CAA_TestApp.Data;
 using CAA_TestApp.Models;
-using OfficeOpenXml.Style;
-using OfficeOpenXml;
+using CAA_TestApp.Utilities;
 using System.Drawing;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace CAA_TestApp.Controllers
 {
@@ -127,7 +128,7 @@ namespace CAA_TestApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "ID", product.CategoryID);
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
             return View(product);
         }
 
@@ -171,6 +172,8 @@ namespace CAA_TestApp.Controllers
 
         public IActionResult DownloadProducts()
         {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
             var product = from a in _context.Products
                 .Include(p => p.Category)
                           orderby a.Name descending

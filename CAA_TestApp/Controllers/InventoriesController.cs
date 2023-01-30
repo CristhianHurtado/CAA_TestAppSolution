@@ -255,8 +255,6 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-           
-
             if (ModelState.IsValid)
             {
                 try
@@ -413,6 +411,8 @@ namespace CAA_TestApp.Controllers
 
         public IActionResult DownloadInventories()
         {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
             var intory = from a in _context.Inventories
                 .Include(i => i.Location)
                 .Include(i => i.Product)
