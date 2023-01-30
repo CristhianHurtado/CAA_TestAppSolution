@@ -116,7 +116,7 @@ namespace CAA_TestApp.Data
                     context.Inventories.AddRange(
                     new Inventory
                     {
-                        Quantity = 1,
+                        Quantity = 10,
                         ISBN = "978006154236",
                         Cost = 499.99,
                         DateReceived = DateTime.Now,

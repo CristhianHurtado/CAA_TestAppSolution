@@ -28,6 +28,7 @@ namespace CAA_TestApp.Models
         [Display(Name = "Product")]
         public int ProductID { get; set; }
 
+        [Display(Name = "Location")]
         public Location Location { get; set; }
 
         [Display(Name = "Product")]
