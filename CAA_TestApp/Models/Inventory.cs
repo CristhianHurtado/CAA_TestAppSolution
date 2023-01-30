@@ -49,6 +49,8 @@ namespace CAA_TestApp.Models
         public ItemThumbnail ItemThumbnail { get; set; }
         
         public QrImage QRImage { get; set; }
+
+
         
         //Methods
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

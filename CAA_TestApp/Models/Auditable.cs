@@ -2,8 +2,8 @@
 
 namespace CAA_TestApp.Models
 {
-    public interface Auditable
-    {
+    //public interface Auditable
+    //{
         public abstract class Auditable : IAuditable
         {
             [ScaffoldColumn(false)]
@@ -58,5 +58,5 @@ namespace CAA_TestApp.Models
             public Byte[] RowVersion { get; set; }//Added for concurrency
 
         }
-    }
+    //}
 }
