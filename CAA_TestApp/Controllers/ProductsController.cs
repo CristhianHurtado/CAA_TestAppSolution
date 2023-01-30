@@ -45,13 +45,14 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
             return View(product);
         }
 
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "ID");
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name");
             return View();
         }
 
@@ -85,7 +86,8 @@ namespace CAA_TestApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "ID", product.CategoryID);
+            
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
             return View(product);
         }
 

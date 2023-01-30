@@ -54,7 +54,8 @@ namespace CAA_TestApp.Data
             modelBuilder.Entity<Product>()
                 .HasMany<Inventory>(i => i.Inventories)
                 .WithOne(i => i.Product)
-                .HasForeignKey(i => i.ProductID);
+                .HasForeignKey(i => i.ProductID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             //unique index for location
             modelBuilder.Entity<Location>()

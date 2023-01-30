@@ -186,14 +186,16 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name", inventory.Location);
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.Product);
             return View(inventory);
         }
 
         // GET: Inventories/Create
         public IActionResult Create()
         {
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID");
-            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "ID");
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name");
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name");
             return View();
         }
 
