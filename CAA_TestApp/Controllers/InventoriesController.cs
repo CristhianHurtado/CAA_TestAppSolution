@@ -233,18 +233,7 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            /* for match values with IDs on try/catch update 
-             * 
-            if (databaseValues.GenreID != clientValues.GenreID)
-            {
-                Genre databaseGenre = await _context.Genres.FirstOrDefaultAsync(i => i.ID == databaseValues.GenreID);
-                ModelState.AddModelError("GenreID", $"Current value: {databaseGenre?.Name}");
-            }
-            if (databaseValues.AlbumID != clientValues.AlbumID)
-            {
-                Album databaseAlbum = await _context.Albums.FirstOrDefaultAsync(i => i.ID == databaseValues.AlbumID);
-                ModelState.AddModelError("AlbumID", $"Current value: {databaseAlbum?.Name}");
-            }*/
+
 
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name", inventory.Location);
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.Product);
@@ -290,6 +279,18 @@ namespace CAA_TestApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
+                    /* for match values with IDs on try/catch update 
+                     * 
+                    if (databaseValues.GenreID != clientValues.GenreID)
+                    {
+                        Genre databaseGenre = await _context.Genres.FirstOrDefaultAsync(i => i.ID == databaseValues.GenreID);
+                        ModelState.AddModelError("GenreID", $"Current value: {databaseGenre?.Name}");
+                    }
+                    if (databaseValues.AlbumID != clientValues.AlbumID)
+                    {
+                        Album databaseAlbum = await _context.Albums.FirstOrDefaultAsync(i => i.ID == databaseValues.AlbumID);
+                        ModelState.AddModelError("AlbumID", $"Current value: {databaseAlbum?.Name}");
+                    }*/
                     if (!InventoryExists(inventory.ID))
                     {
                         return NotFound();
