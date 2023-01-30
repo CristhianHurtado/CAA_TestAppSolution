@@ -239,10 +239,11 @@ namespace CAA_TestApp.Data.CaaMigrations
                 columns: new[] { "EventInventoryID", "EventID" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Inventories_LocationID",
+                name: "IX_Inventories_LocationID_ProductID",
                 schema: "CAA",
                 table: "Inventories",
-                column: "LocationID");
+                columns: new[] { "LocationID", "ProductID" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Inventories_ProductID",
@@ -276,6 +277,13 @@ namespace CAA_TestApp.Data.CaaMigrations
                 schema: "CAA",
                 table: "Products",
                 column: "CategoryID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_Name_CategoryID",
+                schema: "CAA",
+                table: "Products",
+                columns: new[] { "Name", "CategoryID" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_QrImage_invID",

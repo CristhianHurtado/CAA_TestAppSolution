@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAA_TestApp.Data.CaaMigrations
 {
     [DbContext(typeof(CaaContext))]
-    [Migration("20230130195838_Initial")]
+    [Migration("20230130222227_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,11 +159,12 @@ namespace CAA_TestApp.Data.CaaMigrations
 
                     b.HasIndex("CategoryID");
 
-                    b.HasIndex("LocationID");
-
                     b.HasIndex("ProductID");
 
                     b.HasIndex("EventInventoryID", "EventID");
+
+                    b.HasIndex("LocationID", "ProductID")
+                        .IsUnique();
 
                     b.ToTable("Inventories", "CAA");
                 });
@@ -270,6 +271,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.HasKey("ID");
 
                     b.HasIndex("CategoryID");
+
+                    b.HasIndex("Name", "CategoryID")
+                        .IsUnique();
 
                     b.ToTable("Products", "CAA");
                 });
