@@ -11,6 +11,8 @@ using QRCoder;
 using System.Drawing.Imaging;
 using System.Drawing;
 using CAA_TestApp.Utilities;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 
 namespace CAA_TestApp.Controllers
 {
@@ -24,14 +26,17 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Inventories
-        public async Task<IActionResult> Index(string SearchSearchStringName, string SearchStringISBN, int? CategoryID, int? LocationID, int? page, string actionButton, int? pageSizeID)
+        public async Task<IActionResult> Index(string sortDirectionCheck, string sortFieldID, string SearchName, int? CategoryID, int? LocationID, 
+            int? page, string actionButton, int? pageSizeID, string sortDirection = "asc", string sortField = "Inventory")
         {
             PopulateDropDownListsCategories();
             PopulateDropDownListsLocations();
 
             ViewData["Filtering"] = "btn-outline-secondary";
 
-            var caaContext = _context.Inventories
+            string[] sortOptions = new[] { "Product", "Quantity", "Cost", "Location" };
+
+            var inventories = _context.Inventories
                 .Include(i => i.Location)
                 .Include(i => i.Product)
                 .ThenInclude(c => c.Category)
@@ -39,34 +44,126 @@ namespace CAA_TestApp.Controllers
 
             if (CategoryID.HasValue)
             {
-                caaContext = caaContext.Where(p => p.Product.CategoryID == CategoryID);
+                inventories = inventories.Where(p => p.Product.CategoryID == CategoryID);
                 ViewData["Filtering"] = " btn-danger";
             }
             if (LocationID.HasValue)
             {
-                caaContext = caaContext.Where(p => p.LocationID == LocationID);
+                inventories = inventories.Where(p => p.LocationID == LocationID);
                 ViewData["Filtering"] = " btn-danger";
             }
-            if (!String.IsNullOrEmpty(SearchSearchStringName))
+            if (!String.IsNullOrEmpty(SearchName))
             {
-                caaContext = caaContext.Where(p => p.Product.Name.ToUpper().Contains(SearchSearchStringName.ToUpper()));
-                ViewData["Filtering"] = " btn-danger";
-            }
-            if (!String.IsNullOrEmpty(SearchStringISBN))
-            {
-                caaContext = caaContext.Where(p => p.ISBN.ToUpper().Contains(SearchStringISBN.ToUpper()));
+                inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()));
                 ViewData["Filtering"] = " btn-danger";
             }
 
+            //See if we have called for a change of filtering or sorting
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
-                page = 1;
-            }
+                page = 1; //Reset page to start
 
-            //int pageSize = 10;//Change as required
-            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
+                if (sortOptions.Contains(actionButton)) //Change of sort is requested
+                {
+                    if (actionButton == sortField)
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton; //sort by the button clicked
+                }
+                else
+                {
+                    sortDirection = String.IsNullOrEmpty(sortDirectionCheck) ? "asc" : "desc";
+                    sortField = sortFieldID;
+                }
+            }
+            //Now we know which field and direction to sort by
+            if (sortField == "Location")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Location.Name)
+                        .ThenBy(i => i.Product.Name);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Location.Name)
+                        .ThenBy(i => i.Product.Name);
+                }
+            }
+            else if (sortField == "Product")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Product.Name)
+                        .ThenBy(i => i.Location.Name);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Product.Name)
+                        .ThenByDescending(i => i.Location.Name);
+                }
+            }
+            else if (sortField == "Quantity")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Quantity)
+                        .ThenBy(i => i.Location.Name);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Quantity)
+                        .ThenBy(i => i.Location.Name);
+                }
+            }
+            else if (sortField == "Cost")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Cost)
+                        .ThenBy(i => i.Location.Name);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Cost)
+                        .ThenBy(i => i.Location.Name);
+                }
+            }
+            else if (sortField == "Category") //sort by category
+            {
+                if (sortDirection == "asc")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        inventories = inventories
+                            .OrderBy(i => i.Product.Category.Name);
+                    }
+                    else
+                    {
+                        inventories = inventories
+                            .OrderByDescending(i => i.Product.Category.Name);
+                    }
+                }
+            }
+            //Set sort for next time
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            //SelectList for sorting options
+            ViewBag.sortFieldID = new SelectList(sortOptions, sortField.ToString());
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "inventories");
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
-            var pagedData = await PaginatedList<Inventory>.CreateAsync(caaContext.AsNoTracking(), page ?? 1, pageSize);
+            var pagedData = await PaginatedList<Inventory>.CreateAsync(inventories.AsNoTracking(), page ?? 1, pageSize);
 
             return View(pagedData);
         }
@@ -89,14 +186,16 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name", inventory.Location);
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.Product);
             return View(inventory);
         }
 
         // GET: Inventories/Create
         public IActionResult Create()
         {
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID");
-            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "ID");
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name");
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name");
             return View();
         }
 
@@ -136,10 +235,10 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            
 
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", inventory.LocationID);
-            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "ID", inventory.ProductID);
+
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name", inventory.Location);
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.Product);
             return View(inventory);
         }
 
@@ -156,6 +255,7 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
+           
 
             if (ModelState.IsValid)
             {
@@ -181,6 +281,18 @@ namespace CAA_TestApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
+                    /* for match values with IDs on try/catch update 
+                     * 
+                    if (databaseValues.GenreID != clientValues.GenreID)
+                    {
+                        Genre databaseGenre = await _context.Genres.FirstOrDefaultAsync(i => i.ID == databaseValues.GenreID);
+                        ModelState.AddModelError("GenreID", $"Current value: {databaseGenre?.Name}");
+                    }
+                    if (databaseValues.AlbumID != clientValues.AlbumID)
+                    {
+                        Album databaseAlbum = await _context.Albums.FirstOrDefaultAsync(i => i.ID == databaseValues.AlbumID);
+                        ModelState.AddModelError("AlbumID", $"Current value: {databaseAlbum?.Name}");
+                    }*/
                     if (!InventoryExists(inventory.ID))
                     {
                         return NotFound();
@@ -297,6 +409,87 @@ namespace CAA_TestApp.Controllers
         private bool InventoryExists(int id)
         {
           return _context.Inventories.Any(e => e.ID == id);
+        }
+
+        public IActionResult DownloadInventories()
+        {
+            var intory = from a in _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .ThenInclude(c => c.Category)
+                         orderby a.Product descending
+                         select new
+                         {
+                             ISBN = a.ISBN,
+                             Quantity = a.Quantity,
+                             Notes = a.Notes,
+                             Shelf = a.ShelfOn,
+                             Cost = a.Cost,
+                             DateReceived = a.DateReceived.ToShortDateString(),
+                             Location = a.Location.Name,
+                             Product = a.Product.Name
+                         };
+            int numRows = intory.Count();
+
+            if (numRows > 0) //We have data
+            {
+                //Create a new spreadsheet from scratch.
+                using (ExcelPackage excel = new ExcelPackage())
+                {
+
+                    var workSheet = excel.Workbook.Worksheets.Add("Inventory");
+
+                    workSheet.Cells[3, 1].LoadFromCollection(intory, true);
+
+                    workSheet.Column(4).Style.Numberformat.Format = "###,##0.00";
+
+                    workSheet.Cells[4, 1, numRows + 4, 1].Style.Font.Bold = true;
+
+                    using (ExcelRange headings = workSheet.Cells[3, 1, 3, 8])
+                    {
+                        headings.Style.Font.Bold = true;
+                        var fill = headings.Style.Fill;
+                        fill.PatternType = ExcelFillStyle.Solid;
+                        fill.BackgroundColor.SetColor(Color.LightBlue);
+                    }
+
+                    workSheet.Cells.AutoFitColumns();
+
+                    workSheet.Cells[1, 1].Value = "Inventory Report";
+                    using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 8])
+                    {
+                        Rng.Merge = true; //Merge columns start and end range
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 18;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    }
+
+                    DateTime utcDate = DateTime.UtcNow;
+                    TimeZoneInfo esTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                    DateTime localDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, esTimeZone);
+                    using (ExcelRange Rng = workSheet.Cells[2, 8])
+                    {
+                        Rng.Value = "Created: " + localDate.ToShortTimeString() + " on " +
+                            localDate.ToShortDateString();
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 12;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+
+                    try
+                    {
+                        Byte[] theData = excel.GetAsByteArray();
+                        string filename = "Inventory.xlsx";
+                        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        return File(theData, mimeType, filename);
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest("Could not build and download the file.");
+                    }
+                }
+            }
+            return NotFound("No data. ");
         }
 
         private async Task AddPicture(Inventory inventory, IFormFile thePicture)

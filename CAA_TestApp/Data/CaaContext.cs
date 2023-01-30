@@ -36,7 +36,6 @@ namespace CAA_TestApp.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Event> Events { get; set; }
-        public DbSet<Product> products { get; set; }
         public DbSet<ItemPhoto> ItemsPhotos { get; set; }
         public DbSet<ItemThumbnail> ItemsThumbnails { get; set; }
 
@@ -75,7 +74,8 @@ namespace CAA_TestApp.Data
             modelBuilder.Entity<Product>()
                 .HasMany<Inventory>(i => i.Inventories)
                 .WithOne(i => i.Product)
-                .HasForeignKey(i => i.ProductID);
+                .HasForeignKey(i => i.ProductID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             //unique index for location
             modelBuilder.Entity<Location>()

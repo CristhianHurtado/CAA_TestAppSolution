@@ -1,12 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
 
 namespace CAA_TestApp.Models
 {
-    public class Category : Auditable
+    public class Category
     {
         public int ID { get; set; }
 
+        [Display(Name="Category")]
+        [Required(ErrorMessage ="Category cannot be left blank.")]
+        [StringLength(20, ErrorMessage ="Category cannot be longer than 20 characters.")]
         public string Name { get; set; }
 
         public Category()
