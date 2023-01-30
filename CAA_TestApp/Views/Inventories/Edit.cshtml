@@ -46,8 +46,7 @@
                 <span asp-validation-for="ISBN" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label>Quantity befor changes: @Model.Quantity</label> < /br>
-                <label asp-for="Quantity" class="control-label"></label>
+                <label>Quantity before changes: <strong>@Model.Quantity</strong></label>
                 <input asp-for="Quantity" class="form-control" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
