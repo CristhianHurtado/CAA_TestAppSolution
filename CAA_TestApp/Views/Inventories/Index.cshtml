@@ -8,13 +8,13 @@
 
 <p>
     <a asp-action="Create">Create New</a>
-    <a asp-action="DownloadInventories" class="btn btn-info float-end">Download Inventory Report</a>
+    <a asp-action="DownloadInventories" class="btn btn-info float-end btn-style">Download Inventory Report</a>
 </p>
 <form asp-action="Index" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <div class="form-horizontal">
-        <button class="btn @(ViewData["Filtering"])" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+        <button class="btn @(ViewData["Filtering"]) btn-style" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
             Filter/Search
         </button>
         <div class="collapse" id="collapseFilter">
@@ -52,8 +52,8 @@
                     @Html.TextBox("SearchStringISBN", null, new { @class = "form-control" })
                     </div>*@
                     <div class="form-group col-md-4 align-self-end">
-                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
-                        <a asp-action="Index" class="btn btn-outline-dark">Clear</a>
+                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary btn-style" />
+                        <a asp-action="Index" class="btn btn-outline-dark btn-style ">Clear</a>
                     </div>
                 </div>
             </div>

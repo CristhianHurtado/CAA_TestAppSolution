@@ -45,17 +45,17 @@ namespace CAA_TestApp.Controllers
             if (CategoryID.HasValue)
             {
                 inventories = inventories.Where(p => p.Product.CategoryID == CategoryID);
-                ViewData["Filtering"] = " btn-danger";
+                ViewData["Filtering"] = " btn-style";
             }
             if (LocationID.HasValue)
             {
                 inventories = inventories.Where(p => p.LocationID == LocationID);
-                ViewData["Filtering"] = " btn-danger";
+                ViewData["Filtering"] = " btn-style";
             }
             if (!String.IsNullOrEmpty(SearchName))
             {
                 inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()));
-                ViewData["Filtering"] = " btn-danger";
+                ViewData["Filtering"] = " btn-style";
             }
 
             //See if we have called for a change of filtering or sorting
