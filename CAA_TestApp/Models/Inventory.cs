@@ -59,6 +59,14 @@ namespace CAA_TestApp.Models
             {
                 yield return new ValidationResult("Date received cannot be in the future.", new[] { "DateReceived" });
             }
+            else if(Quantity < 0)
+            {
+                yield return new ValidationResult("Quantity cannot be below 0.", new[] { "Quantity" });
+            }
+            else if(Quantity > 500)
+            {
+                yield return new ValidationResult("Quantity cannot be greater than 500.", new[] { "Quantity" });
+            }
         }
     }
 }
