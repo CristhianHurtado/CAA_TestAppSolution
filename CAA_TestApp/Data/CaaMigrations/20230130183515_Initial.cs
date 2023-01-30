@@ -19,7 +19,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true)
+                    Name = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,7 +33,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
                     ProductID = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
@@ -42,13 +42,13 @@ namespace CAA_TestApp.Data.CaaMigrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Product",
+                name: "Products",
                 schema: "CAA",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
                     CategoryID = table.Column<int>(type: "INTEGER", nullable: false),
                     OrderedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     OrderedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
@@ -65,9 +65,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Product", x => x.ID);
+                    table.PrimaryKey("PK_Products", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Product_Categories_CategoryID",
+                        name: "FK_Products_Categories_CategoryID",
                         column: x => x.CategoryID,
                         principalSchema: "CAA",
                         principalTable: "Categories",
@@ -82,9 +82,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false),
                     InventoryID = table.Column<int>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     Date = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    EventLocation = table.Column<string>(type: "TEXT", nullable: true),
+                    EventLocation = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
                     Notes = table.Column<string>(type: "TEXT", nullable: true),
                     InventoryQuantity = table.Column<int>(type: "INTEGER", nullable: false),
                     OrderedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -114,7 +114,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .Annotation("Sqlite:Autoincrement", true),
                     ISBN = table.Column<string>(type: "TEXT", nullable: true),
                     Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    Notes = table.Column<string>(type: "TEXT", nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
                     ShelfOn = table.Column<string>(type: "TEXT", nullable: true),
                     Cost = table.Column<double>(type: "REAL", nullable: false),
                     DateReceived = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -159,12 +159,12 @@ namespace CAA_TestApp.Data.CaaMigrations
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Inventories_Product_ProductID",
+                        name: "FK_Inventories_Products_ProductID",
                         column: x => x.ProductID,
                         principalSchema: "CAA",
-                        principalTable: "Product",
+                        principalTable: "Products",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -293,9 +293,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Product_CategoryID",
+                name: "IX_Products_CategoryID",
                 schema: "CAA",
-                table: "Product",
+                table: "Products",
                 column: "CategoryID");
 
             migrationBuilder.CreateIndex(
@@ -306,12 +306,12 @@ namespace CAA_TestApp.Data.CaaMigrations
                 unique: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Categories_Product_ProductID",
+                name: "FK_Categories_Products_ProductID",
                 schema: "CAA",
                 table: "Categories",
                 column: "ProductID",
                 principalSchema: "CAA",
-                principalTable: "Product",
+                principalTable: "Products",
                 principalColumn: "ID");
 
             migrationBuilder.AddForeignKey(
@@ -328,12 +328,12 @@ namespace CAA_TestApp.Data.CaaMigrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Categories_Product_ProductID",
+                name: "FK_Categories_Products_ProductID",
                 schema: "CAA",
                 table: "Categories");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Inventories_Product_ProductID",
+                name: "FK_Inventories_Products_ProductID",
                 schema: "CAA",
                 table: "Inventories");
 
@@ -355,7 +355,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                 schema: "CAA");
 
             migrationBuilder.DropTable(
-                name: "Product",
+                name: "Products",
                 schema: "CAA");
 
             migrationBuilder.DropTable(

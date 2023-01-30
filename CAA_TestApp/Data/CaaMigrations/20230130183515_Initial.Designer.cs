@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAA_TestApp.Data.CaaMigrations
 {
     [DbContext(typeof(CaaContext))]
-    [Migration("20230130015346_Initial")]
+    [Migration("20230130183515_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,6 +28,8 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("ProductID")
@@ -55,6 +57,8 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("EventLocation")
+                        .IsRequired()
+                        .HasMaxLength(40)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("InventoryQuantity")
@@ -72,6 +76,8 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Notes")
@@ -154,6 +160,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Notes")
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("OrderedBy")
@@ -266,6 +273,8 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(40)
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
@@ -297,6 +306,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("OrderedBy")
@@ -336,7 +346,7 @@ namespace CAA_TestApp.Data.CaaMigrations
 
                     b.HasIndex("CategoryID");
 
-                    b.ToTable("Product", "CAA");
+                    b.ToTable("Products", "CAA");
                 });
 
             modelBuilder.Entity("CAA_TestApp.Models.QrImage", b =>
@@ -389,7 +399,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.HasOne("CAA_TestApp.Models.Product", "Product")
                         .WithMany("Inventories")
                         .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CAA_TestApp.Models.Event", null)
