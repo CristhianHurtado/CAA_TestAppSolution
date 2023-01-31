@@ -69,15 +69,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<int>("InventoryQuantity")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("LastLocation")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LocationChangedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("LocationchangedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -86,31 +77,10 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<string>("Notes")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("OrderedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("OrderedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ReturnedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("ReturnedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
-
-                    b.Property<string>("ShelfMoveBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TookBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("TookOn")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(256)
@@ -155,26 +125,11 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<string>("ISBN")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("LastLocation")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LocationChangedBy")
-                        .HasColumnType("TEXT");
-
                     b.Property<int>("LocationID")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("LocationchangedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Notes")
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("OrderedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("OrderedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ProductID")
@@ -183,27 +138,12 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ReturnedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("ReturnedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
 
-                    b.Property<string>("ShelfMoveBy")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("ShelfOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TookBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("TookOn")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedBy")
@@ -309,44 +249,14 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("LastLocation")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LocationChangedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("LocationchangedOn")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("OrderedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("OrderedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ReturnedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("ReturnedOn")
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("BLOB");
-
-                    b.Property<string>("ShelfMoveBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TookBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("TookOn")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(256)
