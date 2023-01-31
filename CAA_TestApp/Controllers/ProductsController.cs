@@ -148,6 +148,10 @@ namespace CAA_TestApp.Controllers
                             + "was modified by another user. Please go back and refresh.");
                     }
                 }
+                catch(DbUpdateException) 
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                }
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
@@ -183,13 +187,28 @@ namespace CAA_TestApp.Controllers
                 return Problem("Entity set 'CaaContext.Products'  is null.");
             }
             var product = await _context.Products.FindAsync(id);
-            if (product != null)
+            try
             {
-                _context.Products.Remove(product);
+                if (product != null)
+                {
+                    _context.Products.Remove(product);
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (DbUpdateException dex)
+            {
+                if (dex.GetBaseException().Message.Contains("FOREIGN KEY constraint failed"))
+                {
+                    ModelState.AddModelError("", "Unable to Delete Product. Remember, you cannot delete a Product that has Inventory assigned.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                }
+            }
+            return View(product);
         }
 
         public IActionResult DownloadProducts()

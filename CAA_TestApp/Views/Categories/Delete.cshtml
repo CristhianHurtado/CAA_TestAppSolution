@@ -4,11 +4,11 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
+<h1>Delete a Category</h1>
 
-<h3>Are you sure you want to delete this?</h3>
+
 <div>
-    <h4>Category</h4>
+
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -18,10 +18,11 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
     </dl>
-    
+    <h2 style="font-size: 16px; color:red">Are you sure you want to delete this?</h2>
     <form asp-action="Delete">
         <input type="hidden" asp-for="ID" />
         <input type="submit" value="Delete" class="btn btn-danger btn-style" /> |
         <a asp-action="Index">Back to List</a>
     </form>
+
 </div>
