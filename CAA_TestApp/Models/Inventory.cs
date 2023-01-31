@@ -2,7 +2,7 @@
 
 namespace CAA_TestApp.Models
 {
-    public class Inventory : Auditable, IValidatableObject
+    public class Inventory :Auditable,  IValidatableObject
     {
         public int ID { get; set; }
         
@@ -29,6 +29,11 @@ namespace CAA_TestApp.Models
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateReceived { get; set; }
+
+        [ScaffoldColumn(false)]
+        [Timestamp]
+        public Byte[] RowVersion { get; set; }//Added for concurrency
+
 
         [Display(Name = "Location")]
         [Required(ErrorMessage ="Select the location for this inventory record.")]

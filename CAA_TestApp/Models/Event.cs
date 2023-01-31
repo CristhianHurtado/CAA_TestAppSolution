@@ -21,6 +21,11 @@ namespace CAA_TestApp.Models
         [StringLength(40, ErrorMessage = "Event location cannot be longer than 40 characters.")]
         public string EventLocation { get; set; }
 
+        [ScaffoldColumn(false)]
+        [Timestamp]
+        public Byte[] RowVersion { get; set; }//Added for concurrency
+
+
         public string Notes { get; set; }
 
         [Display(Name="Inventory")]
