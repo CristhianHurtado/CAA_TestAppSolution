@@ -40,7 +40,7 @@ namespace CAA_TestApp.Data
              migrationBuilder.Sql(
     @"
                     CREATE TRIGGER SetProductTimestampOnInsert
-                    AFTER INSERT ON Product
+                    AFTER INSERT ON Products
                     BEGIN
                         UPDATE Product
                         SET RowVersion = randomblob(8)
