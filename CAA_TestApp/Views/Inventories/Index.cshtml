@@ -8,13 +8,13 @@
 
 <p>
     <a asp-action="Create">Create New</a>
-    <a asp-action="DownloadInventories" class="btn btn-info float-end">Download Inventory Report</a>
+    <a asp-action="DownloadInventories" class="btn btn-info float-end btn-style">Download Inventory Report</a>
 </p>
 <form asp-action="Index" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <div class="form-horizontal">
-        <button class="btn @(ViewData["Filtering"])" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+        <button class="btn @(ViewData["Filtering"]) btn-style" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
             Filter/Search
         </button>
         <div class="collapse" id="collapseFilter">
@@ -52,8 +52,8 @@
                     @Html.TextBox("SearchStringISBN", null, new { @class = "form-control" })
                     </div>*@
                     <div class="form-group col-md-4 align-self-end">
-                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
-                        <a asp-action="Index" class="btn btn-outline-dark">Clear</a>
+                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary btn-style" />
+                        <a asp-action="Index" class="btn btn-outline-dark btn-style ">Clear</a>
                     </div>
                 </div>
             </div>
@@ -61,27 +61,30 @@
     </div>
     <table class="table">
         @*<thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Product)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Quantity)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Cost)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Location)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Notes)
-                </th>
-                <th></th>
-            </tr>
+        <tr>
+        <th>
+        @Html.DisplayNameFor(model => model.Product)
+        </th>
+        <th>
+        @Html.DisplayNameFor(model => model.Quantity)
+        </th>
+        <th>
+        @Html.DisplayNameFor(model => model.Cost)
+        </th>
+        <th>
+        @Html.DisplayNameFor(model => model.Location)
+        </th>
+        <th>
+        @Html.DisplayNameFor(model => model.Notes)
+        </th>
+        <th></th>
+        </tr>
         </thead>*@
         <thead>
             <tr>
+                <th>
+
+                </th>
                 <th>
                     <input type="submit" name="actionButton" value="Product" class="btn btn-link" />
                 </th>
@@ -103,28 +106,62 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Product.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Quantity)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Cost)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Product.Category.Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Location.Name)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-                    </td>
-                </tr>
+                @if (item.Quantity < 10)
+                {
+                    <tr class="alert-danger">
+                        <td>
+                            <img src="~/images/warning.png" width="30px" height="30px">
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Product.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Quantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Cost)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Product.Category.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Location.Name)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                        </td>
+                    </tr>
+                }
+                @if (item.Quantity >= 10)
+                {
+                    <tr>
+                        <td>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Product.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Quantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Cost)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Product.Category.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Location.Name)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                        </td>
+                    </tr>
+
+                }
             }
         </tbody>
     </table>

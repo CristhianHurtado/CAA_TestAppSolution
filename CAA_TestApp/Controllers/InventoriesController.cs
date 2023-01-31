@@ -13,6 +13,7 @@ using System.Drawing;
 using CAA_TestApp.Utilities;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CAA_TestApp.Controllers
 {
@@ -45,17 +46,17 @@ namespace CAA_TestApp.Controllers
             if (CategoryID.HasValue)
             {
                 inventories = inventories.Where(p => p.Product.CategoryID == CategoryID);
-                ViewData["Filtering"] = " btn-danger";
+                ViewData["Filtering"] = " btn-style";
             }
             if (LocationID.HasValue)
             {
                 inventories = inventories.Where(p => p.LocationID == LocationID);
-                ViewData["Filtering"] = " btn-danger";
+                ViewData["Filtering"] = " btn-style";
             }
             if (!String.IsNullOrEmpty(SearchName))
             {
                 inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()));
-                ViewData["Filtering"] = " btn-danger";
+                ViewData["Filtering"] = " btn-style";
             }
 
             //See if we have called for a change of filtering or sorting
@@ -207,15 +208,36 @@ namespace CAA_TestApp.Controllers
         public async Task<IActionResult> Create([Bind("ID,ISBN,Quantity,Notes,ShelfOn,Cost,DateReceived," +
             "LocationID,ProductID")] Inventory inventory, IFormFile thePicture)
         {
-            if (ModelState.IsValid)
+            try
             {
-                await AddPicture(inventory, thePicture);
-                _context.Add(inventory);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    await AddPicture(inventory, thePicture);
+                    _context.Add(inventory);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", inventory.LocationID);
-            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "ID", inventory.ProductID);
+            catch (RetryLimitExceededException)
+            {
+                ModelState.AddModelError("", "Unable to save changes after multiple attempts. Please try again. " +
+                    "If the problem persists, contact your systems administrator.");
+            }
+            catch (DbUpdateException dex)
+            {
+                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Inventories.LocationID, Inventories.ProductID"))
+                {
+                    ModelState.AddModelError("", "Unable to save changes. You cannot have duplicate records with the same name and location.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Please try again. " +
+                    "If the problem persists, contact your systems administrator.");
+                }
+            }
+
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name", inventory.LocationID);
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.ProductID);
             return View(inventory);
         }
 
@@ -254,8 +276,6 @@ namespace CAA_TestApp.Controllers
             {
                 return NotFound();
             }
-
-           
 
             if (ModelState.IsValid)
             {
@@ -413,6 +433,8 @@ namespace CAA_TestApp.Controllers
 
         public IActionResult DownloadInventories()
         {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
             var intory = from a in _context.Inventories
                 .Include(i => i.Location)
                 .Include(i => i.Product)

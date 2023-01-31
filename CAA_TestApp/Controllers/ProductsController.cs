@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CAA_TestApp.Data;
 using CAA_TestApp.Models;
-using OfficeOpenXml.Style;
-using OfficeOpenXml;
+using CAA_TestApp.Utilities;
 using System.Drawing;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CAA_TestApp.Controllers
 {
@@ -63,13 +65,34 @@ namespace CAA_TestApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Name,CategoryID")] Product product)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(product);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "ID", product.CategoryID);
+            catch (RetryLimitExceededException)
+            {
+                ModelState.AddModelError("", "Unable to save changes after multiple attempts. Please try again. " +
+                    "If the problem persists, contact your systems administrator.");
+            }
+            catch (DbUpdateException dex)
+            {
+                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Products.Name, Products.CategoryID"))
+                {
+                    ModelState.AddModelError("", "Unable to save changes. You cannot have duplicate records with the same name and category.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Please try again. " +
+                    "If the problem persists, contact your systems administrator.");
+                }
+            }
+
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
             return View(product);
         }
 
@@ -127,7 +150,7 @@ namespace CAA_TestApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "ID", product.CategoryID);
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
             return View(product);
         }
 
@@ -171,6 +194,8 @@ namespace CAA_TestApp.Controllers
 
         public IActionResult DownloadProducts()
         {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
             var product = from a in _context.Products
                 .Include(p => p.Category)
                           orderby a.Name descending

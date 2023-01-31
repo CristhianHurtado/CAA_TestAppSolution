@@ -87,6 +87,16 @@ namespace CAA_TestApp.Data
                 .HasIndex(c => c.Name)
                 .IsUnique();
 
+            //unique index for inventory
+            modelBuilder.Entity<Inventory>()
+                .HasIndex(i => new { i.LocationID, i.ProductID })
+                .IsUnique();
+
+            //unique index for product name
+            modelBuilder.Entity<Product>()
+                .HasIndex(i => new { i.Name, i.CategoryID })
+                .IsUnique();
+
             modelBuilder.Entity<Inventory>()
                .HasOne(i => i.QRImage)
                .WithOne(v => v.inventory)

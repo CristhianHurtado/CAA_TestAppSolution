@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CAA_TestApp.Data;
 using CAA_TestApp.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CAA_TestApp.Controllers
 {
@@ -56,12 +57,33 @@ namespace CAA_TestApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Name")] Location location)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(location);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(location);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
+            catch (RetryLimitExceededException)
+            {
+                ModelState.AddModelError("", "Unable to save changes after multiple attempts. Please try again. " +
+                    "If the problem persists, contact your systems administrator.");
+            }
+            catch (DbUpdateException dex)
+            {
+                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Locations.Name"))
+                {
+                    ModelState.AddModelError("", "Unable to save changes. You cannot have duplicate records of locations.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Please try again. " +
+                    "If the problem persists, contact your systems administrator.");
+                }
+            }
+
             return View(location);
         }
 
