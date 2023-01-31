@@ -106,7 +106,34 @@
         <tbody>
             @foreach (var item in Model)
             {
-                @if (item.Quantity < 10)
+                @if(item.Quantity == 0){
+                    <tr class="btn-danger">
+                        <td>
+                            <img src="~/images/warning.png" width="30px" height="30px">
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Product.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Quantity)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Cost)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Product.Category.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Location.Name)
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.ID" class="text-white">Edit</a> |
+                            <a asp-action="Details" asp-route-id="@item.ID" class="text-white">Details</a> |
+                            <a asp-action="Delete" asp-route-id="@item.ID" class="text-white">Delete</a>
+                        </td>
+                    </tr>
+                }
+                @if (item.Quantity < 10 && item.Quantity > 0)
                 {
                     <tr class="alert-warning">
                         <td>
