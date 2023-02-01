@@ -514,7 +514,7 @@ namespace CAA_TestApp.Controllers
                 using (Bitmap bitmap = qr.GetGraphic(20))
                 {
                     bitmap.Save(ms, ImageFormat.Png);
-                    ViewBag.QRCodeImage = "data:image/png;base64" + Convert.ToBase64String(ms.ToArray());
+                    ViewBag.QRCodeImage = "data:image/png;base64," + Convert.ToBase64String(ms.ToArray());
                 }
             }
 
