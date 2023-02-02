@@ -197,6 +197,7 @@ namespace CAA_TestApp.Controllers
         {
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name");
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name");
+            Redirect("/Inventories/Index");
             return View();
         }
 
