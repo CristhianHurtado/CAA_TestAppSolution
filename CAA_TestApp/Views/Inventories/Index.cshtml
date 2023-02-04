@@ -133,7 +133,7 @@
                         </td>
                     </tr>
                 }
-                @if (item.Quantity < 10 && item.Quantity > 0)
+                @if (item.Quantity < item.Product.ParLevel)
                 {
                     <tr class="">
                         <td>
@@ -161,7 +161,7 @@
                         </td>
                     </tr>
                 }
-                @if (item.Quantity >= 10)
+                @if (item.Quantity >= item.Product.ParLevel)
                 {
                     <tr>
                         <td>

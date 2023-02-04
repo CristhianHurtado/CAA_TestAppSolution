@@ -51,7 +51,7 @@ namespace CAA_TestApp.Controllers
             }
 
             ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
-            ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy");
+            ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy", product.OrganizeID);
             return View(product);
         }
 

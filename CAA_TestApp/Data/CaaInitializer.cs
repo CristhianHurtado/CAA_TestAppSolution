@@ -170,7 +170,7 @@ namespace CAA_TestApp.Data
                     context.Inventories.AddRange(
                     new Inventory
                     {
-                        Quantity = 10,
+                        Quantity = 30,
                         ISBN = "978006154236",
                         Cost = 499.99,
                         DateReceived = DateTime.Now,
@@ -186,7 +186,7 @@ namespace CAA_TestApp.Data
                         ISBN = "97800557894654",
                         Cost = 299.99,
                         DateReceived = DateTime.Now,
-                        Quantity = 1,
+                        Quantity = 0,
                         Notes = "Memoento mory",
                         ShelfOn = "S001-02",
                         /*UpdatedBy = "Scott",
@@ -196,7 +196,7 @@ namespace CAA_TestApp.Data
                     },
                     new Inventory
                     {
-                        Quantity = 1,
+                        Quantity = 14,
                         ISBN = "9780068984236",
                         Cost = 100,
                         DateReceived = DateTime.Now,
@@ -209,7 +209,7 @@ namespace CAA_TestApp.Data
                     }, 
                     new Inventory
                     {
-                        Quantity = 1,
+                        Quantity = 4,
                         ISBN = "9784568795462",
                         Cost = 250,
                         DateReceived = DateTime.Now,
@@ -222,7 +222,7 @@ namespace CAA_TestApp.Data
                     }, 
                     new Inventory
                     {
-                        Quantity = 1,
+                        Quantity = 500,
                         ISBN = "978006598957894",
                         Cost = 120,
                         DateReceived = DateTime.Now,
@@ -235,7 +235,7 @@ namespace CAA_TestApp.Data
                     }, 
                     new Inventory
                     {
-                        Quantity = 1,
+                        Quantity = 3,
                         ISBN = "978006544121456",
                         Cost = 110.99,
                         DateReceived = DateTime.Now,
@@ -248,7 +248,7 @@ namespace CAA_TestApp.Data
                     }, 
                     new Inventory
                     {
-                        Quantity = 1,
+                        Quantity = 0,
                         ISBN = "9784561238552",
                         Cost = 99.99,
                         DateReceived = DateTime.Now,

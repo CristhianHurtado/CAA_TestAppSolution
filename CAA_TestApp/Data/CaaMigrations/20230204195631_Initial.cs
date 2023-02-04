@@ -44,7 +44,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    OrganizedBy = table.Column<string>(type: "TEXT", nullable: true)
+                    OrganizedBy = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

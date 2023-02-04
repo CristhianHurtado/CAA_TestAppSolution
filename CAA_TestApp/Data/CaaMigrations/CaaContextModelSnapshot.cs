@@ -244,6 +244,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("OrganizedBy")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");

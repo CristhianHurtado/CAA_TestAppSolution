@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAA_TestApp.Data.CaaMigrations
 {
     [DbContext(typeof(CaaContext))]
-    [Migration("20230204193746_Initial")]
+    [Migration("20230204195631_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -246,6 +246,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("OrganizedBy")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
