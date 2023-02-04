@@ -44,23 +44,53 @@ namespace CAA_TestApp.Data
                     context.Locations.AddRange(
                         new Location
                         {
-                            Name = "St. Catharines"
+                            Name = "St. Catharines",
+                            Phone = "9051211212",
+                            Address = "3271 Schmon Pkwy",
+                            PostalCode = "L2V4Y6"
                         },
                         new Location
                         {
-                            Name = "Niagara Falls"
+                            Name = "Niagara Falls",
+                            Phone = "9051211212",
+                            Address = "6788 Regional Rd 57",
+                            PostalCode = "L2V4Y6"
                         },
                         new Location
                         {
-                            Name = "Welland"
+                            Name = "Welland",
+                            Phone = "9051211212",
+                            Address = "800 Niagara St",
+                            PostalCode = "L3C5Z4"
                         },
                         new Location
                         {
-                            Name = "Thorold"
+                            Name = "Thorold",
+                            Phone = "9059848585",
+                            Address = "3271 Schmon Pkwy",
+                            PostalCode = "L2V4Y6"
                         },
                         new Location
                         {
-                            Name = "Grimsby"
+                            Name = "Grimsby",
+                            Phone = "9051211212",
+                            Address = "Orchardview Village Square, 155 Main St E",
+                            PostalCode = "L3M0A3"
+                        });
+                    context.SaveChanges();
+                }
+
+                //seed organization
+                if (!context.Organizes.Any())
+                {
+                    context.Organizes.AddRange(
+                        new Organize
+                        {
+                            OrganizedBy = "Boxes"
+                        },
+                        new Organize
+                        {
+                            OrganizedBy = "Items"
                         });
                     context.SaveChanges();
                 }
@@ -71,40 +101,64 @@ namespace CAA_TestApp.Data
                     new Product
                     {
                         Name = "iPad Mini",
+                        ParLevel = 20,
+                        OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Items")).ID,
                         CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Equipment")).ID
                     },
                     new Product
                     {
                         Name = "Garmin Smart Watch",
+                        ParLevel = 20,
+                        OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Items")).ID,
                         CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Equipment")).ID,
                     },
                     new Product
                     {
                         Name = "Bracelets",
+                        ParLevel = 15,
+                        OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Boxes")).ID,
                         CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("SWAG")).ID
-                    }, new Product
+                    }, 
+                    new Product
                     {
                         Name = "Cap",
+                        ParLevel = 4,
+                        OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Boxes")).ID,
                         CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("SWAG")).ID
-                    }, new Product
+                    }, 
+                    new Product
                     {
                         Name = "Brochure",
+                        ParLevel = 500,
+                        OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Items")).ID,
                         CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Printed")).ID
-                    }, new Product
+                    }, 
+                    new Product
                     {
                         Name = "Poster",
+                        ParLevel = 3,
+                        OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Boxes")).ID,
                         CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Printed")).ID
-                    }, new Product
+                    }, 
+                    new Product
                     {
                         Name = "Foldable table",
+                        ParLevel = 9,
+                        OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Items")).ID,
                         CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Event Material")).ID
-                    }, new Product
+                    }, 
+                    new Product
                     {
                         Name = "Chair",
+                        ParLevel = 30,
+                        OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Items")).ID,
                         CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Event Material")).ID
-                    }, new Product
+                    }, 
+                    new Product
                     {
                         Name = "Walkie Talkie",
+                        ParLevel = 5,
+                        OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Items")).ID,
                         CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Equipment")).ID
                     });
                     context.SaveChanges();
@@ -152,7 +206,8 @@ namespace CAA_TestApp.Data
                         UpdatedOn = DateTime.Now,*/
                         LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Welland")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Bracelet")).ID
-                    }, new Inventory
+                    }, 
+                    new Inventory
                     {
                         Quantity = 1,
                         ISBN = "9784568795462",
@@ -164,7 +219,8 @@ namespace CAA_TestApp.Data
                         UpdatedOn = DateTime.Now,*/
                         LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Thorold")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Cap")).ID
-                    }, new Inventory
+                    }, 
+                    new Inventory
                     {
                         Quantity = 1,
                         ISBN = "978006598957894",
@@ -176,7 +232,8 @@ namespace CAA_TestApp.Data
                         UpdatedOn = DateTime.Now,*/
                         LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Thorold")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Brochure")).ID
-                    }, new Inventory
+                    }, 
+                    new Inventory
                     {
                         Quantity = 1,
                         ISBN = "978006544121456",
@@ -188,7 +245,8 @@ namespace CAA_TestApp.Data
                         UpdatedOn = DateTime.Now,*/
                         LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Grimsby")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Poster")).ID
-                    }, new Inventory
+                    }, 
+                    new Inventory
                     {
                         Quantity = 1,
                         ISBN = "9784561238552",

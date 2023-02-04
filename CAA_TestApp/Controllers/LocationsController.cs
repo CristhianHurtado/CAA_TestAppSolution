@@ -55,7 +55,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name")] Location location)
+        public async Task<IActionResult> Create([Bind("ID,Name,Phone,Address,PostalCode")] Location location)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace CAA_TestApp.Controllers
                 {
                     _context.Add(location);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Details", new { location.ID });
                 }
             }
             catch (RetryLimitExceededException)
@@ -76,6 +76,18 @@ namespace CAA_TestApp.Controllers
                 if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Locations.Name"))
                 {
                     ModelState.AddModelError("", "Unable to save changes. You cannot have duplicate records of locations.");
+                }
+                else if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Locations.Phone"))
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Locations cannot have the same phone number.");
+                }
+                else if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Locations.Address"))
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Locations cannot have the same address.");
+                }
+                else if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Locations.PostalCode"))
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Locations cannot have the same postal code.");
                 }
                 else
                 {
@@ -108,7 +120,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name")] Location location)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Phone,Address,PostalCode")] Location location)
         {
             if (id != location.ID)
             {
@@ -134,7 +146,7 @@ namespace CAA_TestApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { location.ID });
             }
             return View(location);
         }

@@ -27,7 +27,9 @@ namespace CAA_TestApp.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var caaContext = _context.Products.Include(p => p.Category);
+            var caaContext = _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Organize);
             return View(await caaContext.ToListAsync());
         }
 
@@ -41,6 +43,7 @@ namespace CAA_TestApp.Controllers
 
             var product = await _context.Products
                 .Include(p => p.Category)
+                .Include(p => p.Organize)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (product == null)
             {
@@ -48,6 +51,7 @@ namespace CAA_TestApp.Controllers
             }
 
             ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
+            ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy");
             return View(product);
         }
 
@@ -55,6 +59,7 @@ namespace CAA_TestApp.Controllers
         public IActionResult Create()
         {
             ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name");
+            ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy");
             return View();
         }
 
@@ -63,7 +68,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,CategoryID")] Product product)
+        public async Task<IActionResult> Create([Bind("ID,Name,ParLevel,CategoryID,OrganizeID")] Product product)
         {
             try
             {
@@ -71,7 +76,7 @@ namespace CAA_TestApp.Controllers
                 {
                     _context.Add(product);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Details", new { product.ID });
                 }
             }
             catch (RetryLimitExceededException)
@@ -93,6 +98,7 @@ namespace CAA_TestApp.Controllers
             }
 
             ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
+            ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy", product.OrganizeID);
             return View(product);
         }
 
@@ -111,6 +117,7 @@ namespace CAA_TestApp.Controllers
             }
             
             ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
+            ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy", product.OrganizeID);
             return View(product);
         }
 
@@ -119,7 +126,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,CategoryID")] Product product, Byte[] RowVersion)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,ParLevel,CategoryID,OrganizeID")] Product product, Byte[] RowVersion)
         {
             if (id != product.ID)
             {
@@ -152,9 +159,10 @@ namespace CAA_TestApp.Controllers
                 {
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { product.ID });
             }
             ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
+            ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy", product.OrganizeID);
             return View(product);
         }
 
@@ -168,6 +176,7 @@ namespace CAA_TestApp.Controllers
 
             var product = await _context.Products
                 .Include(p => p.Category)
+                .Include(p => p.Organize)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (product == null)
             {
@@ -195,7 +204,7 @@ namespace CAA_TestApp.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(ViewData["returnURL"].ToString());
             }
             catch (DbUpdateException dex)
             {
@@ -217,6 +226,7 @@ namespace CAA_TestApp.Controllers
 
             var product = from a in _context.Products
                 .Include(p => p.Category)
+                .Include(p => p.Organize)
                           orderby a.Name descending
                           select new
                           {

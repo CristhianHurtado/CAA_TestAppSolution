@@ -9,32 +9,13 @@ namespace CAA_TestApp.Data.CaaMigrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.EnsureSchema(
-                name: "CAA");
-
-            migrationBuilder.CreateTable(
-                name: "Locations",
-                schema: "CAA",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Locations", x => x.ID);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Categories",
-                schema: "CAA",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false),
-                    ProductID = table.Column<int>(type: "INTEGER", nullable: true)
+                    Name = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,35 +23,36 @@ namespace CAA_TestApp.Data.CaaMigrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Products",
-                schema: "CAA",
+                name: "Locations",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
-                    CategoryID = table.Column<int>(type: "INTEGER", nullable: false),
-                    CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                    Name = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
+                    Phone = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
+                    Address = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    PostalCode = table.Column<string>(type: "TEXT", maxLength: 6, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Products_Categories_CategoryID",
-                        column: x => x.CategoryID,
-                        principalSchema: "CAA",
-                        principalTable: "Categories",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
+                    table.PrimaryKey("PK_Locations", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Organizes",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    OrganizedBy = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Organizes", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Events",
-                schema: "CAA",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false),
@@ -93,7 +75,6 @@ namespace CAA_TestApp.Data.CaaMigrations
 
             migrationBuilder.CreateTable(
                 name: "Inventories",
-                schema: "CAA",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
@@ -107,7 +88,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                     RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
                     LocationID = table.Column<int>(type: "INTEGER", nullable: false),
                     ProductID = table.Column<int>(type: "INTEGER", nullable: false),
-                    CategoryID = table.Column<int>(type: "INTEGER", nullable: true),
                     EventID = table.Column<int>(type: "INTEGER", nullable: true),
                     EventInventoryID = table.Column<int>(type: "INTEGER", nullable: true),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -119,36 +99,20 @@ namespace CAA_TestApp.Data.CaaMigrations
                 {
                     table.PrimaryKey("PK_Inventories", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Inventories_Categories_CategoryID",
-                        column: x => x.CategoryID,
-                        principalSchema: "CAA",
-                        principalTable: "Categories",
-                        principalColumn: "ID");
-                    table.ForeignKey(
                         name: "FK_Inventories_Events_EventInventoryID_EventID",
                         columns: x => new { x.EventInventoryID, x.EventID },
-                        principalSchema: "CAA",
                         principalTable: "Events",
                         principalColumns: new[] { "InventoryID", "ID" });
                     table.ForeignKey(
                         name: "FK_Inventories_Locations_LocationID",
                         column: x => x.LocationID,
-                        principalSchema: "CAA",
                         principalTable: "Locations",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Inventories_Products_ProductID",
-                        column: x => x.ProductID,
-                        principalSchema: "CAA",
-                        principalTable: "Products",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ItemsPhotos",
-                schema: "CAA",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
@@ -163,7 +127,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                     table.ForeignKey(
                         name: "FK_ItemsPhotos_Inventories_invID",
                         column: x => x.invID,
-                        principalSchema: "CAA",
                         principalTable: "Inventories",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -171,7 +134,6 @@ namespace CAA_TestApp.Data.CaaMigrations
 
             migrationBuilder.CreateTable(
                 name: "ItemsThumbnails",
-                schema: "CAA",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
@@ -186,15 +148,52 @@ namespace CAA_TestApp.Data.CaaMigrations
                     table.ForeignKey(
                         name: "FK_ItemsThumbnails_Inventories_invID",
                         column: x => x.invID,
-                        principalSchema: "CAA",
                         principalTable: "Inventories",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    ParLevel = table.Column<int>(type: "INTEGER", nullable: false),
+                    CategoryID = table.Column<int>(type: "INTEGER", nullable: false),
+                    OrganizeID = table.Column<int>(type: "INTEGER", nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
+                    InventoryID = table.Column<int>(type: "INTEGER", nullable: true),
+                    CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Products_Categories_CategoryID",
+                        column: x => x.CategoryID,
+                        principalTable: "Categories",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Products_Inventories_InventoryID",
+                        column: x => x.InventoryID,
+                        principalTable: "Inventories",
+                        principalColumn: "ID");
+                    table.ForeignKey(
+                        name: "FK_Products_Organizes_OrganizeID",
+                        column: x => x.OrganizeID,
+                        principalTable: "Organizes",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "QrImage",
-                schema: "CAA",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
@@ -207,7 +206,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                     table.ForeignKey(
                         name: "FK_QrImage_Inventories_invID",
                         column: x => x.invID,
-                        principalSchema: "CAA",
                         principalTable: "Inventories",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -215,151 +213,130 @@ namespace CAA_TestApp.Data.CaaMigrations
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_Name",
-                schema: "CAA",
                 table: "Categories",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categories_ProductID",
-                schema: "CAA",
-                table: "Categories",
-                column: "ProductID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Inventories_CategoryID",
-                schema: "CAA",
-                table: "Inventories",
-                column: "CategoryID");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Inventories_EventInventoryID_EventID",
-                schema: "CAA",
                 table: "Inventories",
                 columns: new[] { "EventInventoryID", "EventID" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Inventories_LocationID_ProductID",
-                schema: "CAA",
                 table: "Inventories",
                 columns: new[] { "LocationID", "ProductID" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Inventories_ProductID",
-                schema: "CAA",
                 table: "Inventories",
                 column: "ProductID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemsPhotos_invID",
-                schema: "CAA",
                 table: "ItemsPhotos",
                 column: "invID",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemsThumbnails_invID",
-                schema: "CAA",
                 table: "ItemsThumbnails",
                 column: "invID",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Locations_Name",
-                schema: "CAA",
+                name: "IX_Locations_Name_Phone_Address_PostalCode",
                 table: "Locations",
-                column: "Name",
+                columns: new[] { "Name", "Phone", "Address", "PostalCode" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Organizes_OrganizedBy",
+                table: "Organizes",
+                column: "OrganizedBy",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryID",
-                schema: "CAA",
                 table: "Products",
                 column: "CategoryID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Products_InventoryID",
+                table: "Products",
+                column: "InventoryID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_Name_CategoryID",
-                schema: "CAA",
                 table: "Products",
                 columns: new[] { "Name", "CategoryID" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Products_OrganizeID",
+                table: "Products",
+                column: "OrganizeID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_QrImage_invID",
-                schema: "CAA",
                 table: "QrImage",
                 column: "invID",
                 unique: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Categories_Products_ProductID",
-                schema: "CAA",
-                table: "Categories",
-                column: "ProductID",
-                principalSchema: "CAA",
-                principalTable: "Products",
-                principalColumn: "ID");
-
-            migrationBuilder.AddForeignKey(
                 name: "FK_Events_Inventories_InventoryID",
-                schema: "CAA",
                 table: "Events",
                 column: "InventoryID",
-                principalSchema: "CAA",
                 principalTable: "Inventories",
                 principalColumn: "ID",
                 onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Inventories_Products_ProductID",
+                table: "Inventories",
+                column: "ProductID",
+                principalTable: "Products",
+                principalColumn: "ID",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Categories_Products_ProductID",
-                schema: "CAA",
-                table: "Categories");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Inventories_Products_ProductID",
-                schema: "CAA",
-                table: "Inventories");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_Events_Inventories_InventoryID",
-                schema: "CAA",
                 table: "Events");
 
-            migrationBuilder.DropTable(
-                name: "ItemsPhotos",
-                schema: "CAA");
+            migrationBuilder.DropForeignKey(
+                name: "FK_Products_Inventories_InventoryID",
+                table: "Products");
 
             migrationBuilder.DropTable(
-                name: "ItemsThumbnails",
-                schema: "CAA");
+                name: "ItemsPhotos");
 
             migrationBuilder.DropTable(
-                name: "QrImage",
-                schema: "CAA");
+                name: "ItemsThumbnails");
 
             migrationBuilder.DropTable(
-                name: "Products",
-                schema: "CAA");
+                name: "QrImage");
 
             migrationBuilder.DropTable(
-                name: "Inventories",
-                schema: "CAA");
+                name: "Inventories");
 
             migrationBuilder.DropTable(
-                name: "Categories",
-                schema: "CAA");
+                name: "Events");
 
             migrationBuilder.DropTable(
-                name: "Events",
-                schema: "CAA");
+                name: "Locations");
 
             migrationBuilder.DropTable(
-                name: "Locations",
-                schema: "CAA");
+                name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Organizes");
         }
     }
 }

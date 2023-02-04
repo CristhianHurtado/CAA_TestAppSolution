@@ -11,13 +11,13 @@ namespace CAA_TestApp.Models
         [StringLength(20, ErrorMessage ="Category cannot be longer than 20 characters.")]
         public string Name { get; set; }
 
-        public Category()
-        {
-            this.Inventories = new HashSet<Inventory>();
-        }
-
-        public ICollection<Inventory> Inventories { get; set; }
-
         public ICollection<Product> Products { get; set; }
+
+        //public ICollection<Inventory> Inventories { get; set; }
+
+        //public Category()
+        //{
+        //    this.Inventories = new HashSet<Inventory>();
+        //}
     }
 }

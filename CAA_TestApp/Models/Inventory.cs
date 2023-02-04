@@ -2,7 +2,7 @@
 
 namespace CAA_TestApp.Models
 {
-    public class Inventory :Auditable,  IValidatableObject
+    public class Inventory : Auditable,  IValidatableObject
     {
         public int ID { get; set; }
         
@@ -55,8 +55,9 @@ namespace CAA_TestApp.Models
         
         public QrImage QRImage { get; set; }
 
+        public ICollection<Product> Products { get; set; }
 
-        
+
         //Methods
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

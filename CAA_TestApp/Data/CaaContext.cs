@@ -35,25 +35,26 @@ namespace CAA_TestApp.Data
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<Organize> Organizes { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<ItemPhoto> ItemsPhotos { get; set; }
         public DbSet<ItemThumbnail> ItemsThumbnails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasDefaultSchema("CAA");
+            //modelBuilder.HasDefaultSchema("CAA");
 
-            //add other foreign key to product table
+            //add foreign key to product table
             modelBuilder.Entity<Category>()
                 .HasMany<Product>(i => i.Products)
                 .WithOne(i => i.Category)
                 .HasForeignKey(i => i.CategoryID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Location>()
-                .HasMany<Inventory>(i => i.Inventories)
-                .WithOne(i => i.Location)
-                .HasForeignKey(i => i.LocationID)
+            modelBuilder.Entity<Organize>()
+                .HasMany<Product>(i => i.Products)
+                .WithOne(i => i.Organize)
+                .HasForeignKey(i => i.OrganizeID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //many to many
@@ -77,9 +78,15 @@ namespace CAA_TestApp.Data
                 .HasForeignKey(i => i.ProductID)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Location>()
+                .HasMany<Inventory>(i => i.Inventories)
+                .WithOne(i => i.Location)
+                .HasForeignKey(i => i.LocationID)
+                .OnDelete(DeleteBehavior.Restrict);
+
             //unique index for location
             modelBuilder.Entity<Location>()
-                .HasIndex(i => i.Name)
+                .HasIndex(i => new { i.Name, i.Phone, i.Address, i.PostalCode })
                 .IsUnique();
 
             //unique index for category
@@ -95,6 +102,11 @@ namespace CAA_TestApp.Data
             //unique index for product name
             modelBuilder.Entity<Product>()
                 .HasIndex(i => new { i.Name, i.CategoryID })
+                .IsUnique();
+
+            //unique index for organize
+            modelBuilder.Entity<Organize>()
+                .HasIndex(i => i.OrganizedBy)
                 .IsUnique();
 
             modelBuilder.Entity<Inventory>()
