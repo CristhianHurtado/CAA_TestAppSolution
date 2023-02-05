@@ -120,35 +120,73 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Phone,Address,PostalCode")] Location location)
+        public async Task<IActionResult> Edit(int id, Byte[] RowVersion)
         {
-            if (id != location.ID)
+            var locationToUpdate = await _context.Locations
+                .FirstOrDefaultAsync(i => i.ID == id);
+
+            if (locationToUpdate == null)
             {
                 return NotFound();
             }
 
+            //Put the original RowVersion value in the OriginalValues collection for the entity
+            _context.Entry(locationToUpdate).Property("RowVersion").OriginalValue = RowVersion;
 
-            if (ModelState.IsValid)
+            //Try updating with the values posted
+            if (await TryUpdateModelAsync<Location>(locationToUpdate, "", i => i.Name,
+                i => i.Phone, i => i.Address, i => i.PostalCode))
             {
                 try
                 {
-                    _context.Update(location);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction("Details", new { locationToUpdate.ID });
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (RetryLimitExceededException /* dex */)
                 {
-                    if (!LocationExists(location.ID))
+                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    var exceptionEntry = ex.Entries.Single();
+                    var clientValues = (Location)exceptionEntry.Entity;
+                    var databaseEntry = exceptionEntry.GetDatabaseValues();
+                    if (databaseEntry == null)
                     {
-                        return NotFound();
+                        ModelState.AddModelError("",
+                            "Unable to save changes. The Location was deleted by another user.");
                     }
                     else
                     {
-                        throw;
+                        var databaseValues = (Location)databaseEntry.ToObject();
+                        if (databaseValues.Name != clientValues.Name)
+                            ModelState.AddModelError("Name", "Current value: "
+                                + databaseValues.Name);
+                        if (databaseValues.Address != clientValues.Address)
+                            ModelState.AddModelError("Address", "Current value: "
+                                + databaseValues.Address);
+                        if (databaseValues.Phone != clientValues.Phone)
+                            ModelState.AddModelError("Phone", "Current value: "
+                                + databaseValues.Phone);
+                        if (databaseValues.PostalCode != clientValues.PostalCode)
+                            ModelState.AddModelError("PostalCode", "Current value: "
+                                + databaseValues.Phone);
+                        ModelState.AddModelError(string.Empty, "The record you attempted to edit "
+                                + "was modified by another user after you received your values. The "
+                                + "edit operation was canceled and the current values in the database "
+                                + "have been displayed. If you still want to save your version of this record, click "
+                                + "the Save button again. Otherwise click the 'Back to Location List' hyperlink.");
+                        locationToUpdate.RowVersion = (byte[])databaseValues.RowVersion;
+                        ModelState.Remove("RowVersion");
                     }
                 }
-                return RedirectToAction("Details", new { location.ID });
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                }
             }
-            return View(location);
+
+            return View(locationToUpdate);
         }
 
         // GET: Locations/Delete/5

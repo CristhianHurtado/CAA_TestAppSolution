@@ -31,7 +31,12 @@ namespace CAA_TestApp.Data.CaaMigrations
                     Name = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
                     Phone = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
                     Address = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    PostalCode = table.Column<string>(type: "TEXT", maxLength: 6, nullable: false)
+                    PostalCode = table.Column<string>(type: "TEXT", maxLength: 6, nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
+                    CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

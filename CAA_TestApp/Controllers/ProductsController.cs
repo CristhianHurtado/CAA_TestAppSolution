@@ -110,7 +110,11 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products
+                .Include(i => i.Category)
+                .Include(i => i.Organize)
+                .FirstOrDefaultAsync(i => i.ID == id);
+            
             if (product == null)
             {
                 return NotFound();
@@ -126,45 +130,133 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,ParLevel,CategoryID,OrganizeID")] Product product, Byte[] RowVersion)
+        public async Task<IActionResult> Edit(int id, Product product, Byte[] RowVersion)
         {
-            if (id != product.ID)
+            var productToUpdate = await _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Organize)
+                .FirstOrDefaultAsync(i => i.ID == id);
+
+            if (productToUpdate == null)
             {
                 return NotFound();
             }
 
             //Put the original RowVersion value in the OriginalValues collection for the entity
-            _context.Entry(product).Property("RowVersion").OriginalValue = RowVersion;
+            _context.Entry(productToUpdate).Property("RowVersion").OriginalValue = RowVersion;
 
-            if (ModelState.IsValid)
+            //try updating it with the values posted
+            if (await TryUpdateModelAsync<Product>(productToUpdate, "", p => p.Name, p => p.ParLevel,
+                p => p.CategoryID, p => p.OrganizeID))
             {
                 try
                 {
-                    _context.Update(product);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction("Details", new { productToUpdate.ID });
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (RetryLimitExceededException /* dex */)
                 {
-                    if (!ProductExists(product.ID))
+                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    var exceptionEntry = ex.Entries.Single();
+                    var clientValues = (Product)exceptionEntry.Entity;
+                    var databaseEntry = exceptionEntry.GetDatabaseValues();
+                    if (databaseEntry == null)
                     {
-                        return NotFound();
+                        ModelState.AddModelError("",
+                            "Unable to save changes. The Product was deleted by another user.");
                     }
                     else
                     {
+                        var databaseValues = (Product)databaseEntry.ToObject();
+                        if (databaseValues.Name != clientValues.Name)
+                            ModelState.AddModelError("Name", "Current value: "
+                                + databaseValues.Name);
+                        if (databaseValues.CategoryID != clientValues.CategoryID)
+                        {
+                            Product databaseProduct = await _context.Products.FirstOrDefaultAsync(i => i.ID == databaseValues.CategoryID);
+                            ModelState.AddModelError("CategoryID", $"Current value: {databaseProduct?.Name}");
+                        }
+                        if (databaseValues.OrganizeID != clientValues.OrganizeID)
+                        {
+                            Product databaseProduct = await _context.Products.FirstOrDefaultAsync(i => i.ID == databaseValues.CategoryID);
+                            ModelState.AddModelError("OrganizeID", $"Current value: {databaseProduct?.Name}");
+                        }
                         ModelState.AddModelError(string.Empty, "The record you attempted to edit "
-                            + "was modified by another user. Please go back and refresh.");
+                                + "was modified by another user after you received your values. The "
+                                + "edit operation was canceled and the current values in the database "
+                                + "have been displayed. If you still want to save your version of this record, click "
+                                + "the Save button again. Otherwise click the 'Back to Product List' hyperlink.");
+                        productToUpdate.RowVersion = (byte[])databaseValues.RowVersion;
+                        ModelState.Remove("RowVersion");
                     }
                 }
-                catch(DbUpdateException) 
+                catch (DbUpdateException dex)
                 {
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Products.CategoryID"))
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. You cannot have duplicate records with the same name and category.");
+                    }
+                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Products.OrganizeID"))
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. You cannot have duplicate records with the same name and organization method.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. Please try again. " +
+                        "If the problem persists, contact your systems administrator.");
+                    }
                 }
-                return RedirectToAction("Details", new { product.ID });
             }
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
-            ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy", product.OrganizeID);
-            return View(product);
+            //return RedirectToAction(nameof(Index));
+
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", productToUpdate.CategoryID);
+            ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy", productToUpdate.OrganizeID);
+            return View(productToUpdate);
         }
+
+
+        //public async Task<IActionResult> Edit(int id, [Bind("ID,Name,ParLevel,CategoryID,OrganizeID")] Product product, Byte[] RowVersion)
+        //{
+        //    if (id != product.ID)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    //Put the original RowVersion value in the OriginalValues collection for the entity
+        //    _context.Entry(product).Property("RowVersion").OriginalValue = RowVersion;
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(product);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!ProductExists(product.ID))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                ModelState.AddModelError(string.Empty, "The record you attempted to edit "
+        //                    + "was modified by another user. Please go back and refresh.");
+        //            }
+        //        }
+        //        catch(DbUpdateException) 
+        //        {
+        //            ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+        //        }
+        //        return RedirectToAction("Details", new { product.ID });
+        //    }
+        //    ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
+        //    ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy", product.OrganizeID);
+        //    return View(product);
+        //}
 
         // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)
