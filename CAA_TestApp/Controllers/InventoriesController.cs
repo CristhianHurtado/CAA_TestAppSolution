@@ -27,7 +27,7 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Inventories
-        public async Task<IActionResult> Index(string sortDirectionCheck, string sortFieldID, string SearchName, int? CategoryID, int? LocationID, 
+        public async Task<IActionResult> Index(string sortDirectionCheck, string sortFieldID, string SearchName, int? CategoryID, int? LocationID,
             int? page, string actionButton, int? pageSizeID, string sortDirection = "asc", string sortField = "Inventory")
         {
             PopulateDropDownListsCategories();
@@ -197,7 +197,7 @@ namespace CAA_TestApp.Controllers
         {
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name");
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name");
-            Redirect("/Inventories/Index");
+            //Redirect("/Inventories/Index");
             return View();
         }
 
@@ -216,7 +216,7 @@ namespace CAA_TestApp.Controllers
                     await AddPicture(inventory, thePicture);
                     _context.Add(inventory);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Details", new { inventory.ID });
                 }
             }
             catch (RetryLimitExceededException)
@@ -250,8 +250,16 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
+            //var inventory = await _context.Inventories
+            //    .Include(i => i.ItemPhoto)
+            //    .Include(i => i.Location)
+            //    .Include(i => i.Product)
+            //    .ThenInclude(i => i.Organize)
+
             var inventory = await _context.Inventories
                 .Include(i => i.ItemPhoto)
+                .Include(i => i.Location)
+                .Include(i => i.Product)
                 .FirstOrDefaultAsync(i => i.ID == id);
             if (inventory == null)
             {
@@ -490,7 +498,7 @@ namespace CAA_TestApp.Controllers
             {
                 _context.Inventories.Remove(inventory);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -549,7 +557,7 @@ namespace CAA_TestApp.Controllers
 
         private bool InventoryExists(int id)
         {
-          return _context.Inventories.Any(e => e.ID == id);
+            return _context.Inventories.Any(e => e.ID == id);
         }
 
         public IActionResult DownloadInventories()
