@@ -17,7 +17,7 @@
         <button class="btn @(ViewData["Filtering"]) btn-style" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
             Filter/Search
         </button>
-        <div class="collapse" id="collapseFilter">
+        <div class="collapse @(ViewData["Filtering"])" id="collapseFilter">
             <div class="card card-body bg-light">
                 <div class="row">
                     <div class="d-block d-lg-none">
@@ -128,8 +128,8 @@
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.ID" class="">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.ID" class="">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.ID" class="">Delete</a>
+                            <a asp-action="Details" asp-route-id="@item.ID" class="">Details</a> 
+                            <a asp-action="Delete" asp-route-id="@item.ID" class="" hidden>Delete</a>
                         </td>
                     </tr>
                 }
@@ -156,8 +156,8 @@
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> 
+                            <a asp-action="Delete" asp-route-id="@item.ID" hidden>Delete</a>
                         </td>
                     </tr>
                 }
@@ -183,8 +183,8 @@
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> 
+                            <a asp-action="Delete" asp-route-id="@item.ID" hidden>Delete</a>
                         </td>
                     </tr>
 
