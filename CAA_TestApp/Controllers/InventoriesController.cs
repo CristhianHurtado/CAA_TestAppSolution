@@ -195,6 +195,8 @@ namespace CAA_TestApp.Controllers
         // GET: Inventories/Create
         public IActionResult Create()
         {
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name");
+            ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name");
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name");
             //Redirect("/Inventories/Index");
@@ -240,6 +242,55 @@ namespace CAA_TestApp.Controllers
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name", inventory.LocationID);
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.ProductID);
             return View(inventory);
+        }
+
+        // GET: Products/Create
+        public IActionResult CreateProduct()
+        {
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name");
+            ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy");
+            return View();
+        }
+
+
+        // POST: Products/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateProduct([Bind("ID,Name,ParLevel,CategoryID,OrganizeID")] Product product)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _context.Add(product);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Create");
+                }
+            }
+            catch (RetryLimitExceededException)
+            {
+                ModelState.AddModelError("", "Unable to save changes after multiple attempts. Please try again. " +
+                    "If the problem persists, contact your systems administrator.");
+            }
+            catch (DbUpdateException dex)
+            {
+                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Products.Name, Products.CategoryID"))
+                {
+                    ModelState.AddModelError("", "Unable to save changes. You cannot have duplicate records with the same name and category.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Please try again. " +
+                    "If the problem persists, contact your systems administrator.");
+                }
+            }
+
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
+            ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy", product.OrganizeID);
+            RedirectToPage("/Inventories/Create");
+            return View();
         }
 
         // GET: Inventories/Edit/5
