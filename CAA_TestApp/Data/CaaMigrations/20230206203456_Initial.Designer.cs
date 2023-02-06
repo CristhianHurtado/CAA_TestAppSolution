@@ -11,7 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAA_TestApp.Data.CaaMigrations
 {
     [DbContext(typeof(CaaContext))]
+<<<<<<<< HEAD:CAA_TestApp/Data/CaaMigrations/20230206203456_Initial.Designer.cs
     [Migration("20230206203456_Initial")]
+========
+    [Migration("20230206203252_Initial")]
+>>>>>>>> 808d8ae16f9bc33fc7b16498716e4c6bc929b0d7:CAA_TestApp/Data/CaaMigrations/20230206203252_Initial.Designer.cs
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
