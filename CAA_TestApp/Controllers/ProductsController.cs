@@ -12,6 +12,7 @@ using System.Drawing;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CAA_TestApp.Controllers
 {
@@ -25,12 +26,128 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchName, int? CategoryID, int? OrganizeID, int? page, string actionButton, int? pageSizeID, string sortDirection = "asc", string sortField = "Product")
         {
+            PopulateDropDownListCategories();
+            PopulateDropDownListOrganizes();
+
+            ViewData["Filtering"] = "btn-outline-secondary";
+
+            string[] sortOptions = new[] { "Items", "Par Level", "Category", "Organize" };
+
+
             var caaContext = _context.Products
                 .Include(p => p.Category)
-                .Include(p => p.Organize);
-            return View(await caaContext.ToListAsync());
+                .Include(p => p.Organize)
+                .AsNoTracking();
+         
+            if (CategoryID.HasValue)
+            {
+                caaContext = caaContext.Where(p => p.CategoryID == CategoryID);
+                ViewData["Filtering"] = " btn-danger";
+            }
+            if (OrganizeID.HasValue)
+            {
+                caaContext = caaContext.Where(p => p.OrganizeID == OrganizeID);
+                ViewData["Filtering"] = " btn-danger";
+            }
+
+            if (!String.IsNullOrEmpty(SearchName))
+            {
+                caaContext = caaContext.Where(p => p.Name.ToUpper().Contains(SearchName.ToUpper()));
+                ViewData["Filtering"] = " btn-danger";
+            }
+
+
+            //See if we have called for a change of filtering or sorting
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
+
+                if (sortOptions.Contains(actionButton)) //Change of sort is requested
+                {
+                    if (actionButton == sortField)
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton; //sort by the button clicked
+                }
+
+            }
+            //Now we know which field and direction to sort by
+            if (sortField == "Organize")
+            {
+                if (sortDirection == "asc")
+                {
+                    caaContext = caaContext
+                        .OrderBy(i => i.Organize.OrganizedBy);
+                        
+                }
+                else
+                {
+                    caaContext = caaContext
+                        .OrderByDescending(i => i.Organize.OrganizedBy);
+                        
+                }
+            }
+            else if (sortField == "Category")
+            {
+                if (sortDirection == "asc")
+                {
+                    caaContext = caaContext
+                        
+                        .OrderBy(i => i.Category.Name);
+                }
+                else
+                {
+                    caaContext = caaContext
+                        .OrderByDescending(i => i.Category.Name);
+                }
+            }
+            else if (sortField == "Par Level")
+            {
+                if (sortDirection == "asc")
+                {
+                    caaContext = caaContext
+                        .OrderByDescending(i => i.ParLevel);
+                        
+                }
+                else
+                {
+                    caaContext = caaContext
+                        .OrderBy(i => i.ParLevel);
+                        
+                }
+            }
+            else if (sortField == "Items")
+            {
+                if (sortDirection == "asc")
+                {
+                    caaContext = caaContext
+                        .OrderByDescending(i => i.Name);
+                      
+                }
+                else
+                {
+                    caaContext = caaContext
+                        .OrderBy(i => i.Name);
+                    
+                }
+            }
+       
+            
+            //Set sort for next time
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            //SelectList for sorting options
+            ViewBag.sortFieldID = new SelectList(sortOptions, sortField.ToString());
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "caaContext");
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<Product>.CreateAsync(caaContext.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
         }
 
         // GET: Products/Details/5
@@ -219,6 +336,33 @@ namespace CAA_TestApp.Controllers
             }
             return View(product);
         }
+
+        private SelectList OrganizeSelectList(int? id)
+        {
+            var dQuery = from d in _context.Locations
+                         orderby d.Name
+                         select d;
+            return new SelectList(dQuery, "ID", "Name", id);
+        }
+
+        private SelectList CategorySelectList(int? id)
+        {
+            var dQuery = from d in _context.Categories
+                         orderby d.Name
+                         select d;
+            return new SelectList(dQuery, "ID", "Name", id);
+        }
+
+        private void PopulateDropDownListCategories(Category category = null)
+        {
+            ViewData["CategoryID"] = CategorySelectList(category?.ID);
+        }
+
+        private void PopulateDropDownListOrganizes(Organize organize = null)
+        {
+            ViewData["OrganizeID"] = OrganizeSelectList(organize?.ID);
+        }
+       
 
         public IActionResult DownloadProducts()
         {
