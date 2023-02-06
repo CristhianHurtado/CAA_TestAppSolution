@@ -296,7 +296,7 @@ namespace CAA_TestApp.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-                    return RedirectToAction(ViewData["returnURL"].ToString());
+                return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException dex)
             {
