@@ -1,0 +1,34 @@
+﻿@model CAA_TestApp.Models.Product
+
+<h4>Add new Product</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateProduct" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ParLevel" class="control-label"></label>
+                <input asp-for="ParLevel" class="form-control" />
+                <span asp-validation-for="ParLevel" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryID" class="control-label"></label>
+                <select asp-for="CategoryID" class ="form-control" asp-items="ViewBag.CategoryID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="OrganizeID" class="control-label"></label>
+                <select asp-for="OrganizeID" class ="form-control" asp-items="ViewBag.OrganizeID"></select>
+            </div>
+            <div class="form-group">
+                <br />
+                <input type="submit" name="Submit" value="Add" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+

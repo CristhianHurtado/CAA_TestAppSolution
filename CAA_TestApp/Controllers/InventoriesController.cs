@@ -390,6 +390,7 @@ namespace CAA_TestApp.Controllers
 
                     _context.Update(inventory);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction("Details", new { inventoryToUpdate.ID });
                 }
                 catch (RetryLimitExceededException)
                 {

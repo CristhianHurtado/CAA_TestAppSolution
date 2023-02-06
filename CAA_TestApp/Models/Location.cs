@@ -3,7 +3,7 @@ using System.Security.Policy;
 
 namespace CAA_TestApp.Models
 {
-    public class Location
+    public class Location : Auditable
     {
         public int ID { get; set; }
 
@@ -25,11 +25,16 @@ namespace CAA_TestApp.Models
         public string Address { get; set; }
 
         [Display(Name ="Postal Code")]
-        [Required(ErrorMessage ="Postal Code cannot be left blank")]
-        [RegularExpression("^\\[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$", ErrorMessage ="Please enter a valid 6 character postal code (without spaces).")]
+        [Required(ErrorMessage ="Postal Code cannot be left blank. Please enter a Postal Code (without spaces).")]
+        //[RegularExpression("^\\[ABCEGHJKLMNPRSTVXY][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9][ABCEGHJKLMNPRSTVWXYZ][0-9]$", ErrorMessage ="Please enter a valid 6 character postal code (without spaces).")]
         [DataType(DataType.PostalCode)]
         [StringLength(6)]
         public string PostalCode { get; set; }
+
+        [ScaffoldColumn(false)]
+        [Timestamp]
+        public Byte[] RowVersion { get; set; }//Added for concurrency
+
 
         [Display(Name ="Phone")]
         public string PhoneFormatted
