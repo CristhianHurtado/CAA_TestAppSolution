@@ -46,7 +46,7 @@
                 <span asp-validation-for="ISBN" class="text-danger"></span>
             </div>-->
             <div class="form-group">
-                <label>Quantity before changes: <strong>@Model.Quantity</strong></label>
+                <label> <strong>Quantity before changes: @Model.Quantity</strong></label>
                 <input asp-for="Quantity" class="form-control" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
@@ -57,12 +57,12 @@
                 <span asp-validation-for="ShelfOn" class="text-danger"></span>
             </div>-->
             <div class="form-group">
-                <label asp-for="Cost" class="control-label"></label>
+                <label asp-for="Cost" class="control-label"><strong>Cost</strong></label>
                 <input asp-for="Cost" class="form-control" />
                 <span asp-validation-for="Cost" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DateReceived" class="control-label"></label>
+                <label asp-for="DateReceived" class="control-label"><strong>Date Received</strong></label>
                 <input asp-for="DateReceived" class="form-control" />
                 <span asp-validation-for="DateReceived" class="text-danger"></span>
             </div>
@@ -77,18 +77,18 @@
                 <span asp-validation-for="ProductID" class="text-danger"></span>
             </div> -->
             <div class="form-group">
-                <label asp-for="Notes" class="control-label"></label>
+                <label asp-for="Notes" class="control-label"><strong>Notes</strong></label>
                 @Html.TextAreaFor(i => i.Notes, new { @class = "form-control" })
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
                 <div class="form-group">
-                    <label class="control-label custom-file-label">Picture File:</label>
+                    <label class="control-label custom-file-label"><strong>Picture File</strong></label>
                     <div class="input-group mb-3">
                         <input type="file" class="form-control" name="thePicture" id="thePicture">
                     </div>
                 </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-primary btn-style" />
             </div>
         </form>
     </div>

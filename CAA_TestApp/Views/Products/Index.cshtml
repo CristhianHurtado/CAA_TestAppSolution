@@ -14,10 +14,10 @@
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <div class="form-horizontal">
-        <button class="btn @(ViewData["Filtering"])" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+        <button class="btn @(ViewData["Filtering"]) btn-style" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
             Filter/Search
         </button>
-        <div class="collapse" id="collapseFilter">
+        <div class="collapse @(ViewData["Filtering"])" id="collapseFilter">
             <div class="card card-body bg-light">
                 <div class="row">
                     <div class="form-group col-md-4">
@@ -33,8 +33,8 @@
                         @Html.DropDownList("OrganizeID", null, "All Organize", htmlAttributes: new { @class = "form-control" })
                     </div>
                     <div class="form-group col-md-4 align-self-end">
-                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
-                        <a asp-action="Index" class="btn btn-outline-dark">Clear</a>
+                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary btn-style" />
+                        <a asp-action="Index" class="btn btn-outline-dark btn-style">Clear</a>
                     </div>
                 </div>
             </div>
@@ -77,8 +77,8 @@
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> 
+                    <a asp-action="Delete" asp-route-id="@item.ID" hidden>Delete</a>
                 </td>
             </tr>
         }
