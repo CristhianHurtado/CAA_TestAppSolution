@@ -11,11 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAA_TestApp.Data.CaaMigrations
 {
     [DbContext(typeof(CaaContext))]
-<<<<<<<< HEAD:CAA_TestApp/Data/CaaMigrations/20230206004224_Initial.Designer.cs
-    [Migration("20230206004224_Initial")]
-========
-    [Migration("20230205222641_Initial")]
->>>>>>>> parent of 1decb78 (added popup for create still WIP):CAA_TestApp/Data/CaaMigrations/20230205222641_Initial.Designer.cs
+    [Migration("20230206203456_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

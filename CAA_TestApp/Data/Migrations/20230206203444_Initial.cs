@@ -190,6 +190,9 @@ namespace CAA_TestApp.Data.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            ExtraMigration.Steps(migrationBuilder);
+
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

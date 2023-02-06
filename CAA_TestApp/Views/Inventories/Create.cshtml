@@ -15,38 +15,42 @@
         <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="ISBN" class="control-label"></label>
-                <input asp-for="ISBN" class="form-control" />
+                <label asp-for="ProductID" class="control-label"><strong>Product</strong></label>
+                <select asp-for="ProductID" class="form-control" asp-items="ViewBag.ProductID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="ISBN" class="control-label" hidden></label>
+                <input asp-for="ISBN" class="form-control" type="hidden" />
                 <span asp-validation-for="ISBN" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Quantity" class="control-label"></label>
-                <input asp-for="Quantity" class="form-control" />
+                <label asp-for="Quantity" class="control-label"><strong>Quantity</strong></label>
+                <input asp-for="Quantity" class="form-control" min="0" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Notes" class="control-label"></label>
-                <input asp-for="Notes" class="form-control" />
-                <span asp-validation-for="Notes" class="text-danger"></span>
+                <label asp-for="LocationID" class="control-label"><strong>Location</strong></label>
+                <select asp-for="LocationID" class="form-control" asp-items="ViewBag.LocationID"></select>
             </div>
             <div class="form-group">
-                <label asp-for="ShelfOn" class="control-label"></label>
-                <input asp-for="ShelfOn" class="form-control" />
+                <label asp-for="ShelfOn" class="control-label" hidden><strong>Shelf &nbsp;</strong><i style="font-size:12px;">Optional</i></label>
+                <input asp-for="ShelfOn" class="form-control" type="hidden" />
                 <span asp-validation-for="ShelfOn" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Cost" class="control-label"></label>
+                <label asp-for="Cost" class="control-label"><strong>Cost</strong></label>
                 <input asp-for="Cost" class="form-control" />
                 <span asp-validation-for="Cost" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="DateReceived" class="control-label"></label>
+                <label asp-for="DateReceived" class="control-label"><strong>Date Received</strong></label>
                 <input asp-for="DateReceived" class="form-control" />
                 <span asp-validation-for="DateReceived" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LocationID" class="control-label"></label>
-                <select asp-for="LocationID" class="form-control" asp-items="ViewBag.LocationID"></select>
+                <label asp-for="Notes" class="control-label"><strong>Notes </strong><i style="font-size:12px;">- Optional</i></label>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+                @Html.TextAreaFor(i => i.Notes, new { @class = "form-control" })
             </div>
             <div class="form-group">
                 <input type="hidden" id="hidden" value="#ProductSelected.value" />
@@ -69,12 +73,9 @@
                     </div>
                 </div>
             </div>-->
+
             <div class="form-group">
-                <label asp-for="ProductID" class="control-label"></label>
-                <select asp-for="ProductID" class="form-control" asp-items="ViewBag.ProductID"></select>
-            </div>
-            <div class="form-group">
-                <label class="control-label custom-file-label">Picture File:</label>
+                <label class="control-label custom-file-label"><strong>Picture File </strong><i style="font-size:12px;">- Optional</i></label>
                 <div class="input-group mb-3">
                     <input type="file" class="form-control" name="thePicture" id="thePicture">
                 </div>
