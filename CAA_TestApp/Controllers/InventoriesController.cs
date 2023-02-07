@@ -15,6 +15,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Reflection;
+using CAA_TestApp.ViewModels;
 
 namespace CAA_TestApp.Controllers
 {
@@ -196,9 +197,9 @@ namespace CAA_TestApp.Controllers
         // GET: Inventories/Create
         public IActionResult Create()
         {
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name");
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Classification");
             ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy");
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name");
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City");
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name");
             //Redirect("/Inventories/Index");
             return View();
@@ -247,7 +248,7 @@ namespace CAA_TestApp.Controllers
 
         public IActionResult CreateProduct()
         {
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name");
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Classification");
             ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy");
             return View();
         }
@@ -583,7 +584,7 @@ namespace CAA_TestApp.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetProducts   (int? id)
+        public JsonResult GetProducts(int? id)
         {
             return Json(ProductSelectList(id));
         }

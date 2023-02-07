@@ -9,14 +9,21 @@
 
 <hr />
 
+<partial name="_addProductModal" />
 
 <div class="row" id="Right">
     <div class="col-md-4">
-        <form method="post" enctype="multipart/form-data">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="ProductID" class="control-label"><strong>Product</strong></label>
-                <select asp-for="ProductID" class="form-control" asp-items="ViewBag.ProductID"></select>
+                <label asp-for="ProductID" class="control-label"></label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <button class="btn addButton" id="nowAddProduct" data-bs-toggle="modal" data-bs-target="#addProductModal" type="button"><strong>+</strong></button>
+                    </div>
+                    <select asp-for="ProductID" class="form-control" asp-items="ViewBag.ProductID">
+                    </select>
+                </div>
             </div>
             <div class="form-group">
                 <label asp-for="ISBN" class="control-label" hidden></label>
@@ -53,35 +60,13 @@
                 @Html.TextAreaFor(i => i.Notes, new { @class = "form-control" })
             </div>
             <div class="form-group">
-                <input type="hidden" id="hidden" value="#ProductSelected.value" />
-            </div>
-            <!--<label asp-for="ProductID" class="control-label"></label>
-            <div style="display:flex">
-                <select asp-for="ProductID" class="form-control" asp-items="ViewBag.ProductID"></select>
-                <button type="button" class="addButton AddPopUp"><strong>+</strong></button>
-            </div>
-
-            <div class="modal fade" id="MyPopUp" role="dialog">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-            @*{//Html.RenderPartial("_CreateProduct");}*@
-
-
-                        <div class="modal-body">
-                            <strong>This is for product</strong>
-                        </div>
-                    </div>
-                </div>
-            </div>-->
-
-            <div class="form-group">
                 <label class="control-label custom-file-label"><strong>Picture File </strong><i style="font-size:12px;">- Optional</i></label>
                 <div class="input-group mb-3">
                     <input type="file" class="form-control" name="thePicture" id="thePicture">
                 </div>
             </div>
             <div class="form-group">
-                <input asp-action="Create" name="submit" type="submit" value="Create" class="btn btn-primary btn-style" />
+                <input name="submit" type="submit" value="Create" class="btn btn-primary btn-style" />
             </div>
         </form>
     </div>
@@ -92,31 +77,34 @@
 </div>
 
 @section Scripts {
-    <script type="text/javascript">
-
-        $(document).ready(function () {
-            $(".AddPopUp").click(function (e) {
-                $('#MyPopUp').modal('show');
-            });
-
-            let div = document.querySelector('#Right');
-            let hiddenInput = document.querySelector('#hidden');
-            let selProd = document.querySelector('#ProductSelected');
-
-            hiddenInput.value = selProd.value;
-
-            div.onclick = function () {
-                console.log(hiddenInput.value);
-                hiddenInput.value = selProd.value;
-            }
-
-            selProd.addEventListener("click", hiddenInput.value = selProd.value);
-        });
-
-
-
-    </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script src="~/js/refreshDDL.js"></script>
+
+    <script type="text/javascript">
+        $('#submitProductCreate').click(function (event) {
+            event.preventDefault();
+            var form = $('#createProductForm');
+            if (form.valid()) {
+                $.ajax({
+                    type: "POST",
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function () {
+                        $('#addProductModal').modal('hide');
+                    },
+                    error: function () {
+                        alert("Create Failed.  There was a problem adding the record.");
+                    }
+                });
+            }
+            return false;
+        });
+        $('#addProductModal').on('hide.bs.modal', function () {
+            $('#createProductForm').find("input[type=text], select").val("");//to clear the data in the popup
+            refreshDDL('ProductID', '/Inventories/GetProducts', false, null, true, 'None', true);
+        });
+    </script>
 }
