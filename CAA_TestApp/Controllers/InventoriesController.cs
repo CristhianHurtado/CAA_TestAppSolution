@@ -33,7 +33,7 @@ namespace CAA_TestApp.Controllers
             PopulateDropDownListsCategories();
             PopulateDropDownListsLocations();
 
-            ViewData["Filtering"] = "";
+            ViewData["Filtering"] = "btn-outline-secondary ";
 
             string[] sortOptions = new[] { "Product", "Quantity", "Cost", "Location" };
 
@@ -46,17 +46,17 @@ namespace CAA_TestApp.Controllers
             if (CategoryID.HasValue)
             {
                 inventories = inventories.Where(p => p.Product.CategoryID == CategoryID);
-                ViewData["Filtering"] = "  show";
+                ViewData["Filtering"] = " btn-danger" ;
             }
             if (LocationID.HasValue)
             {
                 inventories = inventories.Where(p => p.LocationID == LocationID);
-                ViewData["Filtering"] = "  show";
+                ViewData["Filtering"] = "  btn-danger ";
             }
             if (!String.IsNullOrEmpty(SearchName))
             {
                 inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()));
-                ViewData["Filtering"] = "  show";
+                ViewData["Filtering"] = " btn-danger";
             }
 
             //See if we have called for a change of filtering or sorting

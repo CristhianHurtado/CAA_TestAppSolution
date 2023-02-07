@@ -31,7 +31,7 @@ namespace CAA_TestApp.Controllers
             PopulateDropDownListCategories();
             PopulateDropDownListOrganizes();
 
-            ViewData["Filtering"] = "";
+            ViewData["Filtering"] = "btn-outline-secondary";
 
             string[] sortOptions = new[] { "Items", "Par Level", "Category", "Organize" };
 
@@ -44,18 +44,18 @@ namespace CAA_TestApp.Controllers
             if (CategoryID.HasValue)
             {
                 caaContext = caaContext.Where(p => p.CategoryID == CategoryID);
-                ViewData["Filtering"] = " show";
+                ViewData["Filtering"] = " btn-danger";
             }
             if (OrganizeID.HasValue)
             {
                 caaContext = caaContext.Where(p => p.OrganizeID == OrganizeID);
-                ViewData["Filtering"] = " show";
+                ViewData["Filtering"] = " btn-danger";
             }
 
             if (!String.IsNullOrEmpty(SearchName))
             {
                 caaContext = caaContext.Where(p => p.Name.ToUpper().Contains(SearchName.ToUpper()));
-                ViewData["Filtering"] = " show";
+                ViewData["Filtering"] = " btn-danger";
             }
 
 
