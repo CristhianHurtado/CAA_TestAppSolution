@@ -64,12 +64,14 @@ namespace CAA_TestApp.Data
             modelBuilder.Entity<Inventory>()
                 .HasOne(i => i.ItemPhoto)
                 .WithOne(v => v.inventory)
-                .HasForeignKey<ItemPhoto>(i => i.invID);
-
+                .HasForeignKey<ItemPhoto>(i => i.invID)
+                .OnDelete(DeleteBehavior.Cascade);
+                
             modelBuilder.Entity<Inventory>()
                 .HasOne(i => i.ItemThumbnail)
                 .WithOne(v => v.inventory)
-                .HasForeignKey<ItemThumbnail>(i => i.invID);
+                .HasForeignKey<ItemThumbnail>(i => i.invID)
+                .OnDelete(DeleteBehavior.Cascade);
 
             //add foreign key to inventory table
             modelBuilder.Entity<Product>()

@@ -19,18 +19,16 @@ namespace CAA_TestApp.Models
         [Display(Name="Category")]
         [Required(ErrorMessage ="Select the category for this product.")]
         public int CategoryID { get; set; }
+        public Category Category { get; set; }
 
         [Display(Name = "Organized By")]
         [Required(ErrorMessage = "You must select how you will be tracking the count for this product.")]
         public int OrganizeID { get; set; }
+        public Organize Organize { get; set; }
 
         [ScaffoldColumn(false)]
         [Timestamp]
         public Byte[] RowVersion { get; set; }//Added for concurrency
-
-        public Category Category { get; set; }
-
-        public Organize Organize { get; set; }
 
         public ICollection<Inventory> Inventories { get; set; }
 
