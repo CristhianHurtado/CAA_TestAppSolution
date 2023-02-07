@@ -55,7 +55,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Phone,Address,PostalCode")] Location location)
+        public async Task<IActionResult> Create([Bind("ID,City,Phone,Address,PostalCode")] Location location)
         {
             try
             {
@@ -134,7 +134,7 @@ namespace CAA_TestApp.Controllers
             _context.Entry(locationToUpdate).Property("RowVersion").OriginalValue = RowVersion;
 
             //Try updating with the values posted
-            if (await TryUpdateModelAsync<Location>(locationToUpdate, "", i => i.Name,
+            if (await TryUpdateModelAsync<Location>(locationToUpdate, "", i => i.City,
                 i => i.Phone, i => i.Address, i => i.PostalCode))
             {
                 try
@@ -159,9 +159,9 @@ namespace CAA_TestApp.Controllers
                     else
                     {
                         var databaseValues = (Location)databaseEntry.ToObject();
-                        if (databaseValues.Name != clientValues.Name)
-                            ModelState.AddModelError("Name", "Current value: "
-                                + databaseValues.Name);
+                        if (databaseValues.City != clientValues.City)
+                            ModelState.AddModelError("City", "Current value: "
+                                + databaseValues.City);
                         if (databaseValues.Address != clientValues.Address)
                             ModelState.AddModelError("Address", "Current value: "
                                 + databaseValues.Address);

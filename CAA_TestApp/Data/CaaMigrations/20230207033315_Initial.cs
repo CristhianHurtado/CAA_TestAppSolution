@@ -15,7 +15,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false)
+                    Classification = table.Column<string>(type: "TEXT", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,7 +28,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
+                    City = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
                     Phone = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
                     Address = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     PostalCode = table.Column<string>(type: "TEXT", maxLength: 6, nullable: false),
@@ -217,9 +217,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categories_Name",
+                name: "IX_Categories_Classification",
                 table: "Categories",
-                column: "Name",
+                column: "Classification",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -251,9 +251,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Locations_Name_Phone_Address_PostalCode",
+                name: "IX_Locations_City_Phone_Address_PostalCode",
                 table: "Locations",
-                columns: new[] { "Name", "Phone", "Address", "PostalCode" },
+                columns: new[] { "City", "Phone", "Address", "PostalCode" },
                 unique: true);
 
             migrationBuilder.CreateIndex(

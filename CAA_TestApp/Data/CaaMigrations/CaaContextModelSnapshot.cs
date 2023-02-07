@@ -23,14 +23,14 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Classification")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("Classification")
                         .IsUnique();
 
                     b.ToTable("Categories");
@@ -214,16 +214,16 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(40)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Phone")
@@ -250,7 +250,7 @@ namespace CAA_TestApp.Data.CaaMigrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("Name", "Phone", "Address", "PostalCode")
+                    b.HasIndex("City", "Phone", "Address", "PostalCode")
                         .IsUnique();
 
                     b.ToTable("Locations");

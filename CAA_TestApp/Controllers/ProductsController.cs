@@ -96,12 +96,12 @@ namespace CAA_TestApp.Controllers
                 {
                     caaContext = caaContext
                         
-                        .OrderBy(i => i.Category.Name);
+                        .OrderBy(i => i.Category.Classification);
                 }
                 else
                 {
                     caaContext = caaContext
-                        .OrderByDescending(i => i.Category.Name);
+                        .OrderByDescending(i => i.Category.Classification);
                 }
             }
             else if (sortField == "Par Level")
@@ -167,7 +167,7 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Classification", product.CategoryID);
             ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy", product.OrganizeID);
             return View(product);
         }
@@ -175,7 +175,7 @@ namespace CAA_TestApp.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name");
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Classification");
             ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy");
             return View();
         }
@@ -214,7 +214,7 @@ namespace CAA_TestApp.Controllers
                 }
             }
 
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Classification", product.CategoryID);
             ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy", product.OrganizeID);
             return View(product);
         }
@@ -237,7 +237,7 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
             
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", product.CategoryID);
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Classification", product.CategoryID);
             ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy", product.OrganizeID);
             return View(product);
         }
@@ -289,7 +289,7 @@ namespace CAA_TestApp.Controllers
                     {
                         var databaseValues = (Product)databaseEntry.ToObject();
                         if (databaseValues.Name != clientValues.Name)
-                            ModelState.AddModelError("Name", "Current value: "
+                            ModelState.AddModelError("Classification", "Current value: "
                                 + databaseValues.Name);
                         if (databaseValues.CategoryID != clientValues.CategoryID)
                         {
@@ -329,7 +329,7 @@ namespace CAA_TestApp.Controllers
             }
             //return RedirectToAction(nameof(Index));
 
-            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Name", productToUpdate.CategoryID);
+            ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Classification", productToUpdate.CategoryID);
             ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy", productToUpdate.OrganizeID);
             return View(productToUpdate);
         }
@@ -432,17 +432,17 @@ namespace CAA_TestApp.Controllers
         private SelectList OrganizeSelectList(int? id)
         {
             var dQuery = from d in _context.Locations
-                         orderby d.Name
+                         orderby d.City
                          select d;
-            return new SelectList(dQuery, "ID", "Name", id);
+            return new SelectList(dQuery, "ID", "City", id);
         }
 
         private SelectList CategorySelectList(int? id)
         {
             var dQuery = from d in _context.Categories
-                         orderby d.Name
+                         orderby d.Classification
                          select d;
-            return new SelectList(dQuery, "ID", "Name", id);
+            return new SelectList(dQuery, "ID", "Classification", id);
         }
 
         private void PopulateDropDownListCategories(Category category = null)
@@ -468,7 +468,7 @@ namespace CAA_TestApp.Controllers
                           {
 
                               Item = a.Name,
-                              Category = a.Category.Name
+                              Category = a.Category.Classification
                           };
 
             int numRows = product.Count();
