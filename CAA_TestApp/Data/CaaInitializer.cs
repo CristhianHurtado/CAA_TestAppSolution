@@ -18,19 +18,19 @@ namespace CAA_TestApp.Data
                     context.Categories.AddRange(
                         new Category
                         {
-                            Name = "Equipment"
+                            Classification = "Equipment"
                         },
                         new Category
                         {
-                            Name = "SWAG"
+                            Classification = "SWAG"
                         },
                         new Category
                         {
-                            Name = "Printed"
+                            Classification = "Printed"
                         },
                         new Category
                         {
-                            Name = "Event Material"
+                            Classification = "Event Material"
                         });
                     context.SaveChanges();
                 }
@@ -44,35 +44,35 @@ namespace CAA_TestApp.Data
                     context.Locations.AddRange(
                         new Location
                         {
-                            Name = "St. Catharines",
+                            City = "St. Catharines",
                             Phone = "9051211212",
                             Address = "3271 Schmon Pkwy",
                             PostalCode = "L2V4Y6"
                         },
                         new Location
                         {
-                            Name = "Niagara Falls",
+                            City = "Niagara Falls",
                             Phone = "9051211212",
                             Address = "6788 Regional Rd 57",
                             PostalCode = "L2V4Y6"
                         },
                         new Location
                         {
-                            Name = "Welland",
+                            City = "Welland",
                             Phone = "9051211212",
                             Address = "800 Niagara St",
                             PostalCode = "L3C5Z4"
                         },
                         new Location
                         {
-                            Name = "Thorold",
+                            City = "Thorold",
                             Phone = "9059848585",
                             Address = "3271 Schmon Pkwy",
                             PostalCode = "L2V4Y6"
                         },
                         new Location
                         {
-                            Name = "Grimsby",
+                            City = "Grimsby",
                             Phone = "9051211212",
                             Address = "Orchardview Village Square, 155 Main St E",
                             PostalCode = "L3M0A3"
@@ -103,63 +103,63 @@ namespace CAA_TestApp.Data
                         Name = "iPad Mini",
                         ParLevel = 20,
                         OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Items")).ID,
-                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Equipment")).ID
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Classification.Contains("Equipment")).ID
                     },
                     new Product
                     {
                         Name = "Garmin Smart Watch",
                         ParLevel = 20,
                         OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Items")).ID,
-                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Equipment")).ID,
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Classification.Contains("Equipment")).ID,
                     },
                     new Product
                     {
                         Name = "Bracelets",
                         ParLevel = 15,
                         OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Boxes")).ID,
-                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("SWAG")).ID
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Classification.Contains("SWAG")).ID
                     }, 
                     new Product
                     {
                         Name = "Cap",
                         ParLevel = 4,
                         OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Boxes")).ID,
-                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("SWAG")).ID
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Classification.Contains("SWAG")).ID
                     }, 
                     new Product
                     {
                         Name = "Brochure",
                         ParLevel = 500,
                         OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Items")).ID,
-                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Printed")).ID
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Classification.Contains("Printed")).ID
                     }, 
                     new Product
                     {
                         Name = "Poster",
                         ParLevel = 3,
                         OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Boxes")).ID,
-                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Printed")).ID
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Classification.Contains("Printed")).ID
                     }, 
                     new Product
                     {
                         Name = "Foldable table",
                         ParLevel = 9,
                         OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Items")).ID,
-                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Event Material")).ID
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Classification.Contains("Event Material")).ID
                     }, 
                     new Product
                     {
                         Name = "Chair",
                         ParLevel = 30,
                         OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Items")).ID,
-                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Event Material")).ID
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Classification.Contains("Event Material")).ID
                     }, 
                     new Product
                     {
                         Name = "Walkie Talkie",
                         ParLevel = 5,
                         OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Items")).ID,
-                        CategoryID = context.Categories.FirstOrDefault(c => c.Name.Contains("Equipment")).ID
+                        CategoryID = context.Categories.FirstOrDefault(c => c.Classification.Contains("Equipment")).ID
                     });
                     context.SaveChanges();
                 }
@@ -178,7 +178,7 @@ namespace CAA_TestApp.Data
                         ShelfOn = "S001-01",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
-                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("St. Catharines")).ID,
+                        LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("St. Catharines")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("iPad Mini")).ID
                     },
                     new Inventory
@@ -191,7 +191,7 @@ namespace CAA_TestApp.Data
                         ShelfOn = "S001-02",
                         /*UpdatedBy = "Scott",
                         UpdatedOn = DateTime.Now,*/                        
-                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("St. Catharines")).ID,
+                        LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("St. Catharines")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Garmin Smart Watch")).ID
                     },
                     new Inventory
@@ -204,7 +204,7 @@ namespace CAA_TestApp.Data
                         ShelfOn = "S002-01",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
-                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Welland")).ID,
+                        LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("Welland")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Bracelet")).ID
                     }, 
                     new Inventory
@@ -217,7 +217,7 @@ namespace CAA_TestApp.Data
                         ShelfOn = "S002-02",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
-                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Thorold")).ID,
+                        LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("Thorold")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Cap")).ID
                     }, 
                     new Inventory
@@ -230,7 +230,7 @@ namespace CAA_TestApp.Data
                         ShelfOn = "S003-01",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
-                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Thorold")).ID,
+                        LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("Thorold")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Brochure")).ID
                     }, 
                     new Inventory
@@ -243,7 +243,7 @@ namespace CAA_TestApp.Data
                         ShelfOn = "S003-02",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
-                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Grimsby")).ID,
+                        LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("Grimsby")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Poster")).ID
                     }, 
                     new Inventory
@@ -256,7 +256,7 @@ namespace CAA_TestApp.Data
                         ShelfOn = "S004-01",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
-                        LocationID = context.Locations.FirstOrDefault(l => l.Name.Contains("Niagara Falls")).ID,
+                        LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("Niagara Falls")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Chair")).ID
                     });
                     context.SaveChanges();

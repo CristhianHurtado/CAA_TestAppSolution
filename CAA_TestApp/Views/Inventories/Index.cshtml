@@ -8,7 +8,7 @@
 
 <p>
     <a asp-action="Create">Create New</a>
-    <a asp-action="DownloadInventories" class="btn btn-info float-end btn-style">Download Inventory Report</a>
+    <a asp-action="DownloadInventories" class="btn btn-info float-end btn-style">Download Inventory</a>
 </p>
 <form asp-action="Index" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
@@ -121,10 +121,10 @@
                             @Html.DisplayFor(modelItem => item.Cost)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Product.Category.Name)
+                            @Html.DisplayFor(modelItem => item.Product.Category.Classification)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Location.Name)
+                            @Html.DisplayFor(modelItem => item.Location.City)
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.ID" class="">Edit</a> |
@@ -149,10 +149,10 @@
                             @Html.DisplayFor(modelItem => item.Cost)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Product.Category.Name)
+                            @Html.DisplayFor(modelItem => item.Product.Category.Classification)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Location.Name)
+                            @Html.DisplayFor(modelItem => item.Location.City)
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
@@ -176,10 +176,10 @@
                             @Html.DisplayFor(modelItem => item.Cost)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Product.Category.Name)
+                            @Html.DisplayFor(modelItem => item.Product.Category.Classification)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Location.Name)
+                            @Html.DisplayFor(modelItem => item.Location.City)
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

@@ -86,12 +86,12 @@ namespace CAA_TestApp.Data
 
             //unique index for location
             modelBuilder.Entity<Location>()
-                .HasIndex(i => new { i.Name, i.Phone, i.Address, i.PostalCode })
+                .HasIndex(i => new { i.City, i.Phone, i.Address, i.PostalCode })
                 .IsUnique();
 
             //unique index for category
             modelBuilder.Entity<Category>()
-                .HasIndex(c => c.Name)
+                .HasIndex(c => c.Classification)
                 .IsUnique();
 
             //unique index for inventory

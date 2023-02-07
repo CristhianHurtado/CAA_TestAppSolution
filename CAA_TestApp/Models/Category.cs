@@ -9,7 +9,7 @@ namespace CAA_TestApp.Models
         [Display(Name="Category")]
         [Required(ErrorMessage ="Category cannot be left blank.")]
         [StringLength(20, ErrorMessage ="Category cannot be longer than 20 characters.")]
-        public string Name { get; set; }
+        public string Classification { get; set; }
 
         public ICollection<Product> Products { get; set; }
 

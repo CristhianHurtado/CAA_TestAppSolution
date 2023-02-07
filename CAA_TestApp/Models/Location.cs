@@ -10,7 +10,7 @@ namespace CAA_TestApp.Models
         [Display(Name="Location")]
         [Required(ErrorMessage ="Location cannot be left blank.")]
         [StringLength(40, ErrorMessage ="Location cannot be longer than 40 characters.")]
-        public string Name { get; set; }
+        public string City { get; set; }
 
         [Display(Name="Phone")]
         [Required(ErrorMessage ="Phone number cannot be left blank.")]

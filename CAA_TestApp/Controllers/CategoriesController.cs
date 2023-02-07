@@ -55,7 +55,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name")] Category category)
+        public async Task<IActionResult> Create([Bind("ID,Classification")] Category category)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace CAA_TestApp.Controllers
             }
             catch (DbUpdateException dex)
             {
-                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Categories.Name"))
+                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Categories.Classification"))
                 {
                     ModelState.AddModelError("", "Unable to save changes. You cannot have duplicate records of categories.");
                 }
@@ -108,7 +108,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Classification")] Category category)
         {
             if (id != category.ID)
             {
