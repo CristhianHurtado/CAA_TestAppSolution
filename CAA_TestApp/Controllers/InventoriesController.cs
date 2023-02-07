@@ -34,7 +34,7 @@ namespace CAA_TestApp.Controllers
             PopulateDropDownListsCategories();
             PopulateDropDownListsLocations();
 
-            ViewData["Filtering"] = "btn-outline-secondary";
+            ViewData["Filtering"] = "btn-outline-secondary ";
 
             string[] sortOptions = new[] { "Product", "Quantity", "Cost", "Location" };
 
@@ -47,17 +47,17 @@ namespace CAA_TestApp.Controllers
             if (CategoryID.HasValue)
             {
                 inventories = inventories.Where(p => p.Product.CategoryID == CategoryID);
-                ViewData["Filtering"] = " btn-style";
+                ViewData["Filtering"] = " btn-danger" ;
             }
             if (LocationID.HasValue)
             {
                 inventories = inventories.Where(p => p.LocationID == LocationID);
-                ViewData["Filtering"] = " btn-style";
+                ViewData["Filtering"] = "  btn-danger ";
             }
             if (!String.IsNullOrEmpty(SearchName))
             {
                 inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()));
-                ViewData["Filtering"] = " btn-style";
+                ViewData["Filtering"] = " btn-danger";
             }
 
             //See if we have called for a change of filtering or sorting
@@ -85,13 +85,13 @@ namespace CAA_TestApp.Controllers
                 if (sortDirection == "asc")
                 {
                     inventories = inventories
-                        .OrderBy(i => i.Location.Name)
+                        .OrderBy(i => i.Location.City)
                         .ThenBy(i => i.Product.Name);
                 }
                 else
                 {
                     inventories = inventories
-                        .OrderByDescending(i => i.Location.Name)
+                        .OrderByDescending(i => i.Location.City)
                         .ThenBy(i => i.Product.Name);
                 }
             }
@@ -101,13 +101,13 @@ namespace CAA_TestApp.Controllers
                 {
                     inventories = inventories
                         .OrderBy(i => i.Product.Name)
-                        .ThenBy(i => i.Location.Name);
+                        .ThenBy(i => i.Location.City);
                 }
                 else
                 {
                     inventories = inventories
                         .OrderByDescending(i => i.Product.Name)
-                        .ThenByDescending(i => i.Location.Name);
+                        .ThenByDescending(i => i.Location.City);
                 }
             }
             else if (sortField == "Quantity")
@@ -116,13 +116,13 @@ namespace CAA_TestApp.Controllers
                 {
                     inventories = inventories
                         .OrderByDescending(i => i.Quantity)
-                        .ThenBy(i => i.Location.Name);
+                        .ThenBy(i => i.Location.City);
                 }
                 else
                 {
                     inventories = inventories
                         .OrderBy(i => i.Quantity)
-                        .ThenBy(i => i.Location.Name);
+                        .ThenBy(i => i.Location.City);
                 }
             }
             else if (sortField == "Cost")
@@ -131,13 +131,13 @@ namespace CAA_TestApp.Controllers
                 {
                     inventories = inventories
                         .OrderByDescending(i => i.Cost)
-                        .ThenBy(i => i.Location.Name);
+                        .ThenBy(i => i.Location.City);
                 }
                 else
                 {
                     inventories = inventories
                         .OrderBy(i => i.Cost)
-                        .ThenBy(i => i.Location.Name);
+                        .ThenBy(i => i.Location.City);
                 }
             }
             else if (sortField == "Category") //sort by category
@@ -147,12 +147,12 @@ namespace CAA_TestApp.Controllers
                     if (sortDirection == "asc")
                     {
                         inventories = inventories
-                            .OrderBy(i => i.Product.Category.Name);
+                            .OrderBy(i => i.Product.Category.Classification);
                     }
                     else
                     {
                         inventories = inventories
-                            .OrderByDescending(i => i.Product.Category.Name);
+                            .OrderByDescending(i => i.Product.Category.Classification);
                     }
                 }
             }
@@ -188,7 +188,7 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name", inventory.Location);
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.Location);
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.Product);
             return View(inventory);
         }
@@ -240,7 +240,7 @@ namespace CAA_TestApp.Controllers
                 }
             }
 
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name", inventory.LocationID);
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.LocationID);
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.ProductID);
             return View(inventory);
         }
@@ -319,7 +319,7 @@ namespace CAA_TestApp.Controllers
 
 
 
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name", inventory.Location);
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.Location);
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.Product);
             return View(inventory);
         }
@@ -480,7 +480,7 @@ namespace CAA_TestApp.Controllers
                         if (databaseValues.LocationID != clientValues.LocationID)
                         {
                             Location databaseLocation = await _context.Locations.FirstOrDefaultAsync(i => i.ID == databaseValues.LocationID);
-                            ModelState.AddModelError("LocationID", $"Current value: {databaseLocation?.Name}");
+                            ModelState.AddModelError("LocationID", $"Current value: {databaseLocation?.City}");
                         }
                         if (databaseValues.ProductID != clientValues.ProductID)
                         {
@@ -511,7 +511,7 @@ namespace CAA_TestApp.Controllers
             }
             //return RedirectToAction(nameof(Index));
 
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "Name", inventory.LocationID);
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.LocationID);
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.ProductID);
             return View(inventoryToUpdate);
         }
@@ -591,17 +591,17 @@ namespace CAA_TestApp.Controllers
         private SelectList LocationSelectList(int? id)
         {
             var dQuery = from d in _context.Locations
-                         orderby d.Name
+                         orderby d.City
                          select d;
-            return new SelectList(dQuery, "ID", "Name", id);
+            return new SelectList(dQuery, "ID", "City", id);
         }
 
         private SelectList CategorySelectList(int? id)
         {
             var dQuery = from d in _context.Categories
-                         orderby d.Name
+                         orderby d.Classification
                          select d;
-            return new SelectList(dQuery, "ID", "Name", id);
+            return new SelectList(dQuery, "ID", "Classification", id);
         }
 
         private SelectList ProductSelectList(int? id)
@@ -643,7 +643,7 @@ namespace CAA_TestApp.Controllers
                              Shelf = a.ShelfOn,
                              Cost = a.Cost,
                              DateReceived = a.DateReceived.ToShortDateString(),
-                             Location = a.Location.Name,
+                             Location = a.Location.City,
                              Product = a.Product.Name
                          };
             int numRows = intory.Count();
@@ -697,6 +697,128 @@ namespace CAA_TestApp.Controllers
                     {
                         Byte[] theData = excel.GetAsByteArray();
                         string filename = "Inventory.xlsx";
+                        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        return File(theData, mimeType, filename);
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest("Could not build and download the file.");
+                    }
+                }
+            }
+            return NotFound("No data. ");
+        }
+
+        
+
+        public async Task<IActionResult> InventoryReports(int? page, int? pageSizeID)
+        {
+
+            
+            var sumQ = _context.Inventories
+                .Include(a => a.Products)
+                .ThenInclude(b => b.Category)
+                .Include(a => a.Products)
+                .ThenInclude(a => a.Organize)
+                .Include(a => a.Location)
+
+                .GroupBy(c => new { c.ID, c.Product.Category.Classification, c.Product.Name, c.Location.City, c.Quantity, c.Cost })
+                .Select(grp => new InventoryReportsVM
+                {
+                    ID = grp.Key.ID,
+                    Category = grp.Key.Classification,
+                    Product = grp.Key.Name,
+                    Location = grp.Key.City,
+                    Quantity = grp.Key.Quantity,
+                    Cost = grp.Key.Cost,
+                    
+                    
+
+
+                }).OrderBy(s => s.Product);
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "InventoryReports");
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<InventoryReportsVM>.CreateAsync(sumQ.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+
+
+
+        }
+
+        public IActionResult DownloadInventoriesReports()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            var intory = from a in _context.Inventories
+                .Include(a => a.Products)
+                .ThenInclude(b => b.Category)
+                .Include(a => a.Products)
+                .ThenInclude(a => a.Organize)
+                .Include(a => a.Location)
+                         orderby a.Location descending
+                         select new
+                         {
+                             Product = a.Product.Name,
+                             Quantity = a.Quantity,
+                             Cost = a.Cost,
+                             Location = a.Location.City,
+                             Category = a.Product.Category.Classification,
+                                     
+                         };
+            int numRows = intory.Count();
+
+            if (numRows > 0) //We have data
+            {
+                //Create a new spreadsheet from scratch.
+                using (ExcelPackage excel = new ExcelPackage())
+                {
+
+                    var workSheet = excel.Workbook.Worksheets.Add("Inventory");
+
+                    workSheet.Cells[3, 1].LoadFromCollection(intory, true);
+
+                    workSheet.Column(3).Style.Numberformat.Format = "###,##0.00";
+
+                    workSheet.Cells[4, 1, numRows + 4, 1].Style.Font.Bold = true;
+
+                    using (ExcelRange headings = workSheet.Cells[3, 1, 3, 5])
+                    {
+                        headings.Style.Font.Bold = true;
+                        var fill = headings.Style.Fill;
+                        fill.PatternType = ExcelFillStyle.Solid;
+                        fill.BackgroundColor.SetColor(Color.LightBlue);
+                    }
+
+                    workSheet.Cells.AutoFitColumns();
+
+                    workSheet.Cells[1, 1].Value = "Inventory Report";
+                    using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 5])
+                    {
+                        Rng.Merge = true; //Merge columns start and end range
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 18;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    }
+
+                    DateTime utcDate = DateTime.UtcNow;
+                    TimeZoneInfo esTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                    DateTime localDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, esTimeZone);
+                    using (ExcelRange Rng = workSheet.Cells[2, 5])
+                    {
+                        Rng.Value = "Created: " + localDate.ToShortTimeString() + " on " +
+                            localDate.ToShortDateString();
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 12;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+
+                    try
+                    {
+                        Byte[] theData = excel.GetAsByteArray();
+                        string filename = "InventoryReport.xlsx";
                         string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                         return File(theData, mimeType, filename);
                     }
