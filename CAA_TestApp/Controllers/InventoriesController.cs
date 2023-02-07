@@ -568,7 +568,7 @@ namespace CAA_TestApp.Controllers
             //string code = ViewData["ISBN"].ToString();
 
             QRCodeGenerator qrCodeGen = new QRCodeGenerator();
-            QRCodeData qrData = qrCodeGen.CreateQrCode(inventory.ISBN, QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.Product.Name}{inventory.Location}", QRCodeGenerator.ECCLevel.Q);
             QRCode qr = new QRCode(qrData);
 
             using (MemoryStream ms = new MemoryStream())
