@@ -86,7 +86,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .Annotation("Sqlite:Autoincrement", true),
                     ISBN = table.Column<string>(type: "TEXT", nullable: true),
                     Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    Notes = table.Column<string>(type: "TEXT", maxLength: 50, nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     ShelfOn = table.Column<string>(type: "TEXT", nullable: true),
                     Cost = table.Column<double>(type: "REAL", nullable: false),
                     DateReceived = table.Column<DateTime>(type: "TEXT", nullable: false),

@@ -13,7 +13,7 @@ namespace CAA_TestApp.Models
         public int Quantity { get; set; }
 
         [Display(Name = "Notes")]
-        [StringLength(50, ErrorMessage ="Notes cannot be longer than 50 characters.")]
+        [StringLength(500, ErrorMessage ="Notes cannot be longer than 500 characters.")]
         public string Notes { get; set; }
 
         [Display(Name = "Shelf")]

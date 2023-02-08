@@ -119,7 +119,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Notes")
-                        .HasMaxLength(50)
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("ProductID")
