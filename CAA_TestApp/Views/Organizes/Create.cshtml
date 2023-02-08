@@ -13,12 +13,12 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="OrganizedBy" class="control-label"></label>
+                <label asp-for="OrganizedBy" class="control-label"><strong>Organized By</strong></label>
                 <input asp-for="OrganizedBy" class="form-control" />
                 <span asp-validation-for="OrganizedBy" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary btn-style" style="margin-top:10px;" />
             </div>
         </form>
     </div>

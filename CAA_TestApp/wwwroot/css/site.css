@@ -50,3 +50,9 @@ body {
         border: 2px solid black;
     }
 
+.add-button-style {
+    border: 2px solid #185dbd;
+    background-color: #185dbd;
+    color: white;
+}
+
