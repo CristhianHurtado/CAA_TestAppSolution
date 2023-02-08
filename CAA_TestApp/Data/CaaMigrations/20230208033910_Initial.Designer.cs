@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAA_TestApp.Data.CaaMigrations
 {
     [DbContext(typeof(CaaContext))]
-    [Migration("20230207221047_Initial")]
+    [Migration("20230208033910_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
