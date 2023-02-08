@@ -174,7 +174,7 @@ namespace CAA_TestApp.Data
                         ISBN = "978006154236",
                         Cost = 499.99,
                         DateReceived = DateTime.Now,
-                        Notes ="Sit itur Ad astra",
+                        Notes ="",
                         ShelfOn = "S001-01",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
@@ -187,7 +187,7 @@ namespace CAA_TestApp.Data
                         Cost = 299.99,
                         DateReceived = DateTime.Now,
                         Quantity = 0,
-                        Notes = "Memoento mory",
+                        Notes = "",
                         ShelfOn = "S001-02",
                         /*UpdatedBy = "Scott",
                         UpdatedOn = DateTime.Now,*/                        
@@ -200,7 +200,7 @@ namespace CAA_TestApp.Data
                         ISBN = "9780068984236",
                         Cost = 100,
                         DateReceived = DateTime.Now,
-                        Notes = "Love pascem",
+                        Notes = "",
                         ShelfOn = "S002-01",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
@@ -213,7 +213,7 @@ namespace CAA_TestApp.Data
                         ISBN = "9784568795462",
                         Cost = 250,
                         DateReceived = DateTime.Now,
-                        Notes = "Si vis pacem para Belum",
+                        Notes = "",
                         ShelfOn = "S002-02",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
@@ -226,7 +226,7 @@ namespace CAA_TestApp.Data
                         ISBN = "978006598957894",
                         Cost = 120,
                         DateReceived = DateTime.Now,
-                        Notes = "Non perdidit",
+                        Notes = "",
                         ShelfOn = "S003-01",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
@@ -239,7 +239,7 @@ namespace CAA_TestApp.Data
                         ISBN = "978006544121456",
                         Cost = 110.99,
                         DateReceived = DateTime.Now,
-                        Notes = "Vivandum, moriendum est",
+                        Notes = "",
                         ShelfOn = "S003-02",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
@@ -252,7 +252,7 @@ namespace CAA_TestApp.Data
                         ISBN = "9784561238552",
                         Cost = 99.99,
                         DateReceived = DateTime.Now,
-                        Notes = "Quid pro quo",
+                        Notes = "",
                         ShelfOn = "S004-01",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
