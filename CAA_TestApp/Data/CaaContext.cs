@@ -39,6 +39,7 @@ namespace CAA_TestApp.Data
         public DbSet<Event> Events { get; set; }
         public DbSet<ItemPhoto> ItemsPhotos { get; set; }
         public DbSet<ItemThumbnail> ItemsThumbnails { get; set; }
+        public DbSet<Status> statuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -73,6 +74,14 @@ namespace CAA_TestApp.Data
                 .HasForeignKey<ItemThumbnail>(i => i.invID)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            /* for archive and send inv purposes
+            modelBuilder.Entity<Status>()
+                .HasMany<Inventory>(i => i.Inventories)
+                .WithOne(i => i.Status)
+                .HasForeignKey(i => i.statusID)
+                .OnDelete(DeleteBehavior.Restrict);
+            */
+
             //add foreign key to inventory table
             modelBuilder.Entity<Product>()
                 .HasMany<Inventory>(i => i.Inventories)
@@ -98,7 +107,7 @@ namespace CAA_TestApp.Data
 
             //unique index for inventory
             modelBuilder.Entity<Inventory>()
-                .HasIndex(i => new { i.LocationID, i.ProductID })
+                .HasIndex(i => new { i.LocationID, i.ProductID/*, i.statusID*/})
                 .IsUnique();
 
             //unique index for product name

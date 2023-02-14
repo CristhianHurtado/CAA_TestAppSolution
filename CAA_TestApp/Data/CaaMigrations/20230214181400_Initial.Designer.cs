@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAA_TestApp.Data.CaaMigrations
 {
     [DbContext(typeof(CaaContext))]
-    [Migration("20230208060357_Initial")]
+    [Migration("20230214181400_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -138,6 +138,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<string>("ShelfOn")
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("StatusID")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
@@ -148,6 +151,8 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.HasKey("ID");
 
                     b.HasIndex("ProductID");
+
+                    b.HasIndex("StatusID");
 
                     b.HasIndex("EventInventoryID", "EventID");
 
@@ -349,6 +354,20 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.ToTable("QrImage");
                 });
 
+            modelBuilder.Entity("CAA_TestApp.Models.Status", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("status")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("statuses");
+                });
+
             modelBuilder.Entity("CAA_TestApp.Models.Event", b =>
                 {
                     b.HasOne("CAA_TestApp.Models.Inventory", "Inventory")
@@ -373,6 +392,10 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .HasForeignKey("ProductID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("CAA_TestApp.Models.Status", null)
+                        .WithMany("Inventories")
+                        .HasForeignKey("StatusID");
 
                     b.HasOne("CAA_TestApp.Models.Event", null)
                         .WithMany("ItemsInEvent")
@@ -471,6 +494,11 @@ namespace CAA_TestApp.Data.CaaMigrations
                 });
 
             modelBuilder.Entity("CAA_TestApp.Models.Product", b =>
+                {
+                    b.Navigation("Inventories");
+                });
+
+            modelBuilder.Entity("CAA_TestApp.Models.Status", b =>
                 {
                     b.Navigation("Inventories");
                 });

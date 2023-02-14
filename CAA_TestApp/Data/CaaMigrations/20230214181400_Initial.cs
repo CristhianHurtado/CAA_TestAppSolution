@@ -57,6 +57,19 @@ namespace CAA_TestApp.Data.CaaMigrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "statuses",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    status = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_statuses", x => x.ID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Events",
                 columns: table => new
                 {
@@ -95,6 +108,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                     ProductID = table.Column<int>(type: "INTEGER", nullable: false),
                     EventID = table.Column<int>(type: "INTEGER", nullable: true),
                     EventInventoryID = table.Column<int>(type: "INTEGER", nullable: true),
+                    StatusID = table.Column<int>(type: "INTEGER", nullable: true),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -114,6 +128,11 @@ namespace CAA_TestApp.Data.CaaMigrations
                         principalTable: "Locations",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Inventories_statuses_StatusID",
+                        column: x => x.StatusID,
+                        principalTable: "statuses",
+                        principalColumn: "ID");
                 });
 
             migrationBuilder.CreateTable(
@@ -239,6 +258,11 @@ namespace CAA_TestApp.Data.CaaMigrations
                 column: "ProductID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Inventories_StatusID",
+                table: "Inventories",
+                column: "StatusID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ItemsPhotos_invID",
                 table: "ItemsPhotos",
                 column: "invID",
@@ -336,6 +360,9 @@ namespace CAA_TestApp.Data.CaaMigrations
 
             migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "statuses");
 
             migrationBuilder.DropTable(
                 name: "Categories");

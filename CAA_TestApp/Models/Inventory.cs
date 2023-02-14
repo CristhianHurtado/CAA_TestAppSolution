@@ -56,6 +56,12 @@ namespace CAA_TestApp.Models
         public QrImage QRImage { get; set; }
 
         public ICollection<Product> Products { get; set; }
+        /*
+        [Display(Name = "Status")]
+        public int statusID { get; set; }
+        
+        [Display(Name = "Status")]
+        public Status Status { get; set; }*/
 
 
         //Methods

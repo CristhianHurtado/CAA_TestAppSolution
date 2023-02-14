@@ -35,6 +35,28 @@ namespace CAA_TestApp.Data
                     context.SaveChanges();
                 }
 
+                if (!context.statuses.Any())
+                {
+                    context.statuses.AddRange(
+                        new Status
+                        {
+                            status = "In stock"
+                        },
+                        new Status
+                        {
+                            status = "On transit"
+                        },
+                        new Status
+                        {
+                            status = "Archived"
+                        },
+                        new Status
+                        {
+                            status = "In use"
+                        });
+                    context.SaveChanges();
+                }
+
                 //int[] InventoryIDs = context.Inventories.Select(a => a.ID).ToArray();
                 //int InventoryIDCount = InventoryIDs.Length;
 
