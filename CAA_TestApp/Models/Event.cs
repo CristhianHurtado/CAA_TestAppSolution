@@ -25,20 +25,9 @@ namespace CAA_TestApp.Models
         [Timestamp]
         public Byte[] RowVersion { get; set; }//Added for concurrency
 
-
         public string Notes { get; set; }
 
-        [Display(Name="Inventory")]
-        [Required(ErrorMessage = "Select an inventory item for the event.")]
-        public int InventoryID { get; set; }
-
-        [Display(Name = "Quantity")]
-        [Required(ErrorMessage = "Quantity cannot be left blank.")]
-        public int InventoryQuantity { get; set; }
-
-        public Inventory Inventory { get; set; }
-
-        public ICollection<Inventory> ItemsInEvent { get; set; }
+        public ICollection<EventInventory> ItemsInEvent { get; set; } = new HashSet<EventInventory>();
 
     }
 }

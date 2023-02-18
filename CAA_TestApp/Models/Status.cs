@@ -6,6 +6,6 @@
 
         public string status { get; set; }
 
-        public ICollection<Inventory> Inventories { get; set; }
+        public ICollection<Inventory> Inventories { get; set; } = new HashSet<Inventory>();
     }
 }

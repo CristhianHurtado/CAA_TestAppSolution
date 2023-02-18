@@ -10,6 +10,6 @@ namespace CAA_TestApp.Models
         [Required(ErrorMessage ="Organized By field cannot be left blank.")]
         public string OrganizedBy { get; set; }
 
-        public ICollection<Product> Products { get; set; }
+        public ICollection<Product> Products { get; set; } = new HashSet<Product>();
     }
 }

@@ -40,10 +40,14 @@ namespace CAA_TestApp.Data
         public DbSet<ItemPhoto> ItemsPhotos { get; set; }
         public DbSet<ItemThumbnail> ItemsThumbnails { get; set; }
         public DbSet<Status> statuses { get; set; }
+        public DbSet<EventInventory> EventInventories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.HasDefaultSchema("CAA");
+
+            modelBuilder.Entity<EventInventory>()
+                .HasKey(i => new { i.EventID, i.InventoryID });
 
             //add foreign key to product table
             modelBuilder.Entity<Category>()
@@ -59,8 +63,16 @@ namespace CAA_TestApp.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             //many to many
+
             modelBuilder.Entity<Event>()
-                .HasKey(i => new { i.InventoryID, i.ID });
+                .HasMany(i => i.ItemsInEvent)
+                .WithOne(i => i.Event)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Inventory>()
+                .HasMany(i => i.eventInventories)
+                .WithOne(i => i.Inventory)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Inventory>()
                 .HasOne(i => i.ItemPhoto)
@@ -128,19 +140,19 @@ namespace CAA_TestApp.Data
         }
 
         //Code for for Tracking on logged user
-        /*
+        
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             OnBeforeSaving();
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
-
+        
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
         {
             OnBeforeSaving();
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
-
+        
         private void OnBeforeSaving()
         {
             var entries = ChangeTracker.Entries();
@@ -165,6 +177,6 @@ namespace CAA_TestApp.Data
                     }
                 }
             }
-        }*/
+        }
     }
 }

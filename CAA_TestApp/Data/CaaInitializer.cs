@@ -1,4 +1,5 @@
 ﻿using CAA_TestApp.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace CAA_TestApp.Data
@@ -12,6 +13,8 @@ namespace CAA_TestApp.Data
 
             try
             {
+                context.Database.Migrate();
+
                 //seed categories if there arent any
                 if (!context.Categories.Any())
                 {
@@ -32,6 +35,7 @@ namespace CAA_TestApp.Data
                         {
                             Classification = "Event Material"
                         });
+
                     context.SaveChanges();
                 }
 
@@ -54,6 +58,7 @@ namespace CAA_TestApp.Data
                         {
                             status = "In use"
                         });
+
                     context.SaveChanges();
                 }
 
@@ -99,6 +104,7 @@ namespace CAA_TestApp.Data
                             Address = "Orchardview Village Square, 155 Main St E",
                             PostalCode = "L3M0A3"
                         });
+
                     context.SaveChanges();
                 }
 
@@ -114,6 +120,7 @@ namespace CAA_TestApp.Data
                         {
                             OrganizedBy = "Items"
                         });
+
                     context.SaveChanges();
                 }
 
@@ -183,6 +190,7 @@ namespace CAA_TestApp.Data
                         OrganizeID = context.Organizes.FirstOrDefault(c => c.OrganizedBy.Contains("Items")).ID,
                         CategoryID = context.Categories.FirstOrDefault(c => c.Classification.Contains("Equipment")).ID
                     });
+
                     context.SaveChanges();
                 }
 
@@ -281,6 +289,7 @@ namespace CAA_TestApp.Data
                         LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("Niagara Falls")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Chair")).ID
                     });
+
                     context.SaveChanges();
                 }
 
@@ -294,6 +303,7 @@ namespace CAA_TestApp.Data
                             EventLocation = "Welland",
                             Notes = ""
                         });
+
                     context.SaveChanges();
                 }
             }

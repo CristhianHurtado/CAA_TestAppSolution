@@ -45,6 +45,6 @@ namespace CAA_TestApp.Models
             }
         }
 
-        public ICollection<Inventory> Inventories { get; set; }
+        public ICollection<Inventory> Inventories { get; set; } = new HashSet<Inventory>();
     }
 }

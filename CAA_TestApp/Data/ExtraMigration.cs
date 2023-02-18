@@ -2,7 +2,7 @@
 
 namespace CAA_TestApp.Data
 {
-    public class ExtraMigration
+    public static class ExtraMigration
     {
         public static void Steps(MigrationBuilder migrationBuilder)
         {
@@ -28,7 +28,7 @@ namespace CAA_TestApp.Data
                     END
                 ");
                 migrationBuilder.Sql(
-    @"
+                @"
                     CREATE TRIGGER SetProductTimestampOnUpdate
                     AFTER UPDATE ON Products
                     BEGIN
@@ -38,17 +38,17 @@ namespace CAA_TestApp.Data
                     END
                 ");
              migrationBuilder.Sql(
-    @"
+                @"
                     CREATE TRIGGER SetProductTimestampOnInsert
                     AFTER INSERT ON Products
                     BEGIN
-                        UPDATE Product
+                        UPDATE Products
                         SET RowVersion = randomblob(8)
                         WHERE rowid = NEW.rowid;
                     END
                 ");
                 migrationBuilder.Sql(
-    @"
+                    @"
                         CREATE TRIGGER SetEventTimestampOnUpdate
                         AFTER UPDATE ON Events
                         BEGIN
@@ -58,7 +58,7 @@ namespace CAA_TestApp.Data
                         END
                     ");
                 migrationBuilder.Sql(
-    @"
+                @"
                     CREATE TRIGGER SetEventTimestampOnInsert
                     AFTER INSERT ON Events
                     BEGIN
@@ -67,9 +67,26 @@ namespace CAA_TestApp.Data
                         WHERE rowid = NEW.rowid;
                     END
                 ");
-
-
-            }
-
+                migrationBuilder.Sql(
+                    @"
+                        CREATE TRIGGER SetEventInventoriesTimestampOnUpdate
+                        AFTER UPDATE ON EventInventories
+                        BEGIN
+                            UPDATE EventInventories
+                            SET RowVersion = randomblob(8)
+                            WHERE rowid = NEW.rowid;
+                        END
+                    ");
+                migrationBuilder.Sql(
+                @"
+                    CREATE TRIGGER SetEventInventoriesTimestampOnInsert
+                    AFTER INSERT ON EventInventories
+                    BEGIN
+                        UPDATE EventInventories
+                        SET RowVersion = randomblob(8)
+                        WHERE rowid = NEW.rowid;
+                    END
+                ");
+        }
     }
 }

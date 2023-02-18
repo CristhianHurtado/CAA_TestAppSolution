@@ -30,7 +30,7 @@ namespace CAA_TestApp.Models
         [Timestamp]
         public Byte[] RowVersion { get; set; }//Added for concurrency
 
-        public ICollection<Inventory> Inventories { get; set; }
+        public ICollection<Inventory> Inventories { get; set; } = new HashSet<Inventory>();
 
     }
 }

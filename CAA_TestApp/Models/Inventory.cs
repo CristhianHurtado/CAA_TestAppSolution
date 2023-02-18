@@ -55,7 +55,9 @@ namespace CAA_TestApp.Models
         
         public QrImage QRImage { get; set; }
 
-        public ICollection<Product> Products { get; set; }
+        public ICollection<Product> Products { get; set; } = new HashSet<Product>();
+
+        public ICollection<EventInventory> eventInventories { get; set; } = new HashSet<EventInventory>();
         /*
         [Display(Name = "Status")]
         public int statusID { get; set; }
