@@ -56,3 +56,41 @@ body {
     color: white;
 }
 
+/****************HOMEPAGE***********************/
+.action-home {
+    background-image: url('/images/background-home.jpg');
+}
+
+.action-center {
+    padding-top:150px;
+}
+
+.action-grid {
+    display: inline-grid;
+    grid-template-columns: repeat(auto-fit, 1fr);
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.action-image {
+    height: 350px;
+    width: 250px;
+    background-repeat: no-repeat;
+    background-position: center center;
+
+}
+
+.action-text {
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-color: bisque;
+}
+
+.action-image {
+    background-image: url('/images/inventory-image.jpg');
+
+}
