@@ -35,6 +35,8 @@ namespace CAA_TestApp.Controllers
             PopulateDropDownListsCategories();
             PopulateDropDownListsLocations();
 
+            ViewData["Context"] = _context;
+
             ViewData["Filtering"] = "btn-outline-secondary ";
 
             string[] sortOptions = new[] { "Product", "Quantity", "Cost", "Location" };
@@ -48,7 +50,151 @@ namespace CAA_TestApp.Controllers
             if (CategoryID.HasValue)
             {
                 inventories = inventories.Where(p => p.Product.CategoryID == CategoryID);
-                ViewData["Filtering"] = " btn-danger" ;
+                ViewData["Filtering"] = " btn-danger";
+            }
+            if (LocationID.HasValue)
+            {
+                inventories = inventories.Where(p => p.LocationID == LocationID);
+                ViewData["Filtering"] = "  btn-danger ";
+            }
+            if (!String.IsNullOrEmpty(SearchName))
+            {
+                inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()));
+                ViewData["Filtering"] = " btn-danger";
+            }
+
+            //See if we have called for a change of filtering or sorting
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
+
+                if (sortOptions.Contains(actionButton)) //Change of sort is requested
+                {
+                    if (actionButton == sortField)
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton; //sort by the button clicked
+                }
+                else
+                {
+                    sortDirection = String.IsNullOrEmpty(sortDirectionCheck) ? "asc" : "desc";
+                    sortField = sortFieldID;
+                }
+            }
+            //Now we know which field and direction to sort by
+            if (sortField == "Location")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Location.City)
+                        .ThenBy(i => i.Product.Name);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Location.City)
+                        .ThenBy(i => i.Product.Name);
+                }
+            }
+            else if (sortField == "Product")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Product.Name)
+                        .ThenBy(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Product.Name)
+                        .ThenByDescending(i => i.Location.City);
+                }
+            }
+            else if (sortField == "Quantity")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Quantity)
+                        .ThenBy(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Quantity)
+                        .ThenBy(i => i.Location.City);
+                }
+            }
+            else if (sortField == "Cost")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Cost)
+                        .ThenBy(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Cost)
+                        .ThenBy(i => i.Location.City);
+                }
+            }
+            else if (sortField == "Category") //sort by category
+            {
+                if (sortDirection == "asc")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        inventories = inventories
+                            .OrderBy(i => i.Product.Category.Classification);
+                    }
+                    else
+                    {
+                        inventories = inventories
+                            .OrderByDescending(i => i.Product.Category.Classification);
+                    }
+                }
+            }
+            //Set sort for next time
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            //SelectList for sorting options
+            ViewBag.sortFieldID = new SelectList(sortOptions, sortField.ToString());
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "inventories");
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<Inventory>.CreateAsync(inventories.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+        }
+
+        public async Task<IActionResult> Archived(string sortDirectionCheck, string sortFieldID, string SearchName, int? CategoryID, int? LocationID,
+            int? page, string actionButton, int? pageSizeID, string sortDirection = "asc", string sortField = "Inventory")
+        {
+            PopulateDropDownListsCategories();
+            PopulateDropDownListsLocations();
+
+            ViewData["Context"] = _context;
+
+            ViewData["Filtering"] = "btn-outline-secondary ";
+
+            string[] sortOptions = new[] { "Product", "Quantity", "Cost", "Location" };
+
+            var inventories = _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .ThenInclude(c => c.Category)
+                .AsNoTracking();
+
+            if (CategoryID.HasValue)
+            {
+                inventories = inventories.Where(p => p.Product.CategoryID == CategoryID);
+                ViewData["Filtering"] = " btn-danger";
             }
             if (LocationID.HasValue)
             {
@@ -211,13 +357,14 @@ namespace CAA_TestApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,ISBN,Quantity,Notes,ShelfOn,Cost,DateReceived," +
-            "LocationID,ProductID")] Inventory inventory, IFormFile thePicture)
+            "LocationID,ProductID, statusID")] Inventory inventory, IFormFile thePicture)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     await AddPicture(inventory, thePicture);
+                    inventory.statusID = _context.statuses.FirstOrDefault(s => s.status == "In stock").ID;
                     _context.Add(inventory);
                     await _context.SaveChangesAsync();
                     return RedirectToAction("Details", new { inventory.ID });
@@ -396,6 +543,7 @@ namespace CAA_TestApp.Controllers
 
         }*/
 
+
         // POST: Inventories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -526,6 +674,7 @@ namespace CAA_TestApp.Controllers
             }
 
             var inventory = await _context.Inventories
+                .Include(i => i.Status)
                 .Include(i => i.Location)
                 .Include(i => i.Product)
                 .FirstOrDefaultAsync(m => m.ID == id);
@@ -535,6 +684,76 @@ namespace CAA_TestApp.Controllers
             }
 
             return View(inventory);
+        }
+        public async Task<IActionResult> Restore(int? id)
+        {
+            if (id == null || _context.Inventories == null)
+            {
+                return NotFound();
+            }
+
+            var inventory = await _context.Inventories
+                .Include(i => i.Status)
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (inventory == null)
+            {
+                return NotFound();
+            }
+
+            return View(inventory);
+        }
+        public async Task<IActionResult> Archive(int? id)
+        {
+            if (id == null || _context.Inventories == null)
+            {
+                return NotFound();
+            }
+
+            var inventory = await _context.Inventories
+                .Include(i => i.Status)
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (inventory == null)
+            {
+                return NotFound();
+            }
+
+            return View(inventory);
+        }
+
+        [HttpPost, ActionName("Archive")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ArchiveConfirmed(int id)
+        {
+            if (_context.Inventories == null)
+            {
+                return Problem("Entity set 'CaaContext.Inventories'  is null.");
+            }
+            var inventory = await _context.Inventories.FindAsync(id);
+
+            inventory.statusID = _context.statuses.FirstOrDefault(i => i.status == "Archived").ID;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost, ActionName("Restore")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreConfirmed(int id)
+        {
+            if (_context.Inventories == null)
+            {
+                return Problem("Entity set 'CaaContext.Inventories'  is null.");
+            }
+            var inventory = await _context.Inventories.FindAsync(id);
+
+            inventory.statusID = _context.statuses.FirstOrDefault(i => i.status == "In stock").ID;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: Inventories/Delete/5
@@ -547,6 +766,8 @@ namespace CAA_TestApp.Controllers
                 return Problem("Entity set 'CaaContext.Inventories'  is null.");
             }
             var inventory = await _context.Inventories.FindAsync(id);
+
+
             if (inventory != null)
             {
                 _context.Inventories.Remove(inventory);
@@ -710,12 +931,12 @@ namespace CAA_TestApp.Controllers
             return NotFound("No data. ");
         }
 
-        
+
 
         public async Task<IActionResult> InventoryReports(int? page, int? pageSizeID)
         {
 
-            
+
             var sumQ = _context.Inventories
                 .Include(a => a.Products)
                 .ThenInclude(b => b.Category)
@@ -732,8 +953,8 @@ namespace CAA_TestApp.Controllers
                     Location = grp.Key.City,
                     Quantity = grp.Key.Quantity,
                     Cost = grp.Key.Cost,
-                    
-                    
+
+
 
 
                 }).OrderBy(s => s.Product);
@@ -767,7 +988,7 @@ namespace CAA_TestApp.Controllers
                              Cost = a.Cost,
                              Location = a.Location.City,
                              Category = a.Product.Category.Classification,
-                                     
+
                          };
             int numRows = intory.Count();
 
@@ -875,6 +1096,6 @@ namespace CAA_TestApp.Controllers
             }
         }
 
-   
+
     }
 }

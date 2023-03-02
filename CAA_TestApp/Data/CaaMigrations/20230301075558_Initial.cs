@@ -128,7 +128,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                     RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
                     LocationID = table.Column<int>(type: "INTEGER", nullable: false),
                     ProductID = table.Column<int>(type: "INTEGER", nullable: false),
-                    StatusID = table.Column<int>(type: "INTEGER", nullable: true),
+                    statusID = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -144,10 +144,11 @@ namespace CAA_TestApp.Data.CaaMigrations
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Inventories_statuses_StatusID",
-                        column: x => x.StatusID,
+                        name: "FK_Inventories_statuses_statusID",
+                        column: x => x.statusID,
                         principalTable: "statuses",
-                        principalColumn: "ID");
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -273,9 +274,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                 column: "ProductID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Inventories_StatusID",
+                name: "IX_Inventories_statusID",
                 table: "Inventories",
-                column: "StatusID");
+                column: "statusID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemsPhotos_invID",
@@ -343,6 +344,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                 principalTable: "Products",
                 principalColumn: "ID",
                 onDelete: ReferentialAction.Restrict);
+
 
             ExtraMigration.Steps(migrationBuilder);
         }

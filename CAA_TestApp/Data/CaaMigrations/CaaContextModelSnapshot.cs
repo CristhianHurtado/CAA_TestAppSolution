@@ -159,9 +159,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<string>("ShelfOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("StatusID")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
@@ -169,11 +166,14 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("statusID")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("ID");
 
                     b.HasIndex("ProductID");
 
-                    b.HasIndex("StatusID");
+                    b.HasIndex("statusID");
 
                     b.HasIndex("LocationID", "ProductID")
                         .IsUnique();
@@ -420,13 +420,17 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CAA_TestApp.Models.Status", null)
+                    b.HasOne("CAA_TestApp.Models.Status", "Status")
                         .WithMany("Inventories")
-                        .HasForeignKey("StatusID");
+                        .HasForeignKey("statusID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Location");
 
                     b.Navigation("Product");
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("CAA_TestApp.Models.ItemPhoto", b =>

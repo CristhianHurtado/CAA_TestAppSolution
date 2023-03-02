@@ -86,13 +86,13 @@ namespace CAA_TestApp.Data
                 .HasForeignKey<ItemThumbnail>(i => i.invID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            /* for archive and send inv purposes
+            //for archive and send inv purposes
             modelBuilder.Entity<Status>()
                 .HasMany<Inventory>(i => i.Inventories)
                 .WithOne(i => i.Status)
                 .HasForeignKey(i => i.statusID)
                 .OnDelete(DeleteBehavior.Restrict);
-            */
+            
 
             //add foreign key to inventory table
             modelBuilder.Entity<Product>()
