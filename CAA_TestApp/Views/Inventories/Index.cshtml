@@ -100,6 +100,9 @@
                     <input type="submit" name="actionButton" value="Category" class="btn btn-link" />
                 </th>
                 <th>
+                    <input type="submit" name="actionButton" value="Status" class="btn btn-link" />
+                </th>
+                <th>
                     <input type="submit" name="actionButton" value="Location" class="btn btn-link" />
                 </th>
                 <th></th>
@@ -205,6 +208,99 @@
                             <a asp-action="Delete" asp-route-id="@item.ID" hidden>Delete</a>
                         </td>
                     </tr>
+                CaaContext _context = ViewBag.Context;
+                @if (item.statusID != _context.statuses.FirstOrDefault(i => i.status == "Archived").ID)
+                {
+                    @if (item.Quantity == 0) {
+                        <tr class="">
+                            <td>
+                                <img src="~/images/redDot.png" width="30px" height="30px">
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Product.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Quantity)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Cost)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Product.Category.Classification)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Status.status)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Location.City)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.ID" class="">Edit</a> |
+                                <a asp-action="Details" asp-route-id="@item.ID" class="">Details</a> |
+                                <a asp-action="Archive" asp-route-id="@item.ID">Archive</a>
+                            </td>
+                        </tr>
+                    }
+                    @if (item.Quantity < item.Product.ParLevel && item.Quantity != 0)
+                    {
+                        <tr class="">
+                            <td>
+                                <img src="~/images/YSmall.png" width="30dpx" height="30px">
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Product.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Quantity)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Cost)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Product.Category.Classification)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Status.status)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Location.City)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                                <a asp-action="Archive" asp-route-id="@item.ID">Archive</a>
+                            </td>
+                        </tr>
+                    }
+                    @if (item.Quantity >= item.Product.ParLevel && item.Quantity != 0)
+                    {
+                        <tr>
+                            <td>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Product.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Quantity)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Cost)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Product.Category.Classification)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Status.status)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Location.City)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                                <a asp-action="Archive" asp-route-id="@item.ID" >Archive</a>
+                            </td>
+                        </tr>
 
                     }
                 }

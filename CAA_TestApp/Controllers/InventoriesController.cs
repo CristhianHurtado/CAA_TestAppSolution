@@ -46,6 +46,7 @@ namespace CAA_TestApp.Controllers
 
             var inventories = _context.Inventories
                 .Include(i => i.Location)
+                .Include(i => i.Status)
                 .Include(i => i.Product)
                 .ThenInclude(c => c.Category)
                 .AsNoTracking();
@@ -146,7 +147,7 @@ namespace CAA_TestApp.Controllers
                         .ThenBy(i => i.Location.City);
                 }
             }
-            else if (sortField == "Category") //sort by category
+            if (sortField == "Category") //sort by category
             {
                 if (sortDirection == "asc")
                 {
@@ -159,6 +160,22 @@ namespace CAA_TestApp.Controllers
                     {
                         inventories = inventories
                             .OrderByDescending(i => i.Product.Category.Classification);
+                    }
+                }
+            }
+            else if (sortField == "Status") //sort by category
+            {
+                if (sortDirection == "asc")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        inventories = inventories
+                            .OrderBy(i => i.Status.status);
+                    }
+                    else
+                    {
+                        inventories = inventories
+                            .OrderByDescending(i => i.Status.status);
                     }
                 }
             }
@@ -190,6 +207,7 @@ namespace CAA_TestApp.Controllers
 
             var inventories = _context.Inventories
                 .Include(i => i.Location)
+                .Include(i => i.Status)
                 .Include(i => i.Product)
                 .ThenInclude(c => c.Category)
                 .AsNoTracking();
