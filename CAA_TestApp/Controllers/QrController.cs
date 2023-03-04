@@ -3,14 +3,59 @@ using Microsoft.AspNetCore.Mvc;
 using System.Drawing;
 using System.Drawing.Imaging;
 using QRCoder;
+using DinkToPdf;
+using DinkToPdf.Contracts;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace CAA_TestApp.Controllers
 {
     public class QrController : Controller
     {
+
+
+        private readonly IConverter _converter;
+
+        public QrController(IConverter converter)
+        {
+            _converter = converter;
+        }
+
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult ViewForPDF()
+        {
+            return View();
+        }
+
+       
+        public IActionResult DownloadPDF()
+        {
+            string actualPage = HttpContext.Request.Path;
+            string pageURL = HttpContext.Request.GetEncodedUrl();
+            pageURL = pageURL.Replace(actualPage, "");
+            pageURL = $"{pageURL}/Qr/ViewForPDF";
+
+            var pdf = new HtmlToPdfDocument()
+            {
+                GlobalSettings = new GlobalSettings()
+                {
+                    PaperSize = PaperKind.A4,
+                    Orientation = Orientation.Portrait
+                },
+                Objects =
+                {
+                    new ObjectSettings()
+                    {
+                        Page = pageURL,
+                    }
+                }
+            };
+            var PDFFile = _converter.Convert(pdf);
+            string PDFName = "Report_" + DateTime.Now.ToString("ddMMyyyyHHmmss") + ".pdf";
+            return File(PDFFile, "application/pdf", PDFName);
         }
 
         public IActionResult GenerateQr() 
@@ -33,5 +78,7 @@ namespace CAA_TestApp.Controllers
 
             return View();
         }
+
+
     }
 }

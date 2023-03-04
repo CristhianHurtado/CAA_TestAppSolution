@@ -127,8 +127,13 @@
                             @Html.DisplayFor(modelItem => item.Location.City)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.ID" class="">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.ID" class="">Details</a> 
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</a> |
+                            <a asp-action="Details" asp-route-id="@item.ID" class="">Details</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID">Edit</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="InventoryReports">Reports</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID">Send Inventory</a></li>
+                            </ul>
                             <a asp-action="Delete" asp-route-id="@item.ID" class="" hidden>Delete</a>
                         </td>
                     </tr>
@@ -155,9 +160,14 @@
                             @Html.DisplayFor(modelItem => item.Location.City)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> 
-                            <a asp-action="Delete" asp-route-id="@item.ID" hidden>Delete</a>
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</a> |
+                            <a asp-action="Details" asp-route-id="@item.ID" class="">Details</a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID">Edit</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="InventoryReports">Reports</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID">Send Inventory</a></li>
+                            </ul>
+                            <a asp-action="Delete" asp-route-id="@item.ID" class="" hidden>Delete</a>
                         </td>
                     </tr>
                 }
@@ -182,8 +192,14 @@
                             @Html.DisplayFor(modelItem => item.Location.City)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> 
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</a> |
+                            <a asp-action="Details" asp-route-id="@item.ID" class="">Details</a>
+
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID">Edit</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="InventoryReports">Reports</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID">Send Inventory</a></li>
+                            </ul>
                             <a asp-action="Delete" asp-route-id="@item.ID" hidden>Delete</a>
                         </td>
                     </tr>

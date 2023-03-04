@@ -16,6 +16,9 @@ using OfficeOpenXml.Style;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Reflection;
 using CAA_TestApp.ViewModels;
+using DinkToPdf;
+using DinkToPdf.Contracts;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace CAA_TestApp.Controllers
 {
@@ -395,6 +398,106 @@ namespace CAA_TestApp.Controllers
           
 
         }*/
+        public async Task<IActionResult> SendInv(int? id)
+        {
+            if (id == null || _context.Inventories == null)
+            {
+                return NotFound();
+            }
+
+            //var inventory = await _context.Inventories
+            //    .Include(i => i.ItemPhoto)
+            //    .Include(i => i.Location)
+            //    .Include(i => i.Product)
+            //    .ThenInclude(i => i.Organize)
+
+            var inventory = await _context.Inventories
+                .Include(i => i.ItemPhoto)
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .FirstOrDefaultAsync(i => i.ID == id);
+            if (inventory == null)
+            {
+                return NotFound();
+            }
+
+
+
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.Location);
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.Product);
+            return View(inventory);
+        }
+        /*
+        // POST: Inventories/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("ID,ISBN,Quantity,Notes,ShelfOn,Cost,DateReceived," +
+            "LocationID,ProductID")] Inventory inventory, string chkRemoveImage, IFormFile thePicture, Byte[] RowVersion)
+        {
+            if (id != inventory.ID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    //For the image
+                    if (chkRemoveImage != null)
+                    {
+                        //If we are just deleting the two versions of the photo, we need to make sure the Change Tracker knows
+                        //about them both so go get the Thumbnail since we did not include it.
+                        inventory.ItemThumbnail = _context.ItemsThumbnails.Where(p => p.invID == inventory.ID).FirstOrDefault();
+                        //Then, setting them to null will cause them to be deleted from the database.
+                        inventory.ItemPhoto = null;
+                        inventory.ItemThumbnail = null;
+                    }
+                    else
+                    {
+                        await AddPicture(inventory, thePicture);
+                    }
+
+                    _context.Update(inventory);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    /* for match values with IDs on try/catch update 
+                     * 
+                    if (databaseValues.GenreID != clientValues.GenreID)
+                    {
+                        Genre databaseGenre = await _context.Genres.FirstOrDefaultAsync(i => i.ID == databaseValues.GenreID);
+                        ModelState.AddModelError("GenreID", $"Current value: {databaseGenre?.Name}");
+                    }
+                    if (databaseValues.AlbumID != clientValues.AlbumID)
+                    {
+                        Album databaseAlbum = await _context.Albums.FirstOrDefaultAsync(i => i.ID == databaseValues.AlbumID);
+                        ModelState.AddModelError("AlbumID", $"Current value: {databaseAlbum?.Name}");
+                    }
+                    if (!InventoryExists(inventory.ID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "The record you attempted to edit "
+                            + "was modified by another user. Please go back and refresh.");
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            _context.Entry(inventory).Property("RowVersion").OriginalValue = RowVersion;
+            
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "ID", inventory.LocationID);
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "ID", inventory.ProductID);
+            return View(inventory);
+
+          
+
+        }*/
 
         // POST: Inventories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -568,7 +671,8 @@ namespace CAA_TestApp.Controllers
             //string code = ViewData["ISBN"].ToString();
 
             QRCodeGenerator qrCodeGen = new QRCodeGenerator();
-            QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.Product.Name}{inventory.Location}", QRCodeGenerator.ECCLevel.Q);
+ //           QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.Product.Name}{inventory.Location}", QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrData = qrCodeGen.CreateQrCode($"1", QRCodeGenerator.ECCLevel.Q);
             QRCode qr = new QRCode(qrData);
 
             using (MemoryStream ms = new MemoryStream())
@@ -831,6 +935,8 @@ namespace CAA_TestApp.Controllers
             }
             return NotFound("No data. ");
         }
+
+
 
         private async Task AddPicture(Inventory inventory, IFormFile thePicture)
         {

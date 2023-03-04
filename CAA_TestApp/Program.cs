@@ -2,8 +2,17 @@ using CAA_TestApp.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using DinkToPdf;
+using DinkToPdf.Contracts;
+using CAA_TestApp.Extension;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//To PRint QR CODE
+var context = new CustomAssemblyLoadContext();
+context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "PDFLibrary/libwkhtmltox.dll"));
+builder.Services.AddSingleton(typeof(IConverter),new SynchronizedConverter(new PdfTools()));
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

@@ -5,6 +5,9 @@
 }
 
 <h1>GenerateQr</h1>
+
+<div id="parentDiv">
+
 @if(ViewBag.QRCodeImage != null)
 {
     <div class="alert alert-info">Qr Code Created!</div>
@@ -14,3 +17,8 @@ else
 {
     <div class="alert alert-info">Qr Code not created</div>
 }
+</div>
+
+<div>
+    <a id="printQR" class="btn btn-primary" asp-controller="Qrs" asp-action="DownloadPDF">Print</a>
+</div>

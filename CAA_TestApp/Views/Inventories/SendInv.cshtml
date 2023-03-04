@@ -1,0 +1,103 @@
+﻿@{
+    @model CAA_TestApp.Models.Inventory
+    ViewData["Title"] = "Send Inv.";
+}
+
+<h1>@Html.DisplayFor(model => model.Product.Name)</h1>
+<div>
+    <hr />
+        @{
+        if (Model.ItemPhoto?.Content != null)
+        {
+            @:<div>
+                string imageBase64 = Convert.ToBase64String(Model.ItemPhoto.Content);
+                string imageSrc = string.Format("data:" + Model.ItemPhoto.MimeType + ";base64,{0}", imageBase64);
+                <img src="@imageSrc" alt="Profile Picture of @Model.ISBN" title="Profile Picture of @Model.ISBN" class="img-fluid rounded" />
+            @:</div><hr />
+        }
+    }
+    <dl class="row">
+      <!--  <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ISBN)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ISBN)
+        </dd>-->
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Quantity)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Quantity)
+        </dd>
+
+      <!--  <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ShelfOn)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ShelfOn)
+        </dd>-->
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Cost)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Cost)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DateReceived)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DateReceived)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Location)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Location.City)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Product)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Product.Name)
+        </dd>
+                <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Notes)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Notes)
+        </dd>
+    </dl>
+    @{
+        ViewData["IsbnCode"] = ViewBag.ISBN;
+    }
+</div>
+
+<form>
+    From:
+ <div>
+                <label asp-for="LocationID" class="control-label"><strong>Location</strong></label>
+                <select asp-for="LocationID" name=“locationFrom” class="form-control" asp-items="ViewBag.LocationID" ></select>
+                <span asp-validation-for="LocationID" class="text-danger"></span>
+ </div>
+    To:
+ <div >
+                <label asp-for="LocationID" class="control-label"><strong>Location</strong></label>
+                <select asp-for="LocationID" name=“locationTo” class="form-control" asp-items="ViewBag.LocationID" ></select>
+                <span asp-validation-for="LocationID" class="text-danger"></span>
+ </div>
+ </form>
+ <br></br>
+<form id="frm">
+    <div class="col-lg-6 col-lg-offset-3">
+        Quantity:
+        <input type="text" name="Quantity" />
+    </div>
+</form>
+
+ <script>
+     $(document).ready(function (){
+         $("#frm"), submit(function (e){
+             e.preventDefault();
+         })
+     })
+ </script>
