@@ -204,11 +204,12 @@ namespace CAA_TestApp.Data
                         ISBN = "978006154236",
                         Cost = 499.99,
                         DateReceived = DateTime.Now,
-                        Notes ="",
+                        Notes = "",
                         ShelfOn = "S001-01",
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
                         LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("St. Catharines")).ID,
+                        statusID = context.statuses.FirstOrDefault(l => l.status.Contains("In stock")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("iPad Mini")).ID
                     },
                     new Inventory
@@ -220,8 +221,9 @@ namespace CAA_TestApp.Data
                         Notes = "",
                         ShelfOn = "S001-02",
                         /*UpdatedBy = "Scott",
-                        UpdatedOn = DateTime.Now,*/                        
+                        UpdatedOn = DateTime.Now,*/
                         LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("St. Catharines")).ID,
+                        statusID = context.statuses.FirstOrDefault(l => l.status.Contains("In stock")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Garmin Smart Watch")).ID
                     },
                     new Inventory
@@ -235,8 +237,9 @@ namespace CAA_TestApp.Data
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
                         LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("Welland")).ID,
+                        statusID = context.statuses.FirstOrDefault(l => l.status.Contains("In stock")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Bracelet")).ID
-                    }, 
+                    },
                     new Inventory
                     {
                         Quantity = 4,
@@ -248,8 +251,9 @@ namespace CAA_TestApp.Data
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
                         LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("Thorold")).ID,
+                        statusID = context.statuses.FirstOrDefault(l => l.status.Contains("In stock")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Cap")).ID
-                    }, 
+                    },
                     new Inventory
                     {
                         Quantity = 500,
@@ -261,8 +265,9 @@ namespace CAA_TestApp.Data
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
                         LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("Thorold")).ID,
+                        statusID = context.statuses.FirstOrDefault(l => l.status.Contains("In stock")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Brochure")).ID
-                    }, 
+                    },
                     new Inventory
                     {
                         Quantity = 3,
@@ -274,8 +279,9 @@ namespace CAA_TestApp.Data
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
                         LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("Grimsby")).ID,
+                        statusID = context.statuses.FirstOrDefault(l => l.status.Contains("In stock")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Poster")).ID
-                    }, 
+                    },
                     new Inventory
                     {
                         Quantity = 0,
@@ -287,8 +293,9 @@ namespace CAA_TestApp.Data
                         /*UpdatedBy = "Brandon",
                         UpdatedOn = DateTime.Now,*/
                         LocationID = context.Locations.FirstOrDefault(l => l.City.Contains("Niagara Falls")).ID,
+                        statusID = context.statuses.FirstOrDefault(l => l.status.Contains("In stock")).ID,
                         ProductID = context.Products.FirstOrDefault(p => p.Name.Contains("Chair")).ID
-                    });
+                    }); ;
 
                     context.SaveChanges();
                 }

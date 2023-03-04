@@ -2,7 +2,7 @@
 
 namespace CAA_TestApp.Models
 {
-    public class Inventory : Auditable,  IValidatableObject
+    public class Inventory : Auditable,  IValidatableObject, ICloneable
     {
         public int ID { get; set; }
         
@@ -58,12 +58,12 @@ namespace CAA_TestApp.Models
         public ICollection<Product> Products { get; set; } = new HashSet<Product>();
 
         public ICollection<EventInventory> eventInventories { get; set; } = new HashSet<EventInventory>();
-        /*
+        
         [Display(Name = "Status")]
         public int statusID { get; set; }
         
         [Display(Name = "Status")]
-        public Status Status { get; set; }*/
+        public Status Status { get; set; }
 
 
         //Methods
@@ -81,6 +81,11 @@ namespace CAA_TestApp.Models
             {
                 yield return new ValidationResult("Quantity cannot be greater than 500.", new[] { "Quantity" });
             }
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }
