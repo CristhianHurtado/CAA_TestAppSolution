@@ -309,10 +309,46 @@ namespace CAA_TestApp.Data
                             Date = DateTime.Now,
                             EventLocation = "Welland",
                             Notes = ""
+                        },
+                        new Event
+                        {
+                            Name = "Rankin Cancer Run",
+                            Date = DateTime.Now,
+                            EventLocation = "St. Catharines",
+                            Notes = "1 item is broken."
                         });
 
                     context.SaveChanges();
                 }
+
+                if (!context.ItemsInEvent.Any())
+                {
+                    context.ItemsInEvent.AddRange(
+                        new EventInventory
+                        {
+                            AmountLoggedOut = 3,
+                            AmountReturned = 0,
+                            InventoryID = context.Inventories.FirstOrDefault(c => c.ProductID == 1).ID,
+                            EventID = context.Events.FirstOrDefault(c => c.Name == "Niagara College Career Fair").ID
+                        },
+                        new EventInventory
+                        {
+                            AmountLoggedOut = 8,
+                            AmountReturned = 2,
+                            InventoryID = context.Inventories.FirstOrDefault(c => c.ProductID == 3).ID,
+                            EventID = context.Events.FirstOrDefault(c => c.Name == "Niagara College Career Fair").ID
+                        },
+                        new EventInventory
+                        {
+                            AmountLoggedOut = 14,
+                            AmountReturned = 5,
+                            InventoryID = context.Inventories.FirstOrDefault(c => c.ProductID == 1).ID,
+                            EventID = context.Events.FirstOrDefault(c => c.Name == "Rankin Cancer Run").ID
+                        });
+
+                    context.SaveChanges();
+                }
+
             }
             catch (Exception ex)
             {
