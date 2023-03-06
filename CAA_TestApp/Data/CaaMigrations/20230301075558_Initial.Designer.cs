@@ -3,6 +3,7 @@ using System;
 using CAA_TestApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,12 +11,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAA_TestApp.Data.CaaMigrations
 {
     [DbContext(typeof(CaaContext))]
-    partial class CaaContextModelSnapshot : ModelSnapshot
+    [Migration("20230301075558_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.14");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.13");
 
             modelBuilder.Entity("CAA_TestApp.Models.Category", b =>
                 {
@@ -90,23 +92,30 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<int>("InventoryID")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AmountLoggedOut")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("AmountReturned")
-                        .HasColumnType("INTEGER");
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("TEXT");
 
-                    b.Property<int?>("EventID1")
-                        .HasColumnType("INTEGER");
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("EventID", "InventoryID");
 
-                    b.HasIndex("EventID1")
-                        .IsUnique();
-
                     b.HasIndex("InventoryID");
 
-                    b.ToTable("ItemsInEvent");
+                    b.ToTable("EventInventories");
                 });
 
             modelBuilder.Entity("CAA_TestApp.Models.Inventory", b =>
@@ -131,19 +140,14 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<string>("ISBN")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsOnTransit")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("LocationID")
-                        .IsRequired()
+                    b.Property<int>("LocationID")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ProductID")
-                        .IsRequired()
+                    b.Property<int>("ProductID")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Quantity")
@@ -169,11 +173,12 @@ namespace CAA_TestApp.Data.CaaMigrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("LocationID");
-
                     b.HasIndex("ProductID");
 
                     b.HasIndex("statusID");
+
+                    b.HasIndex("LocationID", "ProductID")
+                        .IsUnique();
 
                     b.ToTable("Inventories");
                 });
@@ -392,14 +397,10 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CAA_TestApp.Models.Event", null)
-                        .WithOne("EventInventory")
-                        .HasForeignKey("CAA_TestApp.Models.EventInventory", "EventID1");
-
                     b.HasOne("CAA_TestApp.Models.Inventory", "Inventory")
-                        .WithMany("ItemsInEvent")
+                        .WithMany("eventInventories")
                         .HasForeignKey("InventoryID")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Event");
@@ -497,8 +498,6 @@ namespace CAA_TestApp.Data.CaaMigrations
 
             modelBuilder.Entity("CAA_TestApp.Models.Event", b =>
                 {
-                    b.Navigation("EventInventory");
-
                     b.Navigation("ItemsInEvent");
                 });
 
@@ -508,11 +507,11 @@ namespace CAA_TestApp.Data.CaaMigrations
 
                     b.Navigation("ItemThumbnail");
 
-                    b.Navigation("ItemsInEvent");
-
                     b.Navigation("Products");
 
                     b.Navigation("QRImage");
+
+                    b.Navigation("eventInventories");
                 });
 
             modelBuilder.Entity("CAA_TestApp.Models.Location", b =>

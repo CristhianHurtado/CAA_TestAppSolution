@@ -61,36 +61,40 @@ body {
     background-image: url('/images/background-home.jpg');
 }
 
-.action-center {
-    padding-top:150px;
-}
-
 .action-grid {
-    display: inline-grid;
-    grid-template-columns: repeat(auto-fit, 1fr);
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 30px;
-    padding-bottom: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    align-items:center;
+    grid-auto-rows: 500px;
+    gap: 10px;
+    padding-top: 75px;
 }
 
-.action-image {
-    height: 350px;
-    width: 250px;
-    background-repeat: no-repeat;
-    background-position: center center;
+.action-column, .action-column:visited, .action-column:hover, .action-column:active {
+    text-decoration: none;
+    color: inherit;
+}
 
+.images {
+    max-width: 100%;
+    height: 275px;
+}
+
+.action-title {
+    text-align: center;
+    padding-top: 15px;
+    font-weight: bold;
+    font-size: 20px;
+    text-decoration: underline;
+}
+
+.action-filler {
+    text-align: center;
+    padding-top: 15px;
 }
 
 .action-text {
-    padding-left: 30px;
-    padding-right: 30px;
-    padding-top: 30px;
-    padding-bottom: 30px;
-    background-color: bisque;
+    background-color: white;
+    height: 130px;
 }
 
-.action-image {
-    background-image: url('/images/inventory-image.jpg');
-
-}

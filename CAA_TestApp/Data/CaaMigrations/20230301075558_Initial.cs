@@ -31,8 +31,8 @@ namespace CAA_TestApp.Data.CaaMigrations
                     Name = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     Date = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EventLocation = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
-                    Notes = table.Column<string>(type: "TEXT", nullable: true),
                     RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
+                    Notes = table.Column<string>(type: "TEXT", nullable: true),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -91,6 +91,29 @@ namespace CAA_TestApp.Data.CaaMigrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EventInventories",
+                columns: table => new
+                {
+                    InventoryID = table.Column<int>(type: "INTEGER", nullable: false),
+                    EventID = table.Column<int>(type: "INTEGER", nullable: false),
+                    CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventInventories", x => new { x.EventID, x.InventoryID });
+                    table.ForeignKey(
+                        name: "FK_EventInventories_Events_EventID",
+                        column: x => x.EventID,
+                        principalTable: "Events",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Inventories",
                 columns: table => new
                 {
@@ -105,7 +128,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                     RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
                     LocationID = table.Column<int>(type: "INTEGER", nullable: false),
                     ProductID = table.Column<int>(type: "INTEGER", nullable: false),
-                    IsOnTransit = table.Column<bool>(type: "INTEGER", nullable: false),
                     statusID = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
@@ -127,38 +149,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                         principalTable: "statuses",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ItemsInEvent",
-                columns: table => new
-                {
-                    InventoryID = table.Column<int>(type: "INTEGER", nullable: false),
-                    EventID = table.Column<int>(type: "INTEGER", nullable: false),
-                    AmountLoggedOut = table.Column<int>(type: "INTEGER", nullable: false),
-                    AmountReturned = table.Column<int>(type: "INTEGER", nullable: false),
-                    EventID1 = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ItemsInEvent", x => new { x.EventID, x.InventoryID });
-                    table.ForeignKey(
-                        name: "FK_ItemsInEvent_Events_EventID",
-                        column: x => x.EventID,
-                        principalTable: "Events",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ItemsInEvent_Events_EventID1",
-                        column: x => x.EventID1,
-                        principalTable: "Events",
-                        principalColumn: "ID");
-                    table.ForeignKey(
-                        name: "FK_ItemsInEvent_Inventories_InventoryID",
-                        column: x => x.InventoryID,
-                        principalTable: "Inventories",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -268,18 +258,15 @@ namespace CAA_TestApp.Data.CaaMigrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-<<<<<<<< HEAD:CAA_TestApp/Data/CaaMigrations/20230305152603_Initial.cs
-                name: "IX_Inventories_LocationID_ProductID",
-========
                 name: "IX_EventInventories_InventoryID",
                 table: "EventInventories",
                 column: "InventoryID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Inventories_LocationID",
->>>>>>>> d2561ab1018affd54f4a7db6fa044d2d4c9003b0:CAA_TestApp/Data/CaaMigrations/20230306052944_Initial.cs
+                name: "IX_Inventories_LocationID_ProductID",
                 table: "Inventories",
-                column: "LocationID");
+                columns: new[] { "LocationID", "ProductID" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Inventories_ProductID",
@@ -290,17 +277,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                 name: "IX_Inventories_statusID",
                 table: "Inventories",
                 column: "statusID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemsInEvent_EventID1",
-                table: "ItemsInEvent",
-                column: "EventID1",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemsInEvent_InventoryID",
-                table: "ItemsInEvent",
-                column: "InventoryID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemsPhotos_invID",
@@ -354,26 +330,33 @@ namespace CAA_TestApp.Data.CaaMigrations
                 unique: true);
 
             migrationBuilder.AddForeignKey(
+                name: "FK_EventInventories_Inventories_InventoryID",
+                table: "EventInventories",
+                column: "InventoryID",
+                principalTable: "Inventories",
+                principalColumn: "ID",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
                 name: "FK_Inventories_Products_ProductID",
                 table: "Inventories",
                 column: "ProductID",
                 principalTable: "Products",
                 principalColumn: "ID",
                 onDelete: ReferentialAction.Restrict);
+
+
+            ExtraMigration.Steps(migrationBuilder);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Inventories_Locations_LocationID",
-                table: "Inventories");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Inventories_Products_ProductID",
-                table: "Inventories");
+                name: "FK_Products_Inventories_InventoryID",
+                table: "Products");
 
             migrationBuilder.DropTable(
-                name: "ItemsInEvent");
+                name: "EventInventories");
 
             migrationBuilder.DropTable(
                 name: "ItemsPhotos");
@@ -388,22 +371,22 @@ namespace CAA_TestApp.Data.CaaMigrations
                 name: "Events");
 
             migrationBuilder.DropTable(
+                name: "Inventories");
+
+            migrationBuilder.DropTable(
                 name: "Locations");
 
             migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
+                name: "statuses");
+
+            migrationBuilder.DropTable(
                 name: "Categories");
 
             migrationBuilder.DropTable(
-                name: "Inventories");
-
-            migrationBuilder.DropTable(
                 name: "Organizes");
-
-            migrationBuilder.DropTable(
-                name: "statuses");
         }
     }
 }

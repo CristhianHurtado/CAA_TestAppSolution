@@ -46,6 +46,7 @@ namespace CAA_TestApp.Controllers
 
             var inventories = _context.Inventories
                 .Include(i => i.Location)
+                .Include(i => i.Status)
                 .Include(i => i.Product)
                 .ThenInclude(c => c.Category)
                 .AsNoTracking();
@@ -146,7 +147,7 @@ namespace CAA_TestApp.Controllers
                         .ThenBy(i => i.Location.City);
                 }
             }
-            else if (sortField == "Category") //sort by category
+            if (sortField == "Category") //sort by category
             {
                 if (sortDirection == "asc")
                 {
@@ -159,6 +160,22 @@ namespace CAA_TestApp.Controllers
                     {
                         inventories = inventories
                             .OrderByDescending(i => i.Product.Category.Classification);
+                    }
+                }
+            }
+            else if (sortField == "Status") //sort by category
+            {
+                if (sortDirection == "asc")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        inventories = inventories
+                            .OrderBy(i => i.Status.status);
+                    }
+                    else
+                    {
+                        inventories = inventories
+                            .OrderByDescending(i => i.Status.status);
                     }
                 }
             }
@@ -190,6 +207,7 @@ namespace CAA_TestApp.Controllers
 
             var inventories = _context.Inventories
                 .Include(i => i.Location)
+                .Include(i => i.Status)
                 .Include(i => i.Product)
                 .ThenInclude(c => c.Category)
                 .AsNoTracking();
@@ -346,9 +364,12 @@ namespace CAA_TestApp.Controllers
         // GET: Inventories/Create
         public IActionResult Create()
         {
+            var excludedItem = _context.Locations.FirstOrDefault(i => i.City == "On transit");
+            var locations = _context.Locations.Where(i => i != excludedItem);
+
+            ViewData["LocationID"] = new SelectList(locations, "ID", "City");
             ViewData["CategoryID"] = new SelectList(_context.Categories, "ID", "Classification");
             ViewData["OrganizeID"] = new SelectList(_context.Organizes, "ID", "OrganizedBy");
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City");
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name");
             //Redirect("/Inventories/Index");
             return View();
@@ -364,9 +385,47 @@ namespace CAA_TestApp.Controllers
         {
             try
             {
+                //checks for duplicate ISBN
+                Random random = new Random();
+
+                string newISBN;
+                bool Exist = false;
+
+                do
+                {
+                    newISBN = random.Next(10000, 99999).ToString();
+
+                    foreach(var item in _context.Inventories)
+                    {
+                        if(item.ISBN == newISBN)
+                        {
+                            Exist = true;
+                        }
+                    }
+                }
+                while (Exist);
+
+                //checks for duplicate in DB
+                
+                bool isDuplicate = false;
+
+                do
+                {
+                    foreach (var item in _context.Inventories)
+                    {
+                        if (item.LocationID == inventory.LocationID && item.ProductID == inventory.ProductID)
+                        {
+                            Exist = true;
+                            throw new Exception();
+                        }
+                    }
+                }
+                while (isDuplicate);
+
                 if (ModelState.IsValid)
                 {
                     await AddPicture(inventory, thePicture);
+                    inventory.ISBN = newISBN;
                     inventory.statusID = _context.statuses.FirstOrDefault(s => s.status == "In stock").ID;
                     _context.Add(inventory);
                     await _context.SaveChangesAsync();
@@ -390,6 +449,11 @@ namespace CAA_TestApp.Controllers
                     "If the problem persists, contact your systems administrator.");
                 }
             }
+            catch(Exception ex)
+            {
+                ModelState.AddModelError("", "Unable to save changes. You cannot have duplicate records with the same name and location.");
+            }
+
 
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.LocationID);
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.ProductID);
@@ -445,35 +509,7 @@ namespace CAA_TestApp.Controllers
 
 
         // GET: Inventories/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Inventories == null)
-            {
-                return NotFound();
-            }
-
-            //var inventory = await _context.Inventories
-            //    .Include(i => i.ItemPhoto)
-            //    .Include(i => i.Location)
-            //    .Include(i => i.Product)
-            //    .ThenInclude(i => i.Organize)
-
-            var inventory = await _context.Inventories
-                .Include(i => i.ItemPhoto)
-                .Include(i => i.Location)
-                .Include(i => i.Product)
-                .FirstOrDefaultAsync(i => i.ID == id);
-            if (inventory == null)
-            {
-                return NotFound();
-            }
-
-
-
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.Location);
-            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.Product);
-            return View(inventory);
-        }
+       
         /*
         // POST: Inventories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -568,10 +604,10 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
+            var excludedItem = _context.Locations.FirstOrDefault(i => i.City == "On transit");
+            var locations = _context.Locations.Where(i => i != excludedItem);
 
-
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.Location);
-            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.Product);
+            ViewData["LocationID"] = new SelectList(locations, "ID", "City");
             return View(inventory);
         }
         /*
@@ -646,7 +682,92 @@ namespace CAA_TestApp.Controllers
 
         }*/
 
+        //POST : Inventories/SendInv/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendInv(int id, string locationFrom, string locationTo, int quantity)
+        {
+            var inventoryToSend = await _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .Include(i => i.ItemPhoto)
+                .FirstOrDefaultAsync(i => i.ID == id);
 
+            if (inventoryToSend == null)
+            {
+                return NotFound();
+            }
+
+            string From = _context.Locations.FirstOrDefault(i => i.ID == Convert.ToInt32(locationFrom)).City;
+            string To = _context.Locations.FirstOrDefault(i => i.ID == Convert.ToInt32(locationTo)).City;
+
+            Inventory send = new Inventory 
+            {
+                ISBN= inventoryToSend.ISBN,
+                IsOnTransit=true,
+                ProductID= inventoryToSend.ProductID,
+                LocationID = _context.Locations.FirstOrDefault(i =>i.City == "On transit").ID,
+                Notes= $"Sent from {From} To {To}",
+                ShelfOn= inventoryToSend.ShelfOn,
+                Cost= inventoryToSend.Cost,
+                DateReceived= inventoryToSend.DateReceived,
+                Quantity = quantity,
+                ItemPhoto= inventoryToSend.ItemPhoto,
+                ItemThumbnail= inventoryToSend.ItemThumbnail,
+                QRImage= inventoryToSend.QRImage,
+                eventInventories= inventoryToSend.eventInventories,
+                statusID= _context.statuses.FirstOrDefault(i => i.status == "On transit").ID,
+            };
+
+            int preventNegative = inventoryToSend.Quantity - quantity;
+
+            if (locationFrom == locationTo)
+            {
+                throw new ArgumentException("Both locations can't be the same");
+            }
+
+            if(preventNegative < 0)
+            {
+                throw new ArgumentException("Can't send more items than existing inventory");
+            }
+
+            inventoryToSend.Quantity = preventNegative;
+
+            _context.Inventories.Update(inventoryToSend);
+            await _context.Inventories.AddAsync(send);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null || _context.Inventories == null)
+            {
+                return NotFound();
+            }
+
+            //var inventory = await _context.Inventories
+            //    .Include(i => i.ItemPhoto)
+            //    .Include(i => i.Location)
+            //    .Include(i => i.Product)
+            //    .ThenInclude(i => i.Organize)
+
+            var inventory = await _context.Inventories
+                .Include(i => i.ItemPhoto)
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .FirstOrDefaultAsync(i => i.ID == id);
+            if (inventory == null)
+            {
+                return NotFound();
+            }
+
+
+
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.Location);
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.Product);
+            return View(inventory);
+        }
         // POST: Inventories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.

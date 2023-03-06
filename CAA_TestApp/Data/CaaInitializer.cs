@@ -8,6 +8,10 @@ namespace CAA_TestApp.Data
     {
         public static void Seed(IApplicationBuilder applicationBuilder)
         {
+            Random random = new Random();
+
+            List<int> numbers = Enumerable.Range(10000, 99999).OrderBy(x => random.Next()).Take(7).ToList();
+
             CaaContext context = applicationBuilder.ApplicationServices.CreateScope()
                 .ServiceProvider.GetRequiredService<CaaContext>();
 
@@ -103,6 +107,13 @@ namespace CAA_TestApp.Data
                             Phone = "9051211212",
                             Address = "Orchardview Village Square, 155 Main St E",
                             PostalCode = "L3M0A3"
+                        },
+                        new Location
+                        {
+                            City = "On transit",
+                            Phone = "",
+                            Address = "",
+                            PostalCode = ""
                         });
 
                     context.SaveChanges();
@@ -201,7 +212,7 @@ namespace CAA_TestApp.Data
                     new Inventory
                     {
                         Quantity = 30,
-                        ISBN = "978006154236",
+                        ISBN = numbers[0].ToString(),
                         Cost = 499.99,
                         DateReceived = DateTime.Now,
                         Notes = "",
@@ -214,7 +225,7 @@ namespace CAA_TestApp.Data
                     },
                     new Inventory
                     {
-                        ISBN = "97800557894654",
+                        ISBN = numbers[1].ToString(),
                         Cost = 299.99,
                         DateReceived = DateTime.Now,
                         Quantity = 0,
@@ -229,7 +240,7 @@ namespace CAA_TestApp.Data
                     new Inventory
                     {
                         Quantity = 14,
-                        ISBN = "9780068984236",
+                        ISBN = numbers[2].ToString(),
                         Cost = 100,
                         DateReceived = DateTime.Now,
                         Notes = "",
@@ -243,7 +254,7 @@ namespace CAA_TestApp.Data
                     new Inventory
                     {
                         Quantity = 4,
-                        ISBN = "9784568795462",
+                        ISBN = numbers[3].ToString(),
                         Cost = 250,
                         DateReceived = DateTime.Now,
                         Notes = "",
@@ -257,7 +268,7 @@ namespace CAA_TestApp.Data
                     new Inventory
                     {
                         Quantity = 500,
-                        ISBN = "978006598957894",
+                        ISBN = numbers[4].ToString(),
                         Cost = 120,
                         DateReceived = DateTime.Now,
                         Notes = "",
@@ -271,7 +282,7 @@ namespace CAA_TestApp.Data
                     new Inventory
                     {
                         Quantity = 3,
-                        ISBN = "978006544121456",
+                        ISBN = numbers[5].ToString(),
                         Cost = 110.99,
                         DateReceived = DateTime.Now,
                         Notes = "",
@@ -285,7 +296,7 @@ namespace CAA_TestApp.Data
                     new Inventory
                     {
                         Quantity = 0,
-                        ISBN = "9784561238552",
+                        ISBN = numbers[6].ToString(),
                         Cost = 99.99,
                         DateReceived = DateTime.Now,
                         Notes = "",

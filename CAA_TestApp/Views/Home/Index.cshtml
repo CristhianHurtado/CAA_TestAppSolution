@@ -1,45 +1,45 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Home Page";
 }
 
 <body class="action-home">
-    <section class="action-center">
-        <a class="action-grid" asp-controller="Inventories" asp-action="Index">
-            <div  class="action-colomn" >
-                <div class="action-image" ></div>
-                <div class="action-text" >
-                    <div class="action-title">Inventory</div>
-                    <div class="action-filler">See your up to date inventory</div>
-                </div>
+    <div class="action-grid">
+        <a class="action-column" asp-controller="Inventories" asp-action="Index">
+            <div class="action-image">
+                <img class="images" src="images/inventory-image.jpg" />
+            </div>
+            <div class="action-text">
+                <div class="action-title">INVENTORY</div>
+                <div class="action-filler">Get access to your fully updated inventory list at the click of a button.</div>
             </div>
         </a>
-        <a class="action-grid">
-            <div href="#" class="action-colomn">
-                <div class="action-image" style="background-image:url('/images/inventory-image.jpg')"></div>
-                <div class="action-text">
-                    <div class="action-title">Inventory</div>
-                    <div class="action-filler">See your up to date inventory</div>
-                </div>
+
+        <a class="action-column" asp-controller="Products" asp-action="Index">
+            <div class="action-image">
+                <img class="images" src="images/edit-products.png" />
+            </div>
+            <div class="action-text">
+                <div class="action-title">EDIT PRODUCTS</div>
+                <div class="action-filler">Edit details about the currents products in the system.</div>
             </div>
         </a>
-        <a class="action-grid">
-            <div href="#" class="action-colomn">
-                <div class="action-image" style="background-image:url('/images/inventory-image.jpg')"></div>
-                <div class="action-text">
-                    <div class="action-title">Inventory</div>
-                    <div class="action-filler">See your up to date inventory</div>
-                </div>
+        <a class="action-column" asp-controller="Inventories" asp-action="InventoryReports">
+            <div class="action-image">
+                <img class="images" src="images/reports.jpeg">
+            </div>
+            <div class="action-text">
+                <div class="action-title">REPORTS</div>
+                <div class="action-filler">View a variety of reports about your inventory and locations.</div>
             </div>
         </a>
-        <a class="action-grid">
-            <div href="#" class="action-colomn">
-                <div class="action-image" style="background-image:url('/images/inventory-image.jpg')"></div>
-                <div class="action-text">
-                    <div class="action-title">Inventory</div>
-                    <div class="action-filler">See your up to date inventory</div>
-                </div>
+        <a class="action-column" asp-controller="Inventories" asp-action="Index">
+            <div class="action-image">
+                <img class="images" src="images/events.jpg" />
+            </div>
+            <div class="action-text">
+                <div class="action-title">EVENTS</div>
+                <div class="action-filler">Book out an item for an upcoming event.</div>
             </div>
         </a>
-    </section>
+    </div>
 </body>
