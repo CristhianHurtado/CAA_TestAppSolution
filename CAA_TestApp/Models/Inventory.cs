@@ -43,17 +43,11 @@ namespace CAA_TestApp.Models
         [Required(ErrorMessage ="Select the product for this inventory record.")]
         public int ProductID { get; set; }
 
-        [Display(Name = "Status")]
-        public int statusID { get; set; }
-
         [Display(Name = "Location")]
         public Location Location { get; set; }
 
         [Display(Name = "Product")]
         public Product Product { get; set; }
-
-        [Display(Name = "Status")]
-        public Status Status { get; set; }
 
         public ItemPhoto ItemPhoto { get; set; }
 
@@ -63,7 +57,13 @@ namespace CAA_TestApp.Models
 
         public ICollection<Product> Products { get; set; } = new HashSet<Product>();
 
-        public ICollection<EventInventory> ItemsInEvent { get; set; } = new HashSet<EventInventory>();
+        public ICollection<EventInventory> eventInventories { get; set; } = new HashSet<EventInventory>();
+        
+        [Display(Name = "Status")]
+        public int statusID { get; set; }
+        
+        [Display(Name = "Status")]
+        public Status Status { get; set; }
 
 
         //Methods
