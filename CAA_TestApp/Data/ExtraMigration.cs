@@ -69,20 +69,20 @@ namespace CAA_TestApp.Data
                 ");
                 migrationBuilder.Sql(
                     @"
-                        CREATE TRIGGER SetEventInventoriesTimestampOnUpdate
-                        AFTER UPDATE ON EventInventories
+                        CREATE TRIGGER SetItemsInEventTimestampOnUpdate
+                        AFTER UPDATE ON ItemsInEvent
                         BEGIN
-                            UPDATE EventInventories
+                            UPDATE ItemsInEvent
                             SET RowVersion = randomblob(8)
                             WHERE rowid = NEW.rowid;
                         END
                     ");
                 migrationBuilder.Sql(
                 @"
-                    CREATE TRIGGER SetEventInventoriesTimestampOnInsert
-                    AFTER INSERT ON EventInventories
+                    CREATE TRIGGER SetItemsInEventTimestampOnInsert
+                    AFTER INSERT ON ItemsInEvent
                     BEGIN
-                        UPDATE EventInventories
+                        UPDATE ItemsInEvent
                         SET RowVersion = randomblob(8)
                         WHERE rowid = NEW.rowid;
                     END

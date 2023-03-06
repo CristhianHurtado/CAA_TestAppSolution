@@ -40,14 +40,24 @@ namespace CAA_TestApp.Data
         public DbSet<ItemPhoto> ItemsPhotos { get; set; }
         public DbSet<ItemThumbnail> ItemsThumbnails { get; set; }
         public DbSet<Status> statuses { get; set; }
-        public DbSet<EventInventory> EventInventories { get; set; }
+        public DbSet<EventInventory> ItemsInEvent { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.HasDefaultSchema("CAA");
 
+            //Many to Many intersection (for events)
             modelBuilder.Entity<EventInventory>()
                 .HasKey(i => new { i.EventID, i.InventoryID });
+
+            //many to many
+            //Note: Allow cascade delete from Inventory to EventInventory 
+            modelBuilder.Entity<EventInventory>()
+                .HasOne(i => i.Event)
+                .WithMany(i => i.ItemsInEvent)
+                .HasForeignKey(i => i.EventID)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             //add foreign key to product table
             modelBuilder.Entity<Category>()
@@ -60,18 +70,6 @@ namespace CAA_TestApp.Data
                 .HasMany<Product>(i => i.Products)
                 .WithOne(i => i.Organize)
                 .HasForeignKey(i => i.OrganizeID)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            //many to many
-
-            modelBuilder.Entity<Event>()
-                .HasMany(i => i.ItemsInEvent)
-                .WithOne(i => i.Event)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Inventory>()
-                .HasMany(i => i.eventInventories)
-                .WithOne(i => i.Inventory)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Inventory>()
