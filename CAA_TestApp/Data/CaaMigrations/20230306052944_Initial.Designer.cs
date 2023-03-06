@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAA_TestApp.Data.CaaMigrations
 {
     [DbContext(typeof(CaaContext))]
-    [Migration("20230304082408_Initial")]
+    [Migration("20230306052944_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -140,6 +140,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<string>("ISBN")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsOnTransit")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("LocationID")
                         .IsRequired()
                         .HasColumnType("INTEGER");
@@ -175,12 +178,11 @@ namespace CAA_TestApp.Data.CaaMigrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("LocationID");
+
                     b.HasIndex("ProductID");
 
                     b.HasIndex("statusID");
-
-                    b.HasIndex("LocationID", "ProductID")
-                        .IsUnique();
 
                     b.ToTable("Inventories");
                 });

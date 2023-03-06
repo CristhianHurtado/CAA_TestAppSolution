@@ -138,6 +138,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<string>("ISBN")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsOnTransit")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("LocationID")
                         .IsRequired()
                         .HasColumnType("INTEGER");
@@ -173,12 +176,11 @@ namespace CAA_TestApp.Data.CaaMigrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("LocationID");
+
                     b.HasIndex("ProductID");
 
                     b.HasIndex("statusID");
-
-                    b.HasIndex("LocationID", "ProductID")
-                        .IsUnique();
 
                     b.ToTable("Inventories");
                 });

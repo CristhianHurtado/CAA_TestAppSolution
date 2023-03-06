@@ -126,8 +126,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                     Cost = table.Column<double>(type: "REAL", nullable: false),
                     DateReceived = table.Column<DateTime>(type: "TEXT", nullable: false),
                     RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
-                    LocationID = table.Column<int>(type: "INTEGER", nullable: true),
-                    ProductID = table.Column<int>(type: "INTEGER", nullable: true),
+                    LocationID = table.Column<int>(type: "INTEGER", nullable: false),
+                    ProductID = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsOnTransit = table.Column<bool>(type: "INTEGER", nullable: false),
                     statusID = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
@@ -263,10 +264,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                 column: "InventoryID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Inventories_LocationID_ProductID",
+                name: "IX_Inventories_LocationID",
                 table: "Inventories",
-                columns: new[] { "LocationID", "ProductID" },
-                unique: true);
+                column: "LocationID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Inventories_ProductID",
@@ -344,9 +344,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                 principalTable: "Products",
                 principalColumn: "ID",
                 onDelete: ReferentialAction.Restrict);
-
-
-            ExtraMigration.Steps(migrationBuilder);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

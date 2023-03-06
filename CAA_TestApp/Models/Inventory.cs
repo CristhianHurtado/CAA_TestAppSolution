@@ -59,6 +59,8 @@ namespace CAA_TestApp.Models
 
         public ICollection<EventInventory> eventInventories { get; set; } = new HashSet<EventInventory>();
         
+        public bool IsOnTransit { get; set; }
+
         [Display(Name = "Status")]
         public int statusID { get; set; }
         
