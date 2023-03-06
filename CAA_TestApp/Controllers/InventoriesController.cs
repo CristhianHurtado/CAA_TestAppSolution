@@ -664,6 +664,61 @@ namespace CAA_TestApp.Controllers
 
         }*/
 
+        //POST : Inventories/SendInv/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendInv(int id, string locationFrom, string locationTo, int quantity)
+        {
+            var inventoryToSend = await _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .Include(i => i.ItemPhoto)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(i => i.ID == id);
+
+            if (inventoryToSend == null)
+            {
+                return NotFound();
+            }
+
+            string From = _context.Locations.FirstOrDefault(i => i.ID == Convert.ToInt32(locationFrom)).City;
+            string To = _context.Locations.FirstOrDefault(i => i.ID == Convert.ToInt32(locationTo)).City;
+
+            Inventory send = new Inventory 
+            {
+                ISBN= inventoryToSend.ISBN,
+                ProductID= inventoryToSend.ProductID,
+                Notes= $"Sent from {From} To {To}",
+                ShelfOn= inventoryToSend.ShelfOn,
+                Cost= inventoryToSend.Cost,
+                DateReceived= inventoryToSend.DateReceived,
+                LocationID = null,
+                Quantity = quantity,
+                ItemPhoto= inventoryToSend.ItemPhoto,
+                ItemThumbnail= inventoryToSend.ItemThumbnail,
+                QRImage= inventoryToSend.QRImage,
+                eventInventories= inventoryToSend.eventInventories,
+                statusID= _context.statuses.FirstOrDefault(i => i.status == "On transit").ID,
+            };
+            int preventNegative = inventoryToSend.Quantity - quantity;
+
+            if (locationFrom == locationTo)
+            {
+                throw new ArgumentException("Both locations can't be the same");
+            }
+
+            if(preventNegative < 0)
+            {
+                throw new ArgumentException("Can't send more items than existing inventory");
+            }
+
+            inventoryToSend.Quantity = preventNegative;
+
+            _context.Add(send);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
 
         // POST: Inventories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.

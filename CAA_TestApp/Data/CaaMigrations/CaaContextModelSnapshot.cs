@@ -138,14 +138,16 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<string>("ISBN")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("LocationID")
+                    b.Property<int?>("LocationID")
+                        .IsRequired()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ProductID")
+                    b.Property<int?>("ProductID")
+                        .IsRequired()
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Quantity")

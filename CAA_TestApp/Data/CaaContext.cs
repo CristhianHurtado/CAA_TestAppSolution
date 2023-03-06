@@ -104,7 +104,6 @@ namespace CAA_TestApp.Data
             modelBuilder.Entity<Location>()
                 .HasMany<Inventory>(i => i.Inventories)
                 .WithOne(i => i.Location)
-                .HasForeignKey(i => i.LocationID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //unique index for location
@@ -119,7 +118,7 @@ namespace CAA_TestApp.Data
 
             //unique index for inventory
             modelBuilder.Entity<Inventory>()
-                .HasIndex(i => new { i.LocationID, i.ProductID/*, i.statusID*/})
+                .HasIndex(i => new { i.LocationID, i.ProductID})
                 .IsUnique();
 
             //unique index for product name

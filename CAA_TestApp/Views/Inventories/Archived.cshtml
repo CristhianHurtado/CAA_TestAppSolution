@@ -101,6 +101,8 @@
                 <th>
                     <input type="submit" name="actionButton" value="Location" class="btn btn-link" />
                 </th>
+                <th>Status</th>
+                <th></th>
                 <th></th>
             </tr>
         </thead>
@@ -128,6 +130,9 @@
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Location.City)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Status.status)
                         </td>
                         <td>
                             <a asp-action="Details" asp-route-id="@item.ID">Details</a> |

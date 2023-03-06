@@ -37,17 +37,17 @@ namespace CAA_TestApp.Models
 
         [Display(Name = "Location")]
         [Required(ErrorMessage ="Select the location for this inventory record.")]
-        public int LocationID { get; set; }
+        public int? LocationID { get; set; }
 
         [Display(Name = "Product")]
         [Required(ErrorMessage ="Select the product for this inventory record.")]
-        public int ProductID { get; set; }
+        public int? ProductID { get; set; }
 
         [Display(Name = "Location")]
-        public Location Location { get; set; }
+        public Location? Location { get; set; }
 
         [Display(Name = "Product")]
-        public Product Product { get; set; }
+        public Product? Product { get; set; }
 
         public ItemPhoto ItemPhoto { get; set; }
 
