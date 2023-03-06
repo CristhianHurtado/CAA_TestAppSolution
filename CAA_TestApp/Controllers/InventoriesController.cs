@@ -704,7 +704,6 @@ namespace CAA_TestApp.Controllers
             Inventory send = new Inventory 
             {
                 ISBN= inventoryToSend.ISBN,
-                IsOnTransit=true,
                 ProductID= inventoryToSend.ProductID,
                 LocationID = _context.Locations.FirstOrDefault(i =>i.City == "On transit").ID,
                 Notes= $"Sent from {From} To {To}",

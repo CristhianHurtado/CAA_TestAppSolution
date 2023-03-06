@@ -11,6 +11,10 @@ namespace CAA_TestApp.Models
         [StringLength(50, ErrorMessage ="Event name cannot be longer than 50 characters.")]
         public string Name { get; set; }
 
+        [Display(Name = "Quantity")]
+        [Required(ErrorMessage = "Quantity cannot be left blank.")]
+        public int Quantity { get; set; }
+
         [Required(ErrorMessage ="Event date cannot be left blank.")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
@@ -27,7 +31,7 @@ namespace CAA_TestApp.Models
 
         public string Notes { get; set; }
 
-        public ICollection<EventInventory> ItemsInEvent { get; set; } = new HashSet<EventInventory>();
+        public ICollection<EventInventory> EventInventories { get; set; } = new HashSet<EventInventory>();
 
     }
 }

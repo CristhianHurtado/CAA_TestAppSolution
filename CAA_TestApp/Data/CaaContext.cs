@@ -64,14 +64,13 @@ namespace CAA_TestApp.Data
 
             //many to many
 
-            modelBuilder.Entity<Event>()
-                .HasMany(i => i.ItemsInEvent)
-                .WithOne(i => i.Event)
-                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<EventInventory>()
+                .HasKey(i => new { i.EventID, i.InventoryID });
 
-            modelBuilder.Entity<Inventory>()
-                .HasMany(i => i.eventInventories)
-                .WithOne(i => i.Inventory)
+            modelBuilder.Entity<EventInventory>()
+                .HasOne(i => i.Event)
+                .WithMany(i => i.EventInventories)
+                .HasForeignKey(i => i.EventID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Inventory>()

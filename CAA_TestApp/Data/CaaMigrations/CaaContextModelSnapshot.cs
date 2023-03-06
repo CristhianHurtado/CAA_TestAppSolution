@@ -15,7 +15,7 @@ namespace CAA_TestApp.Data.CaaMigrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.13");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.14");
 
             modelBuilder.Entity("CAA_TestApp.Models.Category", b =>
                 {
@@ -64,6 +64,9 @@ namespace CAA_TestApp.Data.CaaMigrations
 
                     b.Property<string>("Notes")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -138,19 +141,14 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<string>("ISBN")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsOnTransit")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("LocationID")
-                        .IsRequired()
+                    b.Property<int>("LocationID")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("ProductID")
-                        .IsRequired()
+                    b.Property<int>("ProductID")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Quantity")
@@ -394,7 +392,7 @@ namespace CAA_TestApp.Data.CaaMigrations
             modelBuilder.Entity("CAA_TestApp.Models.EventInventory", b =>
                 {
                     b.HasOne("CAA_TestApp.Models.Event", "Event")
-                        .WithMany("ItemsInEvent")
+                        .WithMany("EventInventories")
                         .HasForeignKey("EventID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -402,7 +400,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.HasOne("CAA_TestApp.Models.Inventory", "Inventory")
                         .WithMany("eventInventories")
                         .HasForeignKey("InventoryID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Event");
@@ -500,7 +498,7 @@ namespace CAA_TestApp.Data.CaaMigrations
 
             modelBuilder.Entity("CAA_TestApp.Models.Event", b =>
                 {
-                    b.Navigation("ItemsInEvent");
+                    b.Navigation("EventInventories");
                 });
 
             modelBuilder.Entity("CAA_TestApp.Models.Inventory", b =>

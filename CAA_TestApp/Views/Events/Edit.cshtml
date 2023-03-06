@@ -1,0 +1,81 @@
+﻿@model CAA_TestApp.Models.Event
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Event</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Quantity" class="control-label"></label>
+                <input asp-for="Quantity" class="form-control" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EventLocation" class="control-label"></label>
+                <input asp-for="EventLocation" class="form-control" />
+                <span asp-validation-for="EventLocation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">@Html.DisplayNameFor(model => model.EventInventories)</label>
+                <div class="m-2">
+                    <table>
+                        <tr>
+                            @{
+                                int cnt = 0;
+                                List<CAA_TestApp.ViewModels.CheckOptionVM> checkboxes = ViewBag.InventoryOptions;
+                                foreach (var checkbox in checkboxes)
+                                {
+                                    if (cnt++ % 2 == 0)
+                                    {
+                                    @:</tr><tr>
+                                    }
+                                    @:<td>
+                                        <input type="checkbox"
+                                               name="selectedOptions"
+                                               value="@checkbox.ID"
+                                               @(Html.Raw(checkbox.Assigned ? "checked=\"checked\"" : "")) />
+                                        @checkbox.DisplayText @:&nbsp;&nbsp;
+                                    @:</td>
+                                }
+                            @:</tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            <div class="form-group">
+                <label asp-for="Notes" class="control-label"></label>
+                <input asp-for="Notes" class="form-control" />
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -317,6 +317,7 @@ namespace CAA_TestApp.Data
                         new Event
                         {
                             Name = "Charity",
+                            Quantity= 3,
                             Date = DateTime.Now,
                             EventLocation = "Welland",
                             Notes = ""
