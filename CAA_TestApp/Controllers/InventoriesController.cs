@@ -1047,7 +1047,7 @@ namespace CAA_TestApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ReceiveInv(int id, string codeForISBN, string location)
+        public async Task<IActionResult> ReceiveInv(int id, string codeForISBN)
         {
             string[] qrValidator = codeForISBN.Split(' ');
 
@@ -1074,10 +1074,10 @@ namespace CAA_TestApp.Controllers
 
             int To = _context.Locations.FirstOrDefault(i => i.City == addToLocation).ID;
 
-            if(To != Convert.ToInt32(location))
-            {
-                throw new Exception();
-            }
+            //if(To != Convert.ToInt32(location))
+            //{
+            //    throw new Exception();
+            //}
 
             List<Inventory> receive = _context.Inventories
                 .Include(i => i.Location)

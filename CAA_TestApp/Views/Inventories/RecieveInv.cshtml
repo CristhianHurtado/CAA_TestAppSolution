@@ -4,20 +4,18 @@
     ViewData["Title"] = "Add Inventory";
 }
 
-<h1>Add Inventory</h1>
+<h1>Complete Transfer</h1>
 
 
 <form asp-action="ReceiveInv" method="post">
     <div>
-        <label asp-for="LocationID" class="control-label"><strong>Product</strong></label>
-        <select asp-for="LocationID" name="location" class="form-control" asp-items="ViewBag.LocationID"></select>
         <div class="col-lg-6 col-lg-offset-3">
-            <p>Scan Qr Code:</p>
+            <p>Enter ISBN #:</p>
             <input type="text" name="codeForISBN" />
         </div>
-        <h2 style="font-size: 16px; color:red;">Are you sure you want to archive this?</h2>
-            <input type="hidden" asp-for="ID" />
-            <input type="submit" value="Update" class="btn btn-danger btn-style" /> |
-            <a asp-action="Index">Back to List</a>
+        <h2 style="font-size: 16px; color:red;">Are you sure you want to complete this transfer?</h2>
+        <input type="hidden" asp-for="ID" />
+        <input type="submit" value="Transfer" class="btn btn-danger btn-style" /> |
+        <a asp-action="Index">Back to List</a>
     </div>
 </form>
