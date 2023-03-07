@@ -54,6 +54,7 @@ namespace CAA_TestApp.Controllers
                 .Include(i => i.Status)
                 .Include(i => i.Product)
                 .ThenInclude(c => c.Category)
+                .Include(i=> i.ItemThumbnail)
                 .AsNoTracking();
 
             if (CategoryID.HasValue)

@@ -88,7 +88,8 @@
         </tr>
         </thead>*@
         <thead>
-            <tr>
+            <tr                  
+                <th></th>
                 <th>
 
                 </th>
@@ -126,6 +127,8 @@
                     {
                         @if (item.Quantity == 0)
                         {
+                            item.Status.status = "Out of Stock";
+
                             <tr class="">
                                 <td>
                                     <img src="~/images/redDot.png" width="30px" height="30px">
@@ -142,8 +145,8 @@
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Product.Category.Classification)
                                 </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Status.status)
+                                 <td class="fw-bold">
+                                            @Html.DisplayFor(modelItem => item.Status.status)
                                 </td>
                                 <td>
                                     @{                                
@@ -161,7 +164,7 @@
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID">Edit</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Details">Details</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Details" asp-route-id="@item.ID">Details</a></li>
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Archive" asp-route-id="@item.ID">Archive</a></li>
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID">Transfer Inventory</a></li>
                                     </ul>
@@ -170,6 +173,7 @@
                         }
                         @if (item.Quantity < item.Product.ParLevel && item.Quantity != 0)
                         {
+                            item.Status.status = "Order More";
                             <tr class="">
                                 <td>
                                     <img src="~/images/YSmall.png" width="30dpx" height="30px">
@@ -186,7 +190,7 @@
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Product.Category.Classification)
                                 </td>
-                                <td>
+                                 <td class="fw-bold">
                                     @Html.DisplayFor(modelItem => item.Status.status)
                                 </td>
                                 <td>
@@ -205,7 +209,7 @@
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID">Edit</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Details">Details</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Details" asp-route-id="@item.ID">Details</a></li>
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Archive" asp-route-id="@item.ID">Archive</a></li>
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID">Transfer Inventory</a></li>
                                     </ul>
@@ -250,7 +254,7 @@
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID">Edit</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Details">Details</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Details" asp-route-id="@item.ID">Details</a></li>
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Archive" asp-route-id="@item.ID">Archive</a></li>
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID">Transfer Inventory</a></li>
                                     </ul>
