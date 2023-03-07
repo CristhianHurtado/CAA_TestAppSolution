@@ -7,6 +7,14 @@ namespace CAA_TestApp.Models
     {
         public int ID { get; set; }
 
+        public string FormattedPostalCode
+        {
+            get
+            {
+                return string.Concat(PostalCode.AsSpan(0, 3), " ", PostalCode.AsSpan(3, 3));
+            }
+        }
+
         [Display(Name="Location")]
         [Required(ErrorMessage ="Location cannot be left blank.")]
         [StringLength(40, ErrorMessage ="Location cannot be longer than 40 characters.")]
