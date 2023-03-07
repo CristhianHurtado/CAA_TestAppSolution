@@ -133,7 +133,8 @@
                             @Html.DisplayFor(modelItem => item.Status.status)
                         </td>
                         <td>
-                            <a asp-action="RecieveInv" asp-route-id="@item.ID">Update</a>
+                            <a asp-action="RecieveInv" asp-route-id="@item.ID">Transfer</a> |
+                            <a asp-action="GenerateQr" asp-route-id="@item.ID">Reprint label</a>
                         </td>
                     </tr>
 

@@ -1074,10 +1074,10 @@ namespace CAA_TestApp.Controllers
 
             int To = _context.Locations.FirstOrDefault(i => i.City == addToLocation).ID;
 
-            //if(To != Convert.ToInt32(location))
-            //{
-            //    throw new Exception();
-            //}
+            /*if(To != Convert.ToInt32(location))
+            {
+                throw new Exception("Location incorrect");
+            }**/
 
             List<Inventory> receive = _context.Inventories
                 .Include(i => i.Location)
@@ -1090,15 +1090,15 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            if (qrValidator[0] != validateISBN[0] && qrValidator[1] != validateISBN[1])
+            if (qrValidator[0] != validateISBN[0] || qrValidator[1] != validateISBN[1])
             {
-                throw new Exception();
+                throw new Exception("Wrong qr, make sure you are scanning the right package");
             }
 
             List<int> aux =  new List<int>();
             for(int i = 0;i < receive.Count; i++)
             {
-                if (receive[i].LocationID != To)
+                if (receive[i].LocationID == To && receive[i].statusID == _context.statuses.FirstOrDefault(i => i.status == "In stock").ID)
                 {
                     aux.Add(i);
                 }
@@ -1108,11 +1108,6 @@ namespace CAA_TestApp.Controllers
             foreach(int i in aux)
             {
                 dic.Add(i, receive[i]);
-            }
-
-            foreach (int i in aux)
-            {
-                dic.Remove(i);
             }
 
             if (dic.Count <= 0)
@@ -1126,10 +1121,11 @@ namespace CAA_TestApp.Controllers
             }
             else
             {
-                receive[0].Quantity += inventoryToReceive.Quantity;
-                receive[0].DateReceived = DateTime.Now;
+                Inventory updateInv = (Inventory) dic.FirstOrDefault().Value;
+                updateInv.Quantity += inventoryToReceive.Quantity;
+                updateInv.DateReceived = DateTime.Now;
                 _context.Inventories.Remove(inventoryToReceive);
-                _context.Inventories.Update(receive[0]);
+                _context.Inventories.Update(updateInv);
             }
 
             await _context.SaveChangesAsync();
