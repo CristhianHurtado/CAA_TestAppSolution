@@ -141,6 +141,7 @@
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Cost)
+                                    @("(" + Math.Round(item.Cost * item.Quantity, 2).ToString("c") + ")")
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Product.Category.Classification)
@@ -186,6 +187,7 @@
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Cost)
+                                    @("(" + Math.Round(item.Cost * item.Quantity, 2).ToString("c") + ")")
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Product.Category.Classification)
@@ -229,6 +231,7 @@
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Cost)
+                                    @("(" + Math.Round(item.Cost * item.Quantity, 2).ToString("c") + ")")
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Product.Category.Classification)
