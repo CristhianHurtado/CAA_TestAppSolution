@@ -11,7 +11,7 @@
     <a asp-action="Index">Inventory</a>
     @*<a asp-action="DownloadInventories" class="btn btn-info float-end btn-style">Download Inventory</a>*@
 </p>
-<form asp-action="Archived" method="get">
+<form asp-action="ReceivedInv" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <div class="form-horizontal">
@@ -28,7 +28,7 @@
                                 <div class="input-group-prepend">
                                     <div class="input-group-text">
                                         <input type="checkbox" class="" value="desc"
-                                               @((ViewData["sortDirection"].ToString() != "asc" ? "checked=\"checked\"" : ""))
+                                        @((ViewData["sortDirection"].ToString() != "asc" ? "checked=\"checked\"" : ""))
                                                name="sortDirectionCheck" />&nbsp;&nbsp;Descending
                                     </div>
                                 </div>
@@ -84,9 +84,6 @@
         <thead>
             <tr>
                 <th>
-
-                </th>
-                <th>
                     <input type="submit" name="actionButton" value="Product" class="btn btn-link" />
                 </th>
                 <th>
@@ -101,8 +98,8 @@
                 <th>
                     <input type="submit" name="actionButton" value="Location" class="btn btn-link" />
                 </th>
+                <th>Sent</th>
                 <th>Status</th>
-                <th></th>
                 <th></th>
             </tr>
         </thead>
@@ -114,8 +111,6 @@
                 @if (item.statusID == _context.statuses.FirstOrDefault(i => i.status == "On transit").ID)
                 {
                     <tr>
-                        <td>
-                        </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Product.Name)
                         </td>
@@ -130,6 +125,9 @@
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Location.City)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Notes)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Status.status)

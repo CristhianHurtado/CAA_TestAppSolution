@@ -33,7 +33,7 @@ namespace CAA_TestApp.Controllers
 
             ViewData["Filtering"] = "btn-outline-secondary";
 
-            string[] sortOptions = new[] { "Items", "Par Level", "Category", "Organize" };
+            string[] sortOptions = new[] { "Items", "Quantity Limit", "Category", "Organize" };
 
 
             var caaContext = _context.Products
@@ -104,7 +104,7 @@ namespace CAA_TestApp.Controllers
                         .OrderByDescending(i => i.Category.Classification);
                 }
             }
-            else if (sortField == "Par Level")
+            else if (sortField == "Quantity Limit")
             {
                 if (sortDirection == "asc")
                 {
