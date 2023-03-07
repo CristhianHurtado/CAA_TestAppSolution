@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CAA_TestApp.Data.CaaMigrations
 {
     [DbContext(typeof(CaaContext))]
-    [Migration("20230306220841_Initial")]
+    [Migration("20230307141458_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -400,7 +400,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .IsRequired();
 
                     b.HasOne("CAA_TestApp.Models.Inventory", "Inventory")
-                        .WithMany("eventInventories")
+                        .WithMany("EventInventories")
                         .HasForeignKey("InventoryID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -505,6 +505,8 @@ namespace CAA_TestApp.Data.CaaMigrations
 
             modelBuilder.Entity("CAA_TestApp.Models.Inventory", b =>
                 {
+                    b.Navigation("EventInventories");
+
                     b.Navigation("ItemPhoto");
 
                     b.Navigation("ItemThumbnail");
@@ -512,8 +514,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Navigation("Products");
 
                     b.Navigation("QRImage");
-
-                    b.Navigation("eventInventories");
                 });
 
             modelBuilder.Entity("CAA_TestApp.Models.Location", b =>

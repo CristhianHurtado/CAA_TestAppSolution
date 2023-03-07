@@ -24,7 +24,11 @@ namespace CAA_TestApp.Controllers
         // GET: Events
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Events.ToListAsync());
+            var @event = _context.Events
+                .Include(i => i.EventInventories).ThenInclude(i => i.Inventory).ThenInclude(i => i.Product)
+                .AsNoTracking();
+              
+                return View(await @event.ToListAsync());
         }
 
         // GET: Events/Details/5
@@ -36,6 +40,8 @@ namespace CAA_TestApp.Controllers
             }
 
             var @event = await _context.Events
+                .Include(i => i.EventInventories)
+                .ThenInclude(i => i.Inventory).ThenInclude(i => i.Product)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (@event == null)
             {

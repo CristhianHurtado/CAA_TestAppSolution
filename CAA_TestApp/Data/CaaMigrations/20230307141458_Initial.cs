@@ -32,12 +32,12 @@ namespace CAA_TestApp.Data.CaaMigrations
                     Quantity = table.Column<int>(type: "INTEGER", nullable: false),
                     Date = table.Column<DateTime>(type: "TEXT", nullable: false),
                     EventLocation = table.Column<string>(type: "TEXT", maxLength: 40, nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
                     Notes = table.Column<string>(type: "TEXT", nullable: true),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -344,9 +344,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                 principalTable: "Products",
                 principalColumn: "ID",
                 onDelete: ReferentialAction.Restrict);
-
-            ExtraMigration.Steps(migrationBuilder);
-
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

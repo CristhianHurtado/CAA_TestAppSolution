@@ -431,10 +431,10 @@ namespace CAA_TestApp.Controllers
 
         private SelectList OrganizeSelectList(int? id)
         {
-            var dQuery = from d in _context.Locations
-                         orderby d.City
+            var dQuery = from d in _context.Organizes
+                         orderby d.OrganizedBy
                          select d;
-            return new SelectList(dQuery, "ID", "City", id);
+            return new SelectList(dQuery, "ID", "OrganizedBy", id);
         }
 
         private SelectList CategorySelectList(int? id)

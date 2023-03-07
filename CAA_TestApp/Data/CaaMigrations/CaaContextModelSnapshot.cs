@@ -398,7 +398,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                         .IsRequired();
 
                     b.HasOne("CAA_TestApp.Models.Inventory", "Inventory")
-                        .WithMany("eventInventories")
+                        .WithMany("EventInventories")
                         .HasForeignKey("InventoryID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -503,6 +503,8 @@ namespace CAA_TestApp.Data.CaaMigrations
 
             modelBuilder.Entity("CAA_TestApp.Models.Inventory", b =>
                 {
+                    b.Navigation("EventInventories");
+
                     b.Navigation("ItemPhoto");
 
                     b.Navigation("ItemThumbnail");
@@ -510,8 +512,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Navigation("Products");
 
                     b.Navigation("QRImage");
-
-                    b.Navigation("eventInventories");
                 });
 
             modelBuilder.Entity("CAA_TestApp.Models.Location", b =>

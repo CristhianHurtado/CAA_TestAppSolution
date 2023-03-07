@@ -16,6 +16,9 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.EventInventories)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Quantity)
             </th>
             <th>
@@ -35,6 +38,12 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @foreach(var i in item.EventInventories)
+                {
+                    @i.Inventory.Product.Name <br />
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Quantity)

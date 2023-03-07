@@ -5,12 +5,12 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Inventory</h1>
+<h1>Inventory Records</h1>
 
 <p>
     <a asp-action="Create">Create New</a> |
     <a asp-action="Archived">Archived</a> | 
-    <a asp-action="ReceivedInv">Inventory on transit</a>
+    <a asp-action="ReceivedInv">Inventory In Transit</a>
     @*<a asp-action="DownloadInventories" class="btn btn-info float-end btn-style">Download Inventory</a>*@
 </p>
 <form asp-action="Index" method="get">
@@ -161,12 +161,10 @@
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID">Edit</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID">Send Inventory</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Details">Details</a></li>
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Archive" asp-route-id="@item.ID">Archive</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID">Transfer Inventory</a></li>
                                     </ul>
-                                </td>
-                                <td>
-                                    <a asp-action="Details" asp-route-id="@item.ID" class="">Details</a>
                                 </td>
                             </tr>
                         }
@@ -207,12 +205,10 @@
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID">Edit</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID">Send Inventory</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Details">Details</a></li>
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Archive" asp-route-id="@item.ID">Archive</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID">Transfer Inventory</a></li>
                                     </ul>
-                                </td>
-                                <td>
-                                    <a asp-action="Details" asp-route-id="@item.ID" class="">Details</a>
                                 </td>
                             </tr>
                         }
@@ -254,12 +250,10 @@
                                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID">Edit</a></li>
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID">Send Inventory</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Details">Details</a></li>
                                         <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Archive" asp-route-id="@item.ID">Archive</a></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID">Transfer Inventory</a></li>
                                     </ul>
-                                </td>
-                                <td>
-                                    <a asp-action="Details" asp-route-id="@item.ID" class="">Details</a>
                                 </td>
                             </tr>
                         }

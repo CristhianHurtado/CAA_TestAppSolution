@@ -46,9 +46,6 @@ namespace CAA_TestApp.Data
         {
             //modelBuilder.HasDefaultSchema("CAA");
 
-            modelBuilder.Entity<EventInventory>()
-                .HasKey(i => new { i.EventID, i.InventoryID });
-
             //add foreign key to product table
             modelBuilder.Entity<Category>()
                 .HasMany<Product>(i => i.Products)

@@ -848,7 +848,7 @@ namespace CAA_TestApp.Controllers
                 ItemPhoto = inventoryToSend.ItemPhoto,
                 ItemThumbnail = inventoryToSend.ItemThumbnail,
                 QRImage = inventoryToSend.QRImage,
-                eventInventories = inventoryToSend.eventInventories,
+                EventInventories = inventoryToSend.EventInventories,
                 statusID = _context.statuses.FirstOrDefault(i => i.status == "On transit").ID,
             };
 
