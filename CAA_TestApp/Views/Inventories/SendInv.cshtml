@@ -4,6 +4,7 @@
     ViewData["Title"] = "Send Inv.";
 }
 
+<form asp-action="SendInv" method="post"> 
 <h1>@Html.DisplayFor(model => model.Product.Name)</h1>
 <div>
     <hr />
@@ -73,7 +74,7 @@
      }
 </div>
 
-<form asp-action="SendInv" method="post"> 
+
      <div>
         <label asp-for="LocationID" class="control-label"><strong>From:</strong></label>
         <select asp-for="LocationID" name="locationFrom" class="form-control" asp-items="ViewBag.LocationID" ></select>
@@ -92,7 +93,7 @@
         </div>
     </div>
     <div class="form-group">
-        <input name="submit" type="submit" value="Create" class="btn btn-primary btn-style" />
+        <input name="submit" type="submit" value="Send And Generate Qr" class="btn btn-primary btn-style" />
         <a asp-action="Index">Back to List</a>
     </div>
  </form>

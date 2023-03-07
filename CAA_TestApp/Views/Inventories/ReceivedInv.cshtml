@@ -2,10 +2,10 @@
 @model IEnumerable<CAA_TestApp.Models.Inventory>
 
 @{
-    ViewData["Title"] = "Archived";
+    ViewData["Title"] = "On transit";
 }
 
-<h1>Archived</h1>
+<h1>On transit</h1>
 
 <p>
     <a asp-action="Index">Inventory</a>
@@ -111,7 +111,7 @@
             {
                 CaaContext _context = ViewBag.Context;
 
-                @if (item.statusID == _context.statuses.FirstOrDefault(i => i.status == "Archived").ID)
+                @if (item.statusID == _context.statuses.FirstOrDefault(i => i.status == "On transit").ID)
                 {
                     <tr>
                         <td>
@@ -135,14 +135,14 @@
                             @Html.DisplayFor(modelItem => item.Status.status)
                         </td>
                         <td>
-                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                            <a asp-action="Restore" asp-route-id="@item.ID">Restore</a> |
-                            <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                            <a asp-action="Details" asp-route-id="@item.ID">Details</a> | 
+                            <a asp-action="RecieveInv" asp-route-id="@item.ID">Update</a>
                         </td>
                     </tr>
 
                 }
             }
+
         </tbody>
     </table>
     <partial name="_PagingNavBar" />

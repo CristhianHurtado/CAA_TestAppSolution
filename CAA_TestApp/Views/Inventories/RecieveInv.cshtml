@@ -1,0 +1,21 @@
+﻿@model CAA_TestApp.Models.Inventory
+
+@{
+    ViewData["Title"] = "Add Inventory";
+}
+
+<h1>Add Inventory</h1>
+
+
+<form asp-action="ReceiveInv" method="post">
+    <div>
+        <div class="col-lg-6 col-lg-offset-3">
+            <p>Scan Qr Code:</p>
+            <input type="text" name="codeForISBN" />
+        </div>
+        <h2 style="font-size: 16px; color:red;">Are you sure you want to archive this?</h2>
+            <input type="hidden" asp-for="ID" />
+            <input type="submit" value="Update" class="btn btn-danger btn-style" /> |
+            <a asp-action="Index">Back to List</a>
+    </div>
+</form>

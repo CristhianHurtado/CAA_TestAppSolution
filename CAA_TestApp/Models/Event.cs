@@ -25,10 +25,7 @@ namespace CAA_TestApp.Models
         [StringLength(40, ErrorMessage = "Event location cannot be longer than 40 characters.")]
         public string EventLocation { get; set; }
 
-        [ScaffoldColumn(false)]
-        [Timestamp]
-        public Byte[] RowVersion { get; set; }//Added for concurrency
-
+        [Display(Name = "Notes")]
         public string Notes { get; set; }
 
         public ICollection<EventInventory> EventInventories { get; set; } = new HashSet<EventInventory>();

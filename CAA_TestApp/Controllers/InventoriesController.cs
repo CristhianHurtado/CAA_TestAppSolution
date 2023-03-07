@@ -19,12 +19,17 @@ using CAA_TestApp.ViewModels;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.CodeAnalysis;
 
 namespace CAA_TestApp.Controllers
 {
     public class InventoriesController : Controller
     {
         private readonly CaaContext _context;
+
+        private Random r = new Random();
+
+        private int SendToken;
 
         public InventoriesController(CaaContext context)
         {
@@ -338,6 +343,151 @@ namespace CAA_TestApp.Controllers
             return View(pagedData);
         }
 
+        public async Task<IActionResult> ReceivedInv(string sortDirectionCheck, string sortFieldID, string SearchName, int? CategoryID, int? LocationID,
+            int? page, string actionButton, int? pageSizeID, string sortDirection = "asc", string sortField = "Inventory")
+        {
+            PopulateDropDownListsCategories();
+            PopulateDropDownListsLocations();
+
+            ViewData["Context"] = _context;
+
+            ViewData["Filtering"] = "btn-outline-secondary ";
+
+            string[] sortOptions = new[] { "Product", "Quantity", "Cost", "Location" };
+
+            var inventories = _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Status)
+                .Include(i => i.Product)
+                .ThenInclude(c => c.Category)
+                .AsNoTracking();
+
+            if (CategoryID.HasValue)
+            {
+                inventories = inventories.Where(p => p.Product.CategoryID == CategoryID);
+                ViewData["Filtering"] = " btn-danger";
+            }
+            if (LocationID.HasValue)
+            {
+                inventories = inventories.Where(p => p.LocationID == LocationID);
+                ViewData["Filtering"] = "  btn-danger ";
+            }
+            if (!String.IsNullOrEmpty(SearchName))
+            {
+                inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()));
+                ViewData["Filtering"] = " btn-danger";
+            }
+
+            //See if we have called for a change of filtering or sorting
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
+
+                if (sortOptions.Contains(actionButton)) //Change of sort is requested
+                {
+                    if (actionButton == sortField)
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton; //sort by the button clicked
+                }
+                else
+                {
+                    sortDirection = String.IsNullOrEmpty(sortDirectionCheck) ? "asc" : "desc";
+                    sortField = sortFieldID;
+                }
+            }
+            //Now we know which field and direction to sort by
+            if (sortField == "Location")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Location.City)
+                        .ThenBy(i => i.Product.Name);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Location.City)
+                        .ThenBy(i => i.Product.Name);
+                }
+            }
+            else if (sortField == "Product")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Product.Name)
+                        .ThenBy(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Product.Name)
+                        .ThenByDescending(i => i.Location.City);
+                }
+            }
+            else if (sortField == "Quantity")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Quantity)
+                        .ThenBy(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Quantity)
+                        .ThenBy(i => i.Location.City);
+                }
+            }
+            else if (sortField == "Cost")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Cost)
+                        .ThenBy(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Cost)
+                        .ThenBy(i => i.Location.City);
+                }
+            }
+            else if (sortField == "Category") //sort by category
+            {
+                if (sortDirection == "asc")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        inventories = inventories
+                            .OrderBy(i => i.Product.Category.Classification);
+                    }
+                    else
+                    {
+                        inventories = inventories
+                            .OrderByDescending(i => i.Product.Category.Classification);
+                    }
+                }
+            }
+            //Set sort for next time
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            //SelectList for sorting options
+            ViewBag.sortFieldID = new SelectList(sortOptions, sortField.ToString());
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "inventories");
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<Inventory>.CreateAsync(inventories.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+        }
+
         // GET: Inventories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -386,27 +536,10 @@ namespace CAA_TestApp.Controllers
             try
             {
                 //checks for duplicate ISBN
-                Random random = new Random();
-
-                string newISBN;
-                bool Exist = false;
-
-                do
-                {
-                    newISBN = random.Next(10000, 99999).ToString();
-
-                    foreach(var item in _context.Inventories)
-                    {
-                        if(item.ISBN == newISBN)
-                        {
-                            Exist = true;
-                        }
-                    }
-                }
-                while (Exist);
+                string newISBN = GenerateISBN();
 
                 //checks for duplicate in DB
-                
+
                 bool isDuplicate = false;
 
                 do
@@ -415,7 +548,7 @@ namespace CAA_TestApp.Controllers
                     {
                         if (item.LocationID == inventory.LocationID && item.ProductID == inventory.ProductID)
                         {
-                            Exist = true;
+                            isDuplicate = true;
                             throw new Exception();
                         }
                     }
@@ -449,7 +582,7 @@ namespace CAA_TestApp.Controllers
                     "If the problem persists, contact your systems administrator.");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ModelState.AddModelError("", "Unable to save changes. You cannot have duplicate records with the same name and location.");
             }
@@ -509,7 +642,7 @@ namespace CAA_TestApp.Controllers
 
 
         // GET: Inventories/Edit/5
-       
+
         /*
         // POST: Inventories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -687,6 +820,8 @@ namespace CAA_TestApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendInv(int id, string locationFrom, string locationTo, int quantity)
         {
+            SendToken = r.Next(200);
+
             var inventoryToSend = await _context.Inventories
                 .Include(i => i.Location)
                 .Include(i => i.Product)
@@ -698,24 +833,23 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            string From = _context.Locations.FirstOrDefault(i => i.ID == Convert.ToInt32(locationFrom)).City;
             string To = _context.Locations.FirstOrDefault(i => i.ID == Convert.ToInt32(locationTo)).City;
 
-            Inventory send = new Inventory 
+            Inventory send = new Inventory
             {
-                ISBN= inventoryToSend.ISBN,
-                ProductID= inventoryToSend.ProductID,
-                LocationID = _context.Locations.FirstOrDefault(i =>i.City == "On transit").ID,
-                Notes= $"Sent from {From} To {To}",
-                ShelfOn= inventoryToSend.ShelfOn,
-                Cost= inventoryToSend.Cost,
-                DateReceived= inventoryToSend.DateReceived,
+                ISBN = $"{inventoryToSend.ISBN} {SendToken}",
+                ProductID = inventoryToSend.ProductID,
+                LocationID = _context.Locations.FirstOrDefault(i => i.City == "On transit").ID,
+                Notes = $"To {To}",
+                ShelfOn = inventoryToSend.ShelfOn,
+                Cost = inventoryToSend.Cost,
+                DateReceived = inventoryToSend.DateReceived,
                 Quantity = quantity,
-                ItemPhoto= inventoryToSend.ItemPhoto,
-                ItemThumbnail= inventoryToSend.ItemThumbnail,
-                QRImage= inventoryToSend.QRImage,
-                eventInventories= inventoryToSend.eventInventories,
-                statusID= _context.statuses.FirstOrDefault(i => i.status == "On transit").ID,
+                ItemPhoto = inventoryToSend.ItemPhoto,
+                ItemThumbnail = inventoryToSend.ItemThumbnail,
+                QRImage = inventoryToSend.QRImage,
+                eventInventories = inventoryToSend.eventInventories,
+                statusID = _context.statuses.FirstOrDefault(i => i.status == "On transit").ID,
             };
 
             int preventNegative = inventoryToSend.Quantity - quantity;
@@ -725,7 +859,7 @@ namespace CAA_TestApp.Controllers
                 throw new ArgumentException("Both locations can't be the same");
             }
 
-            if(preventNegative < 0)
+            if (preventNegative < 0)
             {
                 throw new ArgumentException("Can't send more items than existing inventory");
             }
@@ -735,7 +869,7 @@ namespace CAA_TestApp.Controllers
             _context.Inventories.Update(inventoryToSend);
             await _context.Inventories.AddAsync(send);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("GenerateQr", send);
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -851,7 +985,7 @@ namespace CAA_TestApp.Controllers
                                 + databaseValues.DateReceived);
                         if (databaseValues.LocationID != clientValues.LocationID)
                         {
-                            Location databaseLocation = await _context.Locations.FirstOrDefaultAsync(i => i.ID == databaseValues.LocationID);
+                            Models.Location databaseLocation = await _context.Locations.FirstOrDefaultAsync(i => i.ID == databaseValues.LocationID);
                             ModelState.AddModelError("LocationID", $"Current value: {databaseLocation?.City}");
                         }
                         if (databaseValues.ProductID != clientValues.ProductID)
@@ -886,6 +1020,92 @@ namespace CAA_TestApp.Controllers
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.LocationID);
             ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.ProductID);
             return View(inventoryToUpdate);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReceiveInv(int id, string codeForISBN)
+        {
+            string[] qrValidator = codeForISBN.Split(' ');
+
+            var inventoryToReceive = await _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .FirstOrDefaultAsync(i => i.ID == id);
+
+            if (inventoryToReceive == null)
+            {
+                return NotFound();
+            }
+
+            string[] filterLocation = inventoryToReceive.Notes.Split(' ');
+            string addToLocation = "";
+            for(int i = 1; i < filterLocation.Length; i++)
+            {
+                addToLocation += $"{filterLocation[i]} ";
+            }
+
+            addToLocation = addToLocation.Remove(addToLocation.Length - 1);
+
+            string[] validateISBN = inventoryToReceive.ISBN.Split(' ');
+
+            int To = _context.Locations.FirstOrDefault(i => i.City == addToLocation).ID;
+
+            List<Inventory> receive = _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .Where(i => i.ProductID == inventoryToReceive.ProductID)
+                .ToList();
+
+            if (inventoryToReceive == null)
+            {
+                return NotFound();
+            }
+
+            if (qrValidator[0] != validateISBN[0] && qrValidator[1] != validateISBN[1])
+            {
+                throw new Exception();
+            }
+
+            List<int> aux =  new List<int>();
+            for(int i = 0;i < receive.Count; i++)
+            {
+                if (receive[i].LocationID != To)
+                {
+                    aux.Add(i);
+                }
+            }
+
+            Dictionary<int, Inventory> dic = new Dictionary<int, Inventory>();
+            foreach(int i in aux)
+            {
+                dic.Add(i, receive[i]);
+            }
+
+            foreach (int i in aux)
+            {
+                dic.Remove(i);
+            }
+
+            if (dic.Count <= 0)
+            {
+                inventoryToReceive.ISBN = GenerateISBN();
+                inventoryToReceive.LocationID = To;
+                inventoryToReceive.Notes = $"Add new notes";
+                inventoryToReceive.statusID = _context.statuses.FirstOrDefault(i => i.status == "In stock").ID;
+                inventoryToReceive.DateReceived = DateTime.Now;
+                _context.Inventories.Update(inventoryToReceive);
+            }
+            else
+            {
+                receive[0].Quantity += inventoryToReceive.Quantity;
+                receive[0].DateReceived = DateTime.Now;
+                _context.Inventories.Remove(inventoryToReceive);
+                _context.Inventories.Update(receive[0]);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
 
         // GET: Inventories/Delete/5
@@ -928,6 +1148,26 @@ namespace CAA_TestApp.Controllers
             return View(inventory);
         }
         public async Task<IActionResult> Archive(int? id)
+        {
+            if (id == null || _context.Inventories == null)
+            {
+                return NotFound();
+            }
+
+            var inventory = await _context.Inventories
+                .Include(i => i.Status)
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (inventory == null)
+            {
+                return NotFound();
+            }
+
+            return View(inventory);
+        }
+
+        public async Task<IActionResult> RecieveInv(int? id)
         {
             if (id == null || _context.Inventories == null)
             {
@@ -1012,8 +1252,34 @@ namespace CAA_TestApp.Controllers
             //string code = ViewData["ISBN"].ToString();
 
             QRCodeGenerator qrCodeGen = new QRCodeGenerator();
- //           QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.Product.Name}{inventory.Location}", QRCodeGenerator.ECCLevel.Q);
-            QRCodeData qrData = qrCodeGen.CreateQrCode($"1", QRCodeGenerator.ECCLevel.Q);
+            //           QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.Product.Name}{inventory.Location}", QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.ISBN}", QRCodeGenerator.ECCLevel.Q);
+            QRCode qr = new QRCode(qrData);
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (Bitmap bitmap = qr.GetGraphic(20))
+                {
+                    bitmap.Save(ms, ImageFormat.Png);
+                    ViewBag.QRCodeImage = "data:image/png;base64," + Convert.ToBase64String(ms.ToArray());
+                }
+            }
+
+            return View(inventory);
+        }
+
+        public async Task<IActionResult> GenerateQrForSendInv(int? id)
+        {
+
+            var inventory = await _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .FirstOrDefaultAsync(m => m.ID == id);
+            //string code = ViewData["ISBN"].ToString();
+
+            QRCodeGenerator qrCodeGen = new QRCodeGenerator();
+            //           QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.Product.Name}{inventory.Location}", QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.ISBN}", QRCodeGenerator.ECCLevel.Q);
             QRCode qr = new QRCode(qrData);
 
             using (MemoryStream ms = new MemoryStream())
@@ -1058,7 +1324,7 @@ namespace CAA_TestApp.Controllers
             return new SelectList(dQuery, "ID", "Name", id);
         }
 
-        private void PopulateDropDownListsLocations(Location location = null)
+        private void PopulateDropDownListsLocations(Models.Location location = null)
         {
             ViewData["LocationID"] = LocationSelectList(location?.ID);
         }
@@ -1155,7 +1421,29 @@ namespace CAA_TestApp.Controllers
             return NotFound("No data. ");
         }
 
+        public string GenerateISBN()
+        {
+            Random random = new Random();
 
+            string newISBN;
+            bool Exist = false;
+
+            do
+            {
+                newISBN = random.Next(10000, 99999).ToString();
+
+                foreach (var item in _context.Inventories)
+                {
+                    if (item.ISBN == newISBN)
+                    {
+                        Exist = true;
+                    }
+                }
+            }
+            while (Exist);
+
+            return newISBN;
+        }
 
         public async Task<IActionResult> InventoryReports(int? page, int? pageSizeID)
         {
