@@ -37,7 +37,7 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Inventories
-        public async Task<IActionResult> Index(string sortDirectionCheck, string sortFieldID, string SearchName, int? CategoryID, int? LocationID,
+        public async Task<IActionResult> Index(string sortDirectionCheck, string sortFieldID, string SearchName, int? CategoryID, int[] LocationID,
             int? page, string actionButton, int? pageSizeID, string sortDirection = "asc", string sortField = "Inventory")
         {
             PopulateDropDownListsCategories();
@@ -61,9 +61,9 @@ namespace CAA_TestApp.Controllers
                 inventories = inventories.Where(p => p.Product.CategoryID == CategoryID);
                 ViewData["Filtering"] = " btn-danger";
             }
-            if (LocationID.HasValue)
+            if (LocationID.Length > 0)
             {
-                inventories = inventories.Where(p => p.LocationID == LocationID);
+                inventories = inventories.Where(p => LocationID.Contains(p.LocationID));
                 ViewData["Filtering"] = "  btn-danger ";
             }
             if (!String.IsNullOrEmpty(SearchName))

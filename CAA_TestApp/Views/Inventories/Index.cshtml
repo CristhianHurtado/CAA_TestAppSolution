@@ -47,9 +47,13 @@
                         @Html.DropDownList("CategoryID", null, "All Categories", htmlAttributes: new { @class = "form-control" })
                     </div>
                     <div class="form-group col-md-4">
+                        <label class="control-label">Filter by Branches: (Ctrl + Click to Select Multiple)</label>
+                        @Html.ListBox("LocationID", null, htmlAttributes: new { @class = "form-control" })
+                    </div>
+@*                    <div class="form-group col-md-4">
                         <label class="control-label">Filter by Location:</label>
                         @Html.DropDownList("LocationID", null, "All locations", htmlAttributes: new { @class = "form-control" })
-                    </div>
+                    </div>*@
                     @*                    <div class="form-group col-md-4">
                     <label class="control-label">Search item ISBN:</label>
                     @Html.TextBox("SearchStringISBN", null, new { @class = "form-control" })
