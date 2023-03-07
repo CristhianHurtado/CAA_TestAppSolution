@@ -216,6 +216,7 @@ namespace CAA_TestApp.Controllers
                 .Include(i => i.Status)
                 .Include(i => i.Product)
                 .ThenInclude(c => c.Category)
+                .Where(i => i.statusID == _context.statuses.FirstOrDefault(i => i.status == "Archived").ID)
                 .AsNoTracking();
 
             if (CategoryID.HasValue)
@@ -361,6 +362,7 @@ namespace CAA_TestApp.Controllers
                 .Include(i => i.Status)
                 .Include(i => i.Product)
                 .ThenInclude(c => c.Category)
+                .Where(i => i.statusID == _context.statuses.FirstOrDefault(i => i.status == "On transit").ID)
                 .AsNoTracking();
 
             if (CategoryID.HasValue)
