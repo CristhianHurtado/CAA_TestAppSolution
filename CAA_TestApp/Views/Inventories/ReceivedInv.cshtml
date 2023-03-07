@@ -83,6 +83,7 @@
         </thead>*@
         <thead>
             <tr>
+                <th>ISBN</th>
                 <th>
                     <input type="submit" name="actionButton" value="Product" class="btn btn-link" />
                 </th>
@@ -112,6 +113,9 @@
                 {
                     <tr>
                         <td>
+                            @Html.DisplayFor(modelItem => item.ISBN)
+                        </td>
+                        <td>
                             @Html.DisplayFor(modelItem => item.Product.Name)
                         </td>
                         <td>
@@ -134,6 +138,7 @@
                         </td>
                         <td>
                             <a asp-action="RecieveInv" asp-route-id="@item.ID">Transfer</a> |
+                            <a asp-action="NoActionDetails" asp-route-id="@item.ID">Details</a> |
                             <a asp-action="GenerateQr" asp-route-id="@item.ID">Reprint label</a>
                         </td>
                     </tr>

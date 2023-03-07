@@ -514,6 +514,28 @@ namespace CAA_TestApp.Controllers
             return View(inventory);
         }
 
+        public async Task<IActionResult> NoActionDetails(int? id)
+        {
+            if (id == null || _context.Inventories == null)
+            {
+                return NotFound();
+            }
+
+            var inventory = await _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .Include(i => i.ItemPhoto)
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (inventory == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.Location);
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.Product);
+            return View(inventory);
+        }
+
         // GET: Inventories/Create
         public IActionResult Create()
         {
