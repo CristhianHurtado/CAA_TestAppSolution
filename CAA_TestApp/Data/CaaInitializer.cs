@@ -107,13 +107,6 @@ namespace CAA_TestApp.Data
                             Phone = "9051211212",
                             Address = "Orchardview Village Square, 155 Main St E",
                             PostalCode = "L3M0A3"
-                        },
-                        new Location
-                        {
-                            City = "On transit",
-                            Phone = "",
-                            Address = "",
-                            PostalCode = ""
                         });
 
                     context.SaveChanges();

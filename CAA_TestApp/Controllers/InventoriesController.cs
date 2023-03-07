@@ -840,7 +840,7 @@ namespace CAA_TestApp.Controllers
             {
                 ISBN = $"{inventoryToSend.ISBN} {SendToken}",
                 ProductID = inventoryToSend.ProductID,
-                LocationID = _context.Locations.FirstOrDefault(i => i.City == "On transit").ID,
+                LocationID = inventoryToSend.LocationID,
                 Notes = $"To {To}",
                 ShelfOn = inventoryToSend.ShelfOn,
                 Cost = inventoryToSend.Cost,
@@ -1023,9 +1023,29 @@ namespace CAA_TestApp.Controllers
             return View(inventoryToUpdate);
         }
 
+        public async Task<IActionResult> RecieveInv(int? id)
+        {
+            if (id == null || _context.Inventories == null)
+            {
+                return NotFound();
+            }
+
+            var inventory = await _context.Inventories
+                .Include(i => i.Status)
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (inventory == null)
+            {
+                return NotFound();
+            }
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.Location);
+            return View(inventory);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ReceiveInv(int id, string codeForISBN)
+        public async Task<IActionResult> ReceiveInv(int id, string codeForISBN, string location)
         {
             string[] qrValidator = codeForISBN.Split(' ');
 
@@ -1051,6 +1071,11 @@ namespace CAA_TestApp.Controllers
             string[] validateISBN = inventoryToReceive.ISBN.Split(' ');
 
             int To = _context.Locations.FirstOrDefault(i => i.City == addToLocation).ID;
+
+            if(To != Convert.ToInt32(location))
+            {
+                throw new Exception();
+            }
 
             List<Inventory> receive = _context.Inventories
                 .Include(i => i.Location)
@@ -1149,26 +1174,6 @@ namespace CAA_TestApp.Controllers
             return View(inventory);
         }
         public async Task<IActionResult> Archive(int? id)
-        {
-            if (id == null || _context.Inventories == null)
-            {
-                return NotFound();
-            }
-
-            var inventory = await _context.Inventories
-                .Include(i => i.Status)
-                .Include(i => i.Location)
-                .Include(i => i.Product)
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (inventory == null)
-            {
-                return NotFound();
-            }
-
-            return View(inventory);
-        }
-
-        public async Task<IActionResult> RecieveInv(int? id)
         {
             if (id == null || _context.Inventories == null)
             {

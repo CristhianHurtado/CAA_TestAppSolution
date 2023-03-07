@@ -9,6 +9,8 @@
 
 <form asp-action="ReceiveInv" method="post">
     <div>
+        <label asp-for="LocationID" class="control-label"><strong>Product</strong></label>
+        <select asp-for="LocationID" name="location" class="form-control" asp-items="ViewBag.LocationID"></select>
         <div class="col-lg-6 col-lg-offset-3">
             <p>Scan Qr Code:</p>
             <input type="text" name="codeForISBN" />
