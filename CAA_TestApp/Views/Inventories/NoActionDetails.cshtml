@@ -4,10 +4,10 @@
     ViewData["Title"] = "NoActionDetails";
 }
 
-<h1>NoActionDetails</h1>
+<h1> @Html.DisplayFor(model => model.Product.Name) Transfer</h1>
 
 <div>
-    <h4>Inventory</h4>
+
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -23,36 +23,37 @@
             @Html.DisplayFor(model => model.Quantity)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Notes)
+            Going To
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Notes)
         </dd>
         <dt class = "col-sm-2">
+           Coming From
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Location.City)
+        </dd>
+    <!--   <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ShelfOn)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ShelfOn)
-        </dd>
+        </dd> --> 
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Cost)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Cost)
         </dd>
-        <dt class = "col-sm-2">
+   <!--     <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.DateReceived)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.DateReceived)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Location)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Location.Address)
-        </dd>
-        <dt class = "col-sm-2">
+        </dd> --> 
+
+   <!--     <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Product)
         </dt>
         <dd class = "col-sm-10">
@@ -63,7 +64,7 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Status.ID)
-        </dd>
+        </dd> -->
     </dl>
 </div>
 <div>

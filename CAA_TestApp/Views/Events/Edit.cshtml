@@ -4,9 +4,8 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>Edit Event</h1>
 
-<h4>Event</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -14,27 +13,27 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+                <label asp-for="Name" class="control-label"><strong>Name</strong></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Quantity" class="control-label"></label>
+                <label asp-for="Quantity" class="control-label"><strong>Quantity</strong></label>
                 <input asp-for="Quantity" class="form-control" />
                 <span asp-validation-for="Quantity" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Date" class="control-label"></label>
+                <label asp-for="Date" class="control-label"><strong>Date</strong></label>
                 <input asp-for="Date" class="form-control" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="EventLocation" class="control-label"></label>
+                <label asp-for="EventLocation" class="control-label"><strong>Event Location</strong></label>
                 <input asp-for="EventLocation" class="form-control" />
                 <span asp-validation-for="EventLocation" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label class="control-label">@Html.DisplayNameFor(model => model.EventInventories)</label>
+                <label class="control-label" style="margin-top:5px;"><strong>Products Needed</strong></label>
                 <div class="m-2">
                     <table>
                         <tr>
@@ -61,12 +60,12 @@
                     </div>
                 </div>
             <div class="form-group">
-                <label asp-for="Notes" class="control-label"></label>
-                <input asp-for="Notes" class="form-control" />
+                <label asp-for="Notes" class="control-label"><strong>Notes</strong></label>
                 <span asp-validation-for="Notes" class="text-danger"></span>
+                @Html.TextAreaFor(i => i.Notes, new { @class = "form-control" })
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-outline-primary btn-style" />
+                <input type="submit" value="Save" class="btn btn-outline-primary btn-style" style="margin-top:10px;"  />
             </div>
         </form>
     </div>

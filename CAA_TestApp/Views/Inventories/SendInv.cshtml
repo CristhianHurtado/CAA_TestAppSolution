@@ -50,12 +50,6 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.DateReceived)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Product)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Product.Name)
-        </dd>
                 <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Notes)
         </dt>
@@ -81,9 +75,9 @@
         <span asp-validation-for="LocationID" class="text-danger"></span>
      </div>
     <div>
-        <div class="col-lg-6 col-lg-offset-3">
-            <label>Quantity:</label>
-            <input type="number" name="quantity" />
+        <div class="col-lg-6 col-lg-offset-3" style="margin-top:20px;">
+            <label><strong>Quantity:</strong></label>
+            <input type="number" name="quantity" min="0" />
         </div>
         <br />
     </div>
