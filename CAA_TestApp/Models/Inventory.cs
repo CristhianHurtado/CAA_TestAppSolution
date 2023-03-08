@@ -52,7 +52,7 @@ namespace CAA_TestApp.Models
         public ItemPhoto ItemPhoto { get; set; }
 
         public ItemThumbnail ItemThumbnail { get; set; }
-        
+
         public QrImage QRImage { get; set; }
 
         public ICollection<Product> Products { get; set; } = new HashSet<Product>();

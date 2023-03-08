@@ -39,6 +39,7 @@ namespace CAA_TestApp.Data
         public DbSet<Event> Events { get; set; }
         public DbSet<ItemPhoto> ItemsPhotos { get; set; }
         public DbSet<ItemThumbnail> ItemsThumbnails { get; set; }
+       
         public DbSet<Status> statuses { get; set; }
         public DbSet<EventInventory> EventInventories { get; set; }
 

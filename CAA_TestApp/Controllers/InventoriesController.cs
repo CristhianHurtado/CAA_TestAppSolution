@@ -931,7 +931,8 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Inventory inventory, string chkRemoveImage, IFormFile thePicture, Byte[] RowVersion)
+        public async Task<IActionResult> Edit(int id, Inventory inventory,
+            string chkRemoveImage, IFormFile thePicture, Byte[] RowVersion)
         {
             var inventoryToUpdate = await _context.Inventories
                 .Include(i => i.Location)
@@ -960,15 +961,31 @@ namespace CAA_TestApp.Controllers
                     {
                         //If we are just deleting the two versions of the photo, we need to make sure the Change Tracker knows
                         //about them both so go get the Thumbnail since we did not include it.
-                        inventory.ItemThumbnail = _context.ItemsThumbnails.Where(p => p.invID == inventory.ID).FirstOrDefault();
+                        inventoryToUpdate.ItemThumbnail = _context.ItemsThumbnails.Where(p => p.invID == inventoryToUpdate.ID).FirstOrDefault();
                         //Then, setting them to null will cause them to be deleted from the database.
-                        inventory.ItemPhoto = null;
-                        inventory.ItemThumbnail = null;
+                        inventoryToUpdate.ItemPhoto = null;
+                        inventoryToUpdate.ItemThumbnail = null;
                     }
                     else
                     {
-                        await AddPicture(inventory, thePicture);
+                        await AddPicture(inventoryToUpdate, thePicture);
                     }
+                    /* try
+                {
+                    //For the image
+                    if (chkRemoveImage != null)
+                    {
+                        //If we are just deleting the two versions of the photo, we need to make sure the Change Tracker knows
+                        //about them both so go get the Thumbnail since we did not include it.
+                        patientToUpdate.PatientThumbnail = _context.PatientThumbnails.Where(p=>p.PatientID== patientToUpdate.ID).FirstOrDefault();
+                        //Then, setting them to null will cause them to be deleted from the database.
+                        patientToUpdate.PatientPhoto = null;
+                        patientToUpdate.PatientThumbnail = null;
+                    }
+                    else
+                    {
+                        await AddPicture(patientToUpdate, thePicture);
+                    }*/
 
                     _context.Update(inventory);
                     await _context.SaveChangesAsync();
@@ -1595,7 +1612,7 @@ namespace CAA_TestApp.Controllers
 
         private async Task AddPicture(Inventory inventory, IFormFile thePicture)
         {
-            //Get the picture and save it with the Patient (2 sizes)
+            //Get the picture and save it with the Inventory (2 sizes)
             if (thePicture != null)
             {
                 string mimeType = thePicture.ContentType;
@@ -1616,7 +1633,7 @@ namespace CAA_TestApp.Controllers
 
                             //Get the Thumbnail so we can update it.  Remember we didn't include it
                             inventory.ItemThumbnail = _context.ItemsThumbnails.Where(p => p.invID == inventory.ID).FirstOrDefault();
-                            inventory.ItemThumbnail.Content = ResizeImage.shrinkImageWebp(pictureArray, 100, 120);
+                            inventory.ItemThumbnail.Content = ResizeImage.shrinkImageWebp(pictureArray, 75, 90);
                         }
                         else //No pictures saved so start new
                         {
@@ -1627,7 +1644,7 @@ namespace CAA_TestApp.Controllers
                             };
                             inventory.ItemThumbnail = new ItemThumbnail
                             {
-                                Content = ResizeImage.shrinkImageWebp(pictureArray, 100, 120),
+                                Content = ResizeImage.shrinkImageWebp(pictureArray, 75, 90),
                                 MimeType = "image/webp"
                             };
                         }

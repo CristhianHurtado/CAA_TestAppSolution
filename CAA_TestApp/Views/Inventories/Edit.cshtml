@@ -15,7 +15,7 @@
         @:<div>
         string imageBase64 = Convert.ToBase64String(Model.ItemPhoto.Content);
         string imageSrc = string.Format("data:" + Model.ItemPhoto.MimeType + ";base64,{0}", imageBase64);
-        <img src="@imageSrc" alt="Profile Picture of @Model.ISBN" title="Profile Picture of @Model.ISBN" class="img-fluid rounded" />
+        <img src="@imageSrc" alt="Profile Picture of @Model.Product.Name" title="Profile Picture of @Model.Product.Name" class="img-fluid rounded" />
         @:</div><hr />
     }
 }
