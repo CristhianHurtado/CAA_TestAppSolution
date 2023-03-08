@@ -1,0 +1,55 @@
+﻿@model IEnumerable<CAA_TestApp.ViewModels.CostReportsVM>
+
+@{
+    ViewData["Title"] = "Cost Reports";
+}
+
+<h1>Cost Report</h1>
+<form asp-controller="Inventories" asp-action="CostReports" method="get">
+    <a asp-action="DownloadCostReports" class="btn btn-info float-end btn-style">Download Cost Report</a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Product)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Quantity)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cost)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.CostTotal)
+                </th>
+
+
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Product)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cost)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CostTotal)
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+    <partial name="_PagingNavBar" />
+</form>

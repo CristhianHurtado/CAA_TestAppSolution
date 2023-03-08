@@ -1608,6 +1608,367 @@ namespace CAA_TestApp.Controllers
             return NotFound("No data. ");
         }
 
+        public async Task<IActionResult> CostReports(int? page, int? pageSizeID)
+        {
+
+
+            var sumQ = _context.Inventories
+                .Include(a => a.Products)
+                .ThenInclude(b => b.Category)
+                .Include(a => a.Products)
+                .ThenInclude(a => a.Organize)
+                .Include(a => a.Location)
+
+                .GroupBy(c => new { c.ID, c.Product.Name, c.Quantity, c.Cost })
+                .Select(grp => new CostReportsVM
+                {
+                    ID = grp.Key.ID,
+                    Product = grp.Key.Name,
+                    Quantity = grp.Key.Quantity,
+                    Cost = grp.Key.Cost,
+                    CostTotal = grp.Key.Cost * grp.Key.Quantity
+
+
+                }).OrderBy(s => s.Product);
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "CostReports");
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<CostReportsVM>.CreateAsync(sumQ.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+
+        }
+
+        public IActionResult DownloadCostReports()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            var intory = from a in _context.Inventories
+                .Include(a => a.Products)
+                .ThenInclude(b => b.Category)
+                .Include(a => a.Products)
+                .ThenInclude(a => a.Organize)
+                .Include(a => a.Location)
+                         orderby a.Product descending
+                         select new
+                         {
+                             Product = a.Product.Name,
+                             Quantity = a.Quantity,
+                             Cost = a.Cost,
+                             CostTotal = a.Cost * a.Quantity
+
+                         };
+            int numRows = intory.Count();
+
+
+            if (numRows > 0) //We have data
+            {
+                //Create a new spreadsheet from scratch.
+                using (ExcelPackage excel = new ExcelPackage())
+                {
+
+                    var workSheet = excel.Workbook.Worksheets.Add("Inventory");
+
+                    workSheet.Cells[3, 1].LoadFromCollection(intory, true);
+
+                    workSheet.Column(3).Style.Numberformat.Format = "###,##0.00";
+
+                    workSheet.Column(4).Style.Numberformat.Format = "###,##0.00";
+
+                    workSheet.Cells[4, 1, numRows + 4, 1].Style.Font.Bold = true;
+
+                    using (ExcelRange headings = workSheet.Cells[3, 1, 3, 4])
+                    {
+                        headings.Style.Font.Bold = true;
+                        var fill = headings.Style.Fill;
+                        fill.PatternType = ExcelFillStyle.Solid;
+                        fill.BackgroundColor.SetColor(Color.LightBlue);
+                    }
+
+                    workSheet.Cells.AutoFitColumns();
+
+                    workSheet.Cells[1, 1].Value = "Cost Report";
+                    using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 4])
+                    {
+                        Rng.Merge = true; //Merge columns start and end range
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 18;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    }
+
+                    DateTime utcDate = DateTime.UtcNow;
+                    TimeZoneInfo esTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                    DateTime localDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, esTimeZone);
+                    using (ExcelRange Rng = workSheet.Cells[2, 4])
+                    {
+                        Rng.Value = "Created: " + localDate.ToShortTimeString() + " on " +
+                            localDate.ToShortDateString();
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 12;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+
+                    try
+                    {
+                        Byte[] theData = excel.GetAsByteArray();
+                        string filename = "Cost.xlsx";
+                        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        return File(theData, mimeType, filename);
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest("Could not build and download the file.");
+                    }
+                }
+            }
+            return NotFound("No data. ");
+        }
+
+        public async Task<IActionResult> LowStockReports(int? page, int? pageSizeID)
+        {
+
+
+            var sumQ = _context.Inventories
+                .Include(a => a.Products)
+                .ThenInclude(b => b.Category)
+                .Include(a => a.Products)
+                .ThenInclude(a => a.Organize)
+                .Include(a => a.Location)
+                .Where(a => a.Quantity < a.Product.ParLevel)
+                .Where(a => a.Quantity != 0)
+
+                .GroupBy(c => new { c.ID, c.Product.Category.Classification, c.Product.Name, c.Product.ParLevel, c.Location.City, c.Quantity, c.Cost })
+                .Select(grp => new LowStockReportsVM
+                {
+                    ID = grp.Key.ID,
+                    Category = grp.Key.Classification,
+                    Product = grp.Key.Name,
+                    Quantity = grp.Key.Quantity,
+                    ParLevel = grp.Key.ParLevel,
+                    Location = grp.Key.City,
+                    Cost = grp.Key.Cost,
+
+                }).OrderBy(s => s.Product);
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "LowStockReports");
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<LowStockReportsVM>.CreateAsync(sumQ.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+
+        }
+
+        public IActionResult DownloadLowStockReports()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            var intory = from a in _context.Inventories
+                .Include(a => a.Products)
+                .ThenInclude(b => b.Category)
+                .Include(a => a.Products)
+                .ThenInclude(a => a.Organize)
+                .Include(a => a.Location)
+                .Where(a => a.Quantity < a.Product.ParLevel)
+                .Where(a => a.Quantity != 0)
+                         orderby a.Product descending
+                         select new
+                         {
+                             Name = a.Product.Name,
+                             Category = a.Product.Category.Classification,
+                             Quantity = a.Quantity,
+                             ParLevel = a.Product.ParLevel,
+                             Location = a.Location.City,
+                             Cost = a.Cost,
+
+
+
+                         };
+            int numRows = intory.Count();
+
+            if (numRows > 0) //We have data
+            {
+                //Create a new spreadsheet from scratch.
+                using (ExcelPackage excel = new ExcelPackage())
+                {
+
+                    var workSheet = excel.Workbook.Worksheets.Add("LowStock");
+
+                    workSheet.Cells[3, 1].LoadFromCollection(intory, true);
+
+                    workSheet.Column(6).Style.Numberformat.Format = "###,##0.00";
+
+                    workSheet.Cells[4, 1, numRows + 4, 1].Style.Font.Bold = true;
+
+                    using (ExcelRange headings = workSheet.Cells[3, 1, 3, 6])
+                    {
+                        headings.Style.Font.Bold = true;
+                        var fill = headings.Style.Fill;
+                        fill.PatternType = ExcelFillStyle.Solid;
+                        fill.BackgroundColor.SetColor(Color.LightBlue);
+                    }
+
+                    workSheet.Cells.AutoFitColumns();
+
+                    workSheet.Cells[1, 1].Value = "Low Stock Report";
+                    using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 6])
+                    {
+                        Rng.Merge = true; //Merge columns start and end range
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 18;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    }
+
+                    DateTime utcDate = DateTime.UtcNow;
+                    TimeZoneInfo esTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                    DateTime localDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, esTimeZone);
+                    using (ExcelRange Rng = workSheet.Cells[2, 6])
+                    {
+                        Rng.Value = "Created: " + localDate.ToShortTimeString() + " on " +
+                            localDate.ToShortDateString();
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 12;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+
+                    try
+                    {
+                        Byte[] theData = excel.GetAsByteArray();
+                        string filename = "LowStock.xlsx";
+                        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        return File(theData, mimeType, filename);
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest("Could not build and download the file.");
+                    }
+                }
+            }
+            return NotFound("No data. ");
+        }
+
+        public async Task<IActionResult> NoStockReports(int? page, int? pageSizeID)
+        {
+
+
+            var sumQ = _context.Inventories
+                .Include(a => a.Products)
+                .ThenInclude(b => b.Category)
+                .Include(a => a.Products)
+                .ThenInclude(a => a.Organize)
+                .Include(a => a.Location)
+                .Where(a => a.Quantity == 0)
+
+                .GroupBy(c => new { c.ID, c.Product.Category.Classification, c.Product.Name, c.Product.ParLevel, c.Location.City, c.Quantity, c.Cost })
+                .Select(grp => new NoStockReportsVM
+                {
+                    ID = grp.Key.ID,
+                    Category = grp.Key.Classification,
+                    Product = grp.Key.Name,
+                    Quantity = grp.Key.Quantity,
+                    ParLevel = grp.Key.ParLevel,
+                    Location = grp.Key.City,
+                    Cost = grp.Key.Cost,
+
+                }).OrderBy(s => s.Product);
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "NoStockReports");
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<NoStockReportsVM>.CreateAsync(sumQ.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+
+        }
+
+        public IActionResult DownloadNoStockReports()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            var intory = from a in _context.Inventories
+                .Include(a => a.Products)
+                .ThenInclude(b => b.Category)
+                .Include(a => a.Products)
+                .ThenInclude(a => a.Organize)
+                .Include(a => a.Location)
+                .Where(a => a.Quantity == 0)
+                         orderby a.Product descending
+                         select new
+                         {
+                             Name = a.Product.Name,
+                             Category = a.Product.Category.Classification,
+                             Quantity = a.Quantity,
+                             ParLevel = a.Product.ParLevel,
+                             Location = a.Location.City,
+                             Cost = a.Cost,
+
+
+
+                         };
+            int numRows = intory.Count();
+
+            if (numRows > 0) //We have data
+            {
+                //Create a new spreadsheet from scratch.
+                using (ExcelPackage excel = new ExcelPackage())
+                {
+
+                    var workSheet = excel.Workbook.Worksheets.Add("NoStock");
+
+                    workSheet.Cells[3, 1].LoadFromCollection(intory, true);
+
+                    workSheet.Column(6).Style.Numberformat.Format = "###,##0.00";
+
+                    workSheet.Cells[4, 1, numRows + 4, 1].Style.Font.Bold = true;
+
+                    using (ExcelRange headings = workSheet.Cells[3, 1, 3, 6])
+                    {
+                        headings.Style.Font.Bold = true;
+                        var fill = headings.Style.Fill;
+                        fill.PatternType = ExcelFillStyle.Solid;
+                        fill.BackgroundColor.SetColor(Color.LightBlue);
+                    }
+
+                    workSheet.Cells.AutoFitColumns();
+
+                    workSheet.Cells[1, 1].Value = "No Stock Report";
+                    using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 6])
+                    {
+                        Rng.Merge = true; //Merge columns start and end range
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 18;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    }
+
+                    DateTime utcDate = DateTime.UtcNow;
+                    TimeZoneInfo esTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                    DateTime localDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, esTimeZone);
+                    using (ExcelRange Rng = workSheet.Cells[2, 6])
+                    {
+                        Rng.Value = "Created: " + localDate.ToShortTimeString() + " on " +
+                            localDate.ToShortDateString();
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 12;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+
+                    try
+                    {
+                        Byte[] theData = excel.GetAsByteArray();
+                        string filename = "NoStock.xlsx";
+                        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        return File(theData, mimeType, filename);
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest("Could not build and download the file.");
+                    }
+                }
+            }
+            return NotFound("No data. ");
+        }
+
 
 
         private async Task AddPicture(Inventory inventory, IFormFile thePicture)
