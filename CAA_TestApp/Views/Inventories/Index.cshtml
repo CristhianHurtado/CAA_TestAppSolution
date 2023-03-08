@@ -89,7 +89,6 @@
         </thead>*@
         <thead>
             <tr>                  
-                <th></th>
                 <th>
 
                 </th>
@@ -130,16 +129,20 @@
                             item.Status.status = "Out of Stock";
 
                             <tr class="">
+
+                                
                                 
                                 <td>
-                                        @{
+                                    <img src="~/images/redSmall.png" width="30dpx" height="30px">
+
+                                        @*@{
                                             if (item.ItemThumbnail?.Content != null)
                                             {
                                             string imageBase64 = Convert.ToBase64String(item.ItemThumbnail.Content);
                                             string imageSrc = string.Format("data:" + item.ItemThumbnail.MimeType + ";base64,{0}", imageBase64);
                                             <img src="@imageSrc" alt="Profile Picture of @item.Product.Name" title="Profile Picture of @item.Product.Name" class="img-fluid rounded" />
                                             }
-                                        }
+                                        }*@
                                 </td>
 
                                 <td>
