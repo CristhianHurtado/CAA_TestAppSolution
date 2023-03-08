@@ -6,7 +6,6 @@
 
 <h1>Edit</h1>
 
-<h4>Organize</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -14,12 +13,12 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
-                <label asp-for="OrganizedBy" class="control-label"></label>
+                <label asp-for="OrganizedBy" class="control-label"><strong>Organized By</strong></label>
                 <input asp-for="OrganizedBy" class="form-control" />
                 <span asp-validation-for="OrganizedBy" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary btn-style" />
+                <input type="submit" value="Save" class="btn btn-primary btn-style" style="margin-top:10px;" />
             </div>
         </form>
     </div>
