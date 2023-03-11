@@ -667,6 +667,156 @@ namespace CAA_TestApp.Controllers
 
 
         // GET: Inventories/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null || _context.Inventories == null)
+            {
+                return NotFound();
+            }
+
+            //var inventory = await _context.Inventories
+            //    .Include(i => i.ItemPhoto)
+            //    .Include(i => i.Location)
+            //    .Include(i => i.Product)
+            //    .ThenInclude(i => i.Organize)
+
+            var inventory = await _context.Inventories
+                .Include(i => i.ItemPhoto)
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .FirstOrDefaultAsync(i => i.ID == id);
+            
+            if (inventory == null)
+            {
+                return NotFound();
+            }
+
+
+
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.Location);
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.Product);
+            return View(inventory);
+        }
+        // POST: Inventories/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Inventory inventory,
+            string chkRemoveImage, IFormFile thePicture, Byte[] RowVersion)
+        {
+            var inventoryToUpdate = await _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .Include(i => i.ItemPhoto)
+                .FirstOrDefaultAsync(i => i.ID == id);
+
+            if (inventoryToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            //Put the original RowVersion value in the OriginalValues collection for the entity
+            _context.Entry(inventoryToUpdate).Property("RowVersion").OriginalValue = RowVersion;
+
+            //Try updating it with the values posted
+            if (await TryUpdateModelAsync<Inventory>(inventoryToUpdate, "",
+                i => i.Quantity, i => i.Notes, i => i.Cost,
+                i => i.DateReceived, i => i.LocationID, i => i.ProductID))
+            {
+                try
+                {
+                    //For the image
+                    if (chkRemoveImage != null)
+                    {
+                        //If we are just deleting the two versions of the photo, we need to make sure the Change Tracker knows
+                        //about them both so go get the Thumbnail since we did not include it.
+                        inventoryToUpdate.ItemThumbnail = _context.ItemsThumbnails.Where(p => p.invID == inventoryToUpdate.ID).FirstOrDefault();
+                        //Then, setting them to null will cause them to be deleted from the database.
+                        inventoryToUpdate.ItemPhoto = null;
+                        inventoryToUpdate.ItemThumbnail = null;
+                    }
+                    else
+                    {
+                        await AddPicture(inventoryToUpdate, thePicture);
+                    }
+
+                    //_context.Update(inventory);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Details", new { inventoryToUpdate.ID });
+                }
+                catch (RetryLimitExceededException)
+                {
+                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, " +
+                        "see your system administrator.");
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    var exceptionEntry = ex.Entries.Single();
+                    var clientValues = (Inventory)exceptionEntry.Entity;
+                    var databaseEntry = exceptionEntry.GetDatabaseValues();
+
+                    if (databaseEntry == null)
+                    {
+                        ModelState.AddModelError("",
+                            "Unable to save changes. The Inventory record was deleted by another user.");
+                    }
+                    else
+                    {
+                        var databaseValues = (Inventory)databaseEntry.ToObject();
+                        if (databaseValues.Quantity != clientValues.Quantity)
+                            ModelState.AddModelError("Quantity", "Current value: "
+                                + databaseValues.Quantity);
+                        if (databaseValues.Notes != clientValues.Notes)
+                            ModelState.AddModelError("Notes", "Current value: "
+                                + databaseValues.Notes);
+                        if (databaseValues.ShelfOn != clientValues.ShelfOn)
+                            ModelState.AddModelError("ShelfOn", "Current value: "
+                                + databaseValues.ShelfOn);
+                        if (databaseValues.Cost != clientValues.Cost)
+                            ModelState.AddModelError("Cost", "Current value: "
+                                + databaseValues.Cost);
+                        if (databaseValues.DateReceived != clientValues.DateReceived)
+                            ModelState.AddModelError("DateReceived", "Current value: "
+                                + databaseValues.DateReceived);
+                        if (databaseValues.LocationID != clientValues.LocationID)
+                        {
+                            Models.Location databaseLocation = await _context.Locations.FirstOrDefaultAsync(i => i.ID == databaseValues.LocationID);
+                            ModelState.AddModelError("LocationID", $"Current value: {databaseLocation?.City}");
+                        }
+                        if (databaseValues.ProductID != clientValues.ProductID)
+                        {
+                            Product databaseProduct = await _context.Products.FirstOrDefaultAsync(i => i.ID == databaseValues.ProductID);
+                            ModelState.AddModelError("ProductID", $"Current value: {databaseProduct?.Name}");
+                        }
+                        ModelState.AddModelError(string.Empty, "The record you attempted to edit "
+                                + "was modified by another user after you received your values. The "
+                                + "edit operation was canceled and the current values in the database "
+                                + "have been displayed. If you still want to save your version of this record, click "
+                                + "the Save button again. Otherwise click the 'Back to Inventory List' hyperlink.");
+                        inventoryToUpdate.RowVersion = (byte[])databaseValues.RowVersion;
+                        ModelState.Remove("RowVersion");
+                    }
+                }
+                catch (DbUpdateException dex)
+                {
+                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Inventories.LocationID, Inventories.ProductID"))
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. You cannot have duplicate records with the same name and location.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. Please try again. " +
+                        "If the problem persists, contact your systems administrator.");
+                    }
+                }
+            }
+            //return RedirectToAction(nameof(Index));
+
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.LocationID);
+            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.ProductID);
+            return View(inventoryToUpdate);
+        }
 
         /*
         // POST: Inventories/Edit/5
@@ -757,6 +907,7 @@ namespace CAA_TestApp.Controllers
                 .Include(i => i.Location)
                 .Include(i => i.Product)
                 .FirstOrDefaultAsync(i => i.ID == id);
+            
             if (inventory == null)
             {
                 return NotFound();
@@ -858,31 +1009,50 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            string To = _context.Locations.FirstOrDefault(i => i.ID == Convert.ToInt32(locationTo)).City;
-
-            Inventory send = new Inventory
+            try
             {
-                ISBN = $"{inventoryToSend.ISBN} {SendToken}",
-                ProductID = inventoryToSend.ProductID,
-                LocationID = inventoryToSend.LocationID,
-                Notes = $"To {To}",
-                ShelfOn = inventoryToSend.ShelfOn,
-                Cost = inventoryToSend.Cost,
-                DateReceived = inventoryToSend.DateReceived,
-                Quantity = quantity,
-                ItemPhoto = inventoryToSend.ItemPhoto,
-                ItemThumbnail = inventoryToSend.ItemThumbnail,
-                QRImage = inventoryToSend.QRImage,
-                EventInventories = inventoryToSend.EventInventories,
-                statusID = _context.statuses.FirstOrDefault(i => i.status == "On transit").ID,
-            };
+                string To = _context.Locations.FirstOrDefault(i => i.ID == Convert.ToInt32(locationTo)).City;
+                
+                Inventory send = new Inventory
+                {
+                    ISBN = $"{inventoryToSend.ISBN} {SendToken}",
+                    ProductID = inventoryToSend.ProductID,
+                    LocationID = inventoryToSend.LocationID,
+                    Notes = $"To {To}",
+                    ShelfOn = inventoryToSend.ShelfOn,
+                    Cost = inventoryToSend.Cost,
+                    DateReceived = inventoryToSend.DateReceived,
+                    Quantity = quantity,
+                    ItemPhoto = inventoryToSend.ItemPhoto,
+                    ItemThumbnail = inventoryToSend.ItemThumbnail,
+                    QRImage = inventoryToSend.QRImage,
+                    EventInventories = inventoryToSend.EventInventories,
+                    statusID = _context.statuses.FirstOrDefault(i => i.status == "On transit").ID,
+                };
+
+                _context.Inventories.Update(inventoryToSend);
+                await _context.Inventories.AddAsync(send);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", inventoryToSend);
+            }
+            catch (ArgumentException)
+            {
+                if (ViewData["locationFrom"] == ViewData["locationTo"])
+                {
+                    ModelState.AddModelError("locationTo", "Origin location cannot be the same as transfer location.");
+                    
+                }
+            }
+            
+
+            
 
             int preventNegative = inventoryToSend.Quantity - quantity;
 
-            if (locationFrom == locationTo)
-            {
-                throw new ArgumentException("Both locations can't be the same");
-            }
+            //if (locationFrom == locationTo)
+            //{
+            //    throw new ArgumentException("Both locations can't be the same");
+            //}
 
             if (preventNegative < 0)
             {
@@ -891,177 +1061,7 @@ namespace CAA_TestApp.Controllers
 
             inventoryToSend.Quantity = preventNegative;
 
-            _context.Inventories.Update(inventoryToSend);
-            await _context.Inventories.AddAsync(send);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("GenerateQr", send);
-        }
-
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Inventories == null)
-            {
-                return NotFound();
-            }
-
-            //var inventory = await _context.Inventories
-            //    .Include(i => i.ItemPhoto)
-            //    .Include(i => i.Location)
-            //    .Include(i => i.Product)
-            //    .ThenInclude(i => i.Organize)
-
-            var inventory = await _context.Inventories
-                .Include(i => i.ItemPhoto)
-                .Include(i => i.Location)
-                .Include(i => i.Product)
-                .FirstOrDefaultAsync(i => i.ID == id);
-            if (inventory == null)
-            {
-                return NotFound();
-            }
-
-
-
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.Location);
-            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.Product);
-            return View(inventory);
-        }
-        // POST: Inventories/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Inventory inventory,
-            string chkRemoveImage, IFormFile thePicture, Byte[] RowVersion)
-        {
-            var inventoryToUpdate = await _context.Inventories
-                .Include(i => i.Location)
-                .Include(i => i.Product)
-                .Include(i => i.ItemPhoto)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(i => i.ID == id);
-
-            if (inventoryToUpdate == null)
-            {
-                return NotFound();
-            }
-
-            //Put the original RowVersion value in the OriginalValues collection for the entity
-            _context.Entry(inventoryToUpdate).Property("RowVersion").OriginalValue = RowVersion;
-
-            //Try updating it with the values posted
-            if (await TryUpdateModelAsync<Inventory>(inventoryToUpdate, "",
-                i => i.Quantity, i => i.Notes, i => i.ShelfOn, i => i.Cost,
-                i => i.DateReceived, i => i.ISBN, i => i.LocationID, i => i.ProductID))
-            {
-                try
-                {
-                    //For the image
-                    if (chkRemoveImage != null)
-                    {
-                        //If we are just deleting the two versions of the photo, we need to make sure the Change Tracker knows
-                        //about them both so go get the Thumbnail since we did not include it.
-                        inventoryToUpdate.ItemThumbnail = _context.ItemsThumbnails.Where(p => p.invID == inventoryToUpdate.ID).FirstOrDefault();
-                        //Then, setting them to null will cause them to be deleted from the database.
-                        inventoryToUpdate.ItemPhoto = null;
-                        inventoryToUpdate.ItemThumbnail = null;
-                    }
-                    else
-                    {
-                        await AddPicture(inventoryToUpdate, thePicture);
-                    }
-                    /* try
-                {
-                    //For the image
-                    if (chkRemoveImage != null)
-                    {
-                        //If we are just deleting the two versions of the photo, we need to make sure the Change Tracker knows
-                        //about them both so go get the Thumbnail since we did not include it.
-                        patientToUpdate.PatientThumbnail = _context.PatientThumbnails.Where(p=>p.PatientID== patientToUpdate.ID).FirstOrDefault();
-                        //Then, setting them to null will cause them to be deleted from the database.
-                        patientToUpdate.PatientPhoto = null;
-                        patientToUpdate.PatientThumbnail = null;
-                    }
-                    else
-                    {
-                        await AddPicture(patientToUpdate, thePicture);
-                    }*/
-
-                    _context.Update(inventory);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("Details", new { inventoryToUpdate.ID });
-                }
-                catch (RetryLimitExceededException)
-                {
-                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, " +
-                        "see your system administrator.");
-                }
-                catch (DbUpdateConcurrencyException ex)
-                {
-                    var exceptionEntry = ex.Entries.Single();
-                    var clientValues = (Inventory)exceptionEntry.Entity;
-                    var databaseEntry = exceptionEntry.GetDatabaseValues();
-
-                    if (databaseEntry == null)
-                    {
-                        ModelState.AddModelError("",
-                            "Unable to save changes. The Inventory record was deleted by another user.");
-                    }
-                    else
-                    {
-                        var databaseValues = (Inventory)databaseEntry.ToObject();
-                        if (databaseValues.Quantity != clientValues.Quantity)
-                            ModelState.AddModelError("Quantity", "Current value: "
-                                + databaseValues.Quantity);
-                        if (databaseValues.Notes != clientValues.Notes)
-                            ModelState.AddModelError("Notes", "Current value: "
-                                + databaseValues.Notes);
-                        if (databaseValues.ShelfOn != clientValues.ShelfOn)
-                            ModelState.AddModelError("ShelfOn", "Current value: "
-                                + databaseValues.ShelfOn);
-                        if (databaseValues.Cost != clientValues.Cost)
-                            ModelState.AddModelError("Cost", "Current value: "
-                                + databaseValues.Cost);
-                        if (databaseValues.DateReceived != clientValues.DateReceived)
-                            ModelState.AddModelError("DateReceived", "Current value: "
-                                + databaseValues.DateReceived);
-                        if (databaseValues.LocationID != clientValues.LocationID)
-                        {
-                            Models.Location databaseLocation = await _context.Locations.FirstOrDefaultAsync(i => i.ID == databaseValues.LocationID);
-                            ModelState.AddModelError("LocationID", $"Current value: {databaseLocation?.City}");
-                        }
-                        if (databaseValues.ProductID != clientValues.ProductID)
-                        {
-                            Product databaseProduct = await _context.Products.FirstOrDefaultAsync(i => i.ID == databaseValues.ProductID);
-                            ModelState.AddModelError("ProductID", $"Current value: {databaseProduct?.Name}");
-                        }
-                        ModelState.AddModelError(string.Empty, "The record you attempted to edit "
-                                + "was modified by another user after you received your values. The "
-                                + "edit operation was canceled and the current values in the database "
-                                + "have been displayed. If you still want to save your version of this record, click "
-                                + "the Save button again. Otherwise click the 'Back to Inventory List' hyperlink.");
-                        inventoryToUpdate.RowVersion = (byte[])databaseValues.RowVersion;
-                        ModelState.Remove("RowVersion");
-                    }
-                }
-                catch (DbUpdateException dex)
-                {
-                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Inventories.LocationID, Inventories.ProductID"))
-                    {
-                        ModelState.AddModelError("", "Unable to save changes. You cannot have duplicate records with the same name and location.");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Unable to save changes. Please try again. " +
-                        "If the problem persists, contact your systems administrator.");
-                    }
-                }
-            }
-            //return RedirectToAction(nameof(Index));
-
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City", inventory.LocationID);
-            ViewData["ProductID"] = new SelectList(_context.Products, "ID", "Name", inventory.ProductID);
-            return View(inventoryToUpdate);
+            return View(inventoryToSend);
         }
 
         public async Task<IActionResult> RecieveInv(int? id)
