@@ -1030,18 +1030,24 @@ namespace CAA_TestApp.Controllers
                     statusID = _context.statuses.FirstOrDefault(i => i.status == "On transit").ID,
                 };
 
-                _context.Inventories.Update(inventoryToSend);
-                await _context.Inventories.AddAsync(send);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index", inventoryToSend);
+                if (ViewData["locationFrom"] == ViewData["locationTo"])
+                {
+                    ViewData["ErrorMessage"] = "Origin Location cannot be the same as transfer location";
+                    //ModelState.AddModelError("locationTo", "Origin location cannot be the same as transfer location.");
+                    return RedirectToAction("SendInv", inventoryToSend);
+                }
+                else
+                {
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Index", inventoryToSend);
+                }
+                //_context.Inventories.Update(inventoryToSend);
+                //await _context.Inventories.AddAsync(send);
+
             }
             catch (ArgumentException)
             {
-                if (ViewData["locationFrom"] == ViewData["locationTo"])
-                {
-                    ModelState.AddModelError("locationTo", "Origin location cannot be the same as transfer location.");
-                    
-                }
+
             }
             
 

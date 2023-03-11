@@ -68,6 +68,10 @@
         <select asp-for="LocationID" name="locationFrom" class="form-control" asp-items="ViewBag.LocationID" disabled="True"></select>
         <span asp-validation-for="LocationID" class="text-danger"></span>
      </div>
+
+     <div>
+         <h4>@(ViewData["ErrorMessage"])</h4>
+     </div>
     
      <div >
         <label asp-for="LocationID" class="control-label"><strong>To:</strong></label>
