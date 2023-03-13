@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Security.Policy;
 
 namespace CAA_TestApp.Controllers
 {
@@ -1051,17 +1052,18 @@ namespace CAA_TestApp.Controllers
                     ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City");
                     return View(inventoryToSend);
                 }
-
+                
 
                 ModelState.SetModelValue("locationFrom", new ValueProviderResult(locationFrom));
                 ModelState.SetModelValue("locationTo", new ValueProviderResult(To));
                 ModelState.SetModelValue("quantity", new ValueProviderResult(quantity.ToString()));
 
                 inventoryToSend.Quantity = preventNegative;
-
+                
                 _context.Inventories.Add(send);
                 _context.Update(inventoryToSend);
                 _context.SaveChanges();
+                
 
             }
             catch (Exception)
@@ -1070,11 +1072,14 @@ namespace CAA_TestApp.Controllers
 
             ViewData["LocFrom"] = _context.Locations.FirstOrDefault(i => i.ID == inventoryToSend.LocationID).City;
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City");
-
+            ViewData["done"] = true;
 
             return View(inventoryToSend);
         }
-
+        public IActionResult ItemTransfered()
+        {
+            return View();
+        }
         public async Task<IActionResult> RecieveInv(int? id)
         {
             if (id == null || _context.Inventories == null)
@@ -1318,7 +1323,7 @@ namespace CAA_TestApp.Controllers
                     ViewBag.QRCodeImage = "data:image/png;base64," + Convert.ToBase64String(ms.ToArray());
                 }
             }
-
+            
             return View(inventory);
         }
 
@@ -1344,7 +1349,7 @@ namespace CAA_TestApp.Controllers
                     ViewBag.QRCodeImage = "data:image/png;base64," + Convert.ToBase64String(ms.ToArray());
                 }
             }
-
+         
             return View(inventory);
         }
 

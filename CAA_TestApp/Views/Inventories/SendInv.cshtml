@@ -16,6 +16,7 @@
                 string imageSrc = string.Format("data:" + Model.ItemPhoto.MimeType + ";base64,{0}", imageBase64);
                 <img src="@imageSrc" alt="Profile Picture of @Model.ISBN" title="Profile Picture of @Model.ISBN" class="img-fluid rounded" />
             @:</div><hr />
+
         }
     }
     <dl class="row">
@@ -60,6 +61,7 @@
     @{
         ViewData["IsbnCode"] = ViewBag.ISBN;
      }
+
 </div>
 
 
@@ -82,8 +84,12 @@
         <br />
     </div>
     <div class="form-group">
-        <input name="submit" type="submit" value="Send And Generate Qr" class="btn btn-primary btn-style" />
+ 
+         <input name="submit" value="Transfer"  type="submit"  class="btn btn-primary btn-style" href="@Url.Action("ItemTransfered","Inventories")" type="button" data-toggle="modal" data-target="#exampleModal">
         <a asp-action="Index">Back to List</a>
     </div>
  </form>
  <br/>
+
+
+
