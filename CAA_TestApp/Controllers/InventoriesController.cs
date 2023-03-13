@@ -1098,9 +1098,9 @@ namespace CAA_TestApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ReceiveInv(int id, string codeForISBN)
+        public async Task<IActionResult> ReceiveInv(int id)
         {
-            string[] qrValidator = codeForISBN.Split(' ');
+            //string[] qrValidator = codeForISBN.Split(' ');
 
             var inventoryToReceive = await _context.Inventories
                 .Include(i => i.Location)
@@ -1141,10 +1141,10 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            if (qrValidator[0] != validateISBN[0] || qrValidator[1] != validateISBN[1])
-            {
-                throw new Exception("Wrong qr, make sure you are scanning the right package");
-            }
+            //if (qrValidator[0] != validateISBN[0] || qrValidator[1] != validateISBN[1])
+            //{
+            //    throw new Exception("Wrong qr, make sure you are scanning the right package");
+            //}
 
             List<int> aux =  new List<int>();
             for(int i = 0;i < receive.Count; i++)
