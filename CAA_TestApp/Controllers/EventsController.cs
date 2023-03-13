@@ -69,16 +69,16 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Date,EventLocation,Notes")] Event @event, string[] selectedOptions, int[] quantitties, string[] locations)
+        public async Task<IActionResult> Create([Bind("ID,Name,Date,EventLocation,Notes")] Event @event, string[] selectedOptions, int[] quan, string[] locations)
         {
             try
             {
                 if(selectedOptions != null)
                 {
+                        //@event.Quantity = the sum of all values inside quan;
                     foreach(var item in selectedOptions)
                     {
                         var itemToAdd = new EventInventory { EventID = @event.ID, InventoryID = int.Parse(item)};
-                        @event.Quantity = 5;
                         @event.EventInventories.Add(itemToAdd);
                     }
                 }
