@@ -1072,7 +1072,8 @@ namespace CAA_TestApp.Controllers
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City");
 
 
-            return View(inventoryToSend);
+            //if successful - take the user to the ReceivedInv page (which is In Transit)
+            return RedirectToAction("ReceivedInv");
         }
 
         public async Task<IActionResult> RecieveInv(int? id)
