@@ -20,6 +20,8 @@ using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.CodeAnalysis;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CAA_TestApp.Controllers
 {
@@ -916,6 +918,7 @@ namespace CAA_TestApp.Controllers
             var excludedItem = _context.Locations.FirstOrDefault(i => i.City == "On transit");
             var locations = _context.Locations.Where(i => i != excludedItem);
 
+            ViewData["LocFrom"] = _context.Locations.FirstOrDefault(i => i.ID == inventory.LocationID).City;
             ViewData["LocationID"] = new SelectList(locations, "ID", "City");
             return View(inventory);
         }
@@ -1030,42 +1033,44 @@ namespace CAA_TestApp.Controllers
                     statusID = _context.statuses.FirstOrDefault(i => i.status == "On transit").ID,
                 };
 
-                if (ViewData["locationFrom"] == ViewData["locationTo"])
+                int preventNegative = inventoryToSend.Quantity - quantity;
+
+                if (!ValidateLocationFromAndTo(locationFrom, To))
                 {
-                    ViewData["ErrorMessage"] = "Origin Location cannot be the same as transfer location";
-                    //ModelState.AddModelError("locationTo", "Origin location cannot be the same as transfer location.");
-                    return RedirectToAction("SendInv", inventoryToSend);
+                    ViewData["SameLocs"] = "• You can't send inventory to the same locations";
+                    // Return the view with errors if validation fails
+                    ViewData["LocFrom"] = _context.Locations.FirstOrDefault(i => i.ID == inventoryToSend.LocationID).City;
+                    ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City");
+                    return View(inventoryToSend);
                 }
-                else
+
+                if(!ValidatePreventBelowZero(inventoryToSend.Quantity, quantity))
                 {
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("Index", inventoryToSend);
+                    ViewData["OverQuan"] = "• You can't send more items than existing in inventory";
+                    ViewData["LocFrom"] = _context.Locations.FirstOrDefault(i => i.ID == inventoryToSend.LocationID).City;
+                    ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City");
+                    return View(inventoryToSend);
                 }
-                //_context.Inventories.Update(inventoryToSend);
-                //await _context.Inventories.AddAsync(send);
+
+
+                ModelState.SetModelValue("locationFrom", new ValueProviderResult(locationFrom));
+                ModelState.SetModelValue("locationTo", new ValueProviderResult(To));
+                ModelState.SetModelValue("quantity", new ValueProviderResult(quantity.ToString()));
+
+                inventoryToSend.Quantity = preventNegative;
+
+                _context.Inventories.Add(send);
+                _context.Update(inventoryToSend);
+                _context.SaveChanges();
 
             }
-            catch (ArgumentException)
+            catch (Exception)
             {
-
-            }
-            
-
-            
-
-            int preventNegative = inventoryToSend.Quantity - quantity;
-
-            //if (locationFrom == locationTo)
-            //{
-            //    throw new ArgumentException("Both locations can't be the same");
-            //}
-
-            if (preventNegative < 0)
-            {
-                throw new ArgumentException("Can't send more items than existing inventory");
             }
 
-            inventoryToSend.Quantity = preventNegative;
+            ViewData["LocFrom"] = _context.Locations.FirstOrDefault(i => i.ID == inventoryToSend.LocationID).City;
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City");
+
 
             return View(inventoryToSend);
         }
@@ -1975,7 +1980,27 @@ namespace CAA_TestApp.Controllers
             return NotFound("No data. ");
         }
 
+        private bool ValidateLocationFromAndTo(string locationFrom, string locationTo)
+        {
+            if (locationFrom == locationTo)
+            {
+                ModelState.AddModelError("locationToAndFrom", "Locations cannot be the same.");
+                return false;
+            }
 
+            return true;
+        }
+        private bool ValidatePreventBelowZero(int realQuan, int sending)
+        {
+            int diff = realQuan - sending;
+            if (diff < 0)
+            {
+                ModelState.AddModelError("ValidatePreventBelowZero", "Can't send more items than existing.");
+                return false;
+            }
+
+            return true;
+        }
 
         private async Task AddPicture(Inventory inventory, IFormFile thePicture)
         {

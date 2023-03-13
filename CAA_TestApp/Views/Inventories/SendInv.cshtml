@@ -64,24 +64,20 @@
 
 
      <div>
-        <label asp-for="LocationID" class="control-label"><strong>From: </strong></label>
-        <select asp-for="LocationID" name="locationFrom" class="form-control" asp-items="ViewBag.LocationID" disabled="True"></select>
-        <span asp-validation-for="LocationID" class="text-danger"></span>
+        <label asp-for="Location.City" class="control-label"><strong>From: </strong></label>
+        <input asp-for="Location.City" name="locationFrom" class="form-control" value="@ViewBag.locFrom" readonly>
      </div>
-
-     <div>
-         <h4>@(ViewData["ErrorMessage"])</h4>
-     </div>
-    
      <div >
-        <label asp-for="LocationID" class="control-label"><strong>To:</strong></label>
+        <label asp-for="LocationID" class="control-label"><strong>To:</strong></label><br />
+        <span style="color:red">@ViewBag.SameLocs</span>
         <select asp-for="LocationID" name="locationTo" class="form-control" asp-items="ViewBag.LocationID" ></select>
         <span asp-validation-for="LocationID" class="text-danger"></span>
      </div>
     <div>
         <div class="col-lg-6 col-lg-offset-3" style="margin-top:20px;">
-            <label><strong>Quantity:</strong></label>
-            <input type="number" name="quantity" min="0" />
+            <label><strong>Quantity:</strong></label><br />
+            <span style="color:red">@ViewBag.OverQuan</span><br />
+            <input type="number" name="quantity" min="0" required/>
         </div>
         <br />
     </div>
@@ -90,12 +86,4 @@
         <a asp-action="Index">Back to List</a>
     </div>
  </form>
- <br></br>
-
- <script>
-     $(document).ready(function (){
-         $("#frm"), submit(function (e){
-             e.preventDefault();
-         })
-     })
- </script>
+ <br/>
