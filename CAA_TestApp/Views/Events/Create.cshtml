@@ -6,7 +6,7 @@
 
 <h1>Create New Event</h1>
 
-
+<div id="dataDiv" data-chkData="@ViewBag.InventoryOptions"></div>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -47,7 +47,7 @@
                                     @:</tr><tr>
                                     }
                                     @:<td>
-                                        <input type="checkbox"
+                                        <input type="checkbox" id="chk" class="checkbox"
                                                name="selectedOptions"
                                                value="@checkbox.ID"
                                                @(Html.Raw(checkbox.Assigned ? "checked=\"checked\"" : "")) />
@@ -59,6 +59,8 @@
                     </table>
                 </div>
             </div>
+
+            <div id="divQuantity"></div>
             <div class="form-group">
                 <label asp-for="Notes" class="control-label"><strong>Notes</strong></label>
                 <span asp-validation-for="Notes" class="text-danger"></span>
@@ -75,7 +77,58 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+//Using JQUERY for retrieve data
+$(document).ready(function() {
+    //checks for all checkboxes and get the value (in this case would be the productID) returns as string
+    $('.checkbox').change(function() {
+        var selectedValues = [];
+        $('.checkbox:checked').each(function() {
+            selectedValues.push($(this).val());
+        });
+
+        console.log(selectedValues);
+
+        //turns the selected IDs into ints
+        var numberArray = $.map(selectedValues, function(str) {
+            return parseInt(str, 10);
+        });
+        console.log(numberArray);
+
+        //gets the array from the viewbag of all data for InvOptions
+        let myArray = @Html.Raw(Json.Serialize(ViewBag.InventoryOptions));
+        console.log(myArray);
+
+        //filters all the objects that matches the ones selected
+        var filteredArray = myArray.filter(function(item) {
+            return numberArray.includes(item.id);
+        });
+        console.log(filteredArray);
+
+        //creates the select list based on a viewData sent from the get method
+        let selectString = '<select name="locations">';
+        let locations = @Html.Raw(Json.Serialize(ViewBag.Locations));
+        console.log(locations[0]);
+        for (let i = 0; i < locations.length; i++) {
+          selectString += '<option value="' + locations[i].value + '">' + locations[i].text + '</option>';
+        }
+        selectString += '</select>';
+
+        //creates the string that is going to be passed into a div (equivalent as InnerHTML)
+        let aux = "";
+        for(let i = 0; i < selectedValues.length; i++){
+           aux += '<label><strong>' + filteredArray[i].displayText + '</strong></label><br/>' +
+                  '<input type="number" name="Quantitties"/>' + selectString + '<br/>';
+        }
+
+        //Sets the .InnerHTML jquery property
+        $('#divQuantity').html(aux);
+    });
+});
+</script>
 
 @section Scripts {
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

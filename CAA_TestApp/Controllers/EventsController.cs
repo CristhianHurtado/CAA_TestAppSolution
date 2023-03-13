@@ -235,7 +235,7 @@ namespace CAA_TestApp.Controllers
                     Assigned = currentOptionsIDs.Contains(option.ID)
                 });
             }
-
+            ViewData["Locations"] = new SelectList(_context.Locations, "ID", "City");
             ViewData["InventoryOptions"] = checkBoxes;
         }
 
