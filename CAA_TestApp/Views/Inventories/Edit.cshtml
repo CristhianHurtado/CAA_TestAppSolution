@@ -5,7 +5,10 @@
 }
 
 <h1>Edit @Html.DisplayFor(model => model.Product.Name)</h1>
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
 
+<div class="row">
+        <div class="col-md-4">
 
 <hr />
 @{
@@ -18,13 +21,18 @@
         <img src="@imageSrc" alt="Profile Picture of @Model.Product.Name" title="Profile Picture of @Model.Product.Name" class="img-fluid rounded" />
         @:</div><hr />
     }
+    else
+            {
+                @:<div><br/>
+                    <img src="~/images/img_not_found .png" alt="Image not available" title="Image not found"  />
+                @:</div><br/>
+            }
 }
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
             <input type="hidden" asp-for="RowVersion" />
+
                 <div>
         @{
             if (hasPicture)
@@ -39,7 +47,10 @@
                 </div>
             }
         }
-    </div>
+                </div>
+    </div>    
+    <div class="col-md-4">
+
          <!--   <div class="form-group">
                 <label asp-for="ISBN" class="control-label"></label>
                 <input asp-for="ISBN" class="form-control" readonly/>
@@ -89,15 +100,16 @@
                 </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary btn-style" />
-            </div>
-        </form>
-    </div>
-</div>
+                    <a asp-action="Index">Back to List</a>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+            </div>
+            </div>
+    
 </div>
+        </form>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+

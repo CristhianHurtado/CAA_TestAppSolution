@@ -2022,7 +2022,7 @@ namespace CAA_TestApp.Controllers
                         if (inventory.ItemPhoto != null)
                         {
                             //We already have pictures so just replace the Byte[]
-                            inventory.ItemPhoto.Content = ResizeImage.shrinkImageWebp(pictureArray, 500, 600);
+                            inventory.ItemPhoto.Content = ResizeImage.shrinkImageWebp(pictureArray, 300, 400);
 
                             //Get the Thumbnail so we can update it.  Remember we didn't include it
                             inventory.ItemThumbnail = _context.ItemsThumbnails.Where(p => p.invID == inventory.ID).FirstOrDefault();
@@ -2032,7 +2032,7 @@ namespace CAA_TestApp.Controllers
                         {
                             inventory.ItemPhoto = new ItemPhoto
                             {
-                                Content = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
+                                Content = ResizeImage.shrinkImageWebp(pictureArray, 300, 400),
                                 MimeType = "image/webp"
                             };
                             inventory.ItemThumbnail = new ItemThumbnail
