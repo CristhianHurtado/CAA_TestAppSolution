@@ -5,12 +5,15 @@
 }
 
 <h1>Event Report</h1>
-<form asp-controller="Events" asp-action="EventReports" method="get">
+<form asp-controller="Inventories" asp-action="EventReports" method="get">
     <a asp-action="DownloadEventReports" class="btn btn-info float-end btn-style">Download Event Report</a>
 
     <table class="table">
         <thead>
             <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Name)
                 </th>
@@ -36,6 +39,9 @@
             @foreach (var item in Model)
             {
                 <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>

@@ -1967,6 +1967,122 @@ namespace CAA_TestApp.Controllers
             return NotFound("No data. ");
         }
 
+        public async Task<IActionResult> EventReports(int? page, int? pageSizeID)
+        {
+
+
+            var sumQ = _context.EventInventories
+                .Include(a => a.Event)
+                .Include(a => a.Inventory)
+                .ThenInclude(a => a.Product)
+
+
+                .GroupBy(c => new { c.ID, c.Inventory.Product.Name, c.Inventory.Quantity, c.Event.Title,c.Event.Date, c.Event.EventLocation, c.Event.Notes })
+                .Select(grp => new EventReportsVM
+                {
+                    ID = grp.Key.ID,
+                    Title = grp.Key.Title,
+                    Name = grp.Key.Name,
+                    Quantity = grp.Key.Quantity,
+                    Date = grp.Key.Date,
+                    EventLocation = grp.Key.EventLocation,
+                    Notes = grp.Key.Notes
+
+
+                }).OrderBy(s => s.Name);
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "EventReports");
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<EventReportsVM>.CreateAsync(sumQ.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+
+        }
+
+        public IActionResult DownloadEventReports()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            var intory = from a in _context.EventInventories
+                .Include(a => a.Event)
+                .Include(a => a.Inventory)
+                .ThenInclude(a => a.Product)
+                         orderby a.Event.Title descending
+                         select new
+                         {
+                             Title = a.Event.Title,
+                             Name = a.Inventory.Product.Name,
+                             Quantity = a.Inventory.Quantity,
+                             Date = a.Event.Date.ToShortDateString(),
+                             EventLocation = a.Event.EventLocation,
+                             Notes = a.Event.Notes
+
+                         };
+            int numRows = intory.Count();
+
+
+            if (numRows > 0) //We have data
+            {
+                //Create a new spreadsheet from scratch.
+                using (ExcelPackage excel = new ExcelPackage())
+                {
+
+                    var workSheet = excel.Workbook.Worksheets.Add("Events");
+
+                    workSheet.Cells[3, 1].LoadFromCollection(intory, true);
+
+
+                    workSheet.Cells[4, 1, numRows + 4, 1].Style.Font.Bold = true;
+
+                    using (ExcelRange headings = workSheet.Cells[3, 1, 3, 5])
+                    {
+                        headings.Style.Font.Bold = true;
+                        var fill = headings.Style.Fill;
+                        fill.PatternType = ExcelFillStyle.Solid;
+                        fill.BackgroundColor.SetColor(Color.LightBlue);
+                    }
+
+                    workSheet.Cells.AutoFitColumns();
+
+                    workSheet.Cells[1, 1].Value = "Event Report";
+                    using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 5])
+                    {
+                        Rng.Merge = true; //Merge columns start and end range
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 18;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    }
+
+                    DateTime utcDate = DateTime.UtcNow;
+                    TimeZoneInfo esTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                    DateTime localDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, esTimeZone);
+                    using (ExcelRange Rng = workSheet.Cells[2, 5])
+                    {
+                        Rng.Value = "Created: " + localDate.ToShortTimeString() + " on " +
+                            localDate.ToShortDateString();
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 12;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+
+                    try
+                    {
+                        Byte[] theData = excel.GetAsByteArray();
+                        string filename = "Event.xlsx";
+                        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        return File(theData, mimeType, filename);
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest("Could not build and download the file.");
+                    }
+                }
+            }
+            return NotFound("No data. ");
+        }
+
+
         private bool ValidateLocationFromAndTo(string locationFrom, string locationTo)
         {
             if (locationFrom == locationTo)

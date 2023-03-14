@@ -1,13 +1,52 @@
 ﻿@model IEnumerable<CAA_TestApp.ViewModels.InventoryReportsVM>
 
 @{
-    ViewData["Title"] = "InventoryReports";
+    ViewData["Title"] = "Inventory Reports";
 }
 
 <h1>Inventory Report</h1>
-<form asp-controller="Inventories" asp-action="InventoryReports" method="get">
+<form asp-controller="Index" method="get">
 <a asp-action="DownloadInventoriesReports" class="btn btn-info float-end btn-style">Download Inventory Report</a>
-
+    <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+    <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+    <div class="form-horizontal">
+        <button class=" btn @(ViewData["Filtering"]) " type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" style="border-radius: 25px;">
+            Filter/Search
+        </button>
+        <div class="collapse" id="collapseFilter">
+            <div class="card card-body bg-light">
+                <div class="row">
+                    <div class="d-block d-lg-none">
+                        <div class="form-group">
+                            <label class="control-label">Sort By:</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <input type="checkbox" class="" value="desc"
+                                               @((ViewData["sortDirection"].ToString() != "asc" ? "checked=\"checked\"" : ""))
+                                               name="sortDirectionCheck" />&nbsp;&nbsp;Descending
+                                    </div>
+                                </div>
+                                <select name="sortFieldID" class="form-control" asp-items="ViewBag.sortFieldID"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Search Item Name:</label>
+                        @Html.TextBox("SearchName", null, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Filter by Branches: (Ctrl + Click to Select Multiple)</label>
+                        @Html.ListBox("LocationID", null, htmlAttributes: new { @class = "form-control" })
+                    </div>
+                    <div class="form-group col-md-4 align-self-end" style="margin-top:5px;">
+                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary btn-style" />
+                        <a asp-action="Index" class="btn btn-outline-dark btn-style ">Clear</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 <table class="table">
     <thead>
         <tr>

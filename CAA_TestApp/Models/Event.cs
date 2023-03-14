@@ -9,7 +9,7 @@ namespace CAA_TestApp.Models
         [Display(Name="Name")]
         [Required(ErrorMessage ="Name of the event cannot be left blank.")]
         [StringLength(50, ErrorMessage ="Event name cannot be longer than 50 characters.")]
-        public string Name { get; set; }
+        public string Title { get; set; }
 
         [Display(Name = "Quantity")]
         [Required(ErrorMessage = "Quantity cannot be left blank.")]
