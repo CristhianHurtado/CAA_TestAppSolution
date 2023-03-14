@@ -95,7 +95,10 @@ namespace CAA_TestApp.Controllers
                 if (selectedOptions != null)
                 {
                     //info is a dictionary taht the key is the productID and then has an array as valuea that contains [locations, quantityTotake]
-                    //structure: {"productID":["location.City", "quantityTotake"]} all values are structured as strings so convertion is required
+                    //structure: {"productID":[["location.City", "quantityTotake"], ["location.city", "quantityTotake"]]} all values are structured as strings so convertion is required
+                    /*
+                     use the location and productId to modify that item and change its quantity, u can use a loop to use it and the lenght of the vlaue as iterable
+                     */
 
                     //converts arrays to numbers for filtering
                     int[] selectOptInNumbers = selectedOptions.Select(int.Parse).ToArray();
