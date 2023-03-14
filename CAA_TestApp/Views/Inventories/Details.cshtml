@@ -31,18 +31,12 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Quantity)
         </dd>
-
-      <!--  <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ShelfOn)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ShelfOn)
-        </dd>-->
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Cost)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Cost)
+            @("(" + Math.Round(Model.Cost * Model.Quantity, 2).ToString("c") + ")")
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.DateReceived)
