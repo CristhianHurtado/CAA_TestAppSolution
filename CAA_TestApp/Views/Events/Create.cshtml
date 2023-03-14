@@ -16,6 +16,7 @@
 
 <div class="row">
         <input type="hidden" name="locations" class="hidden-locations-input" />
+        <input type="hidden" name="dataInfo" class="hidden-dataInfo-input" />
         <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -184,16 +185,14 @@ $(document).ready(function() {
 
     $("#product-table tbody tr.filterable:visible").each(function() {
       var productId = $(this).attr("data-id");
+      var location = $(this).find("input[name='locations']").val();
       var quantity = $(this).find("input[name='quan']").val();
       if (!dictionary[productId]) {
-        dictionary[productId] = [quantity];
+        dictionary[productId] = [[location, quantity]];
       } else {
-        dictionary[productId].push(quantity);
+        dictionary[productId].push([location, quantity]);
       }
-    console.log(dictionary);
     });
-
-    
 
     // Hide the "no items" row if the checkbox is unchecked
     $('.checkbox:not(:checked)').each(function() {
@@ -201,6 +200,8 @@ $(document).ready(function() {
       $("#product-table tbody tr[data-checkbox='" + checkboxId + "']").remove();
     });
     $('.hidden-locations-input').val(uniqueArr.join(','));
+    $('.hidden-dataInfo-input').val(JSON.stringify(dictionary));
+    console.log(dictionary);
     $("#product-table").show();
   });
 
