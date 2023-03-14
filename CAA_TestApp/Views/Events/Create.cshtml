@@ -18,11 +18,6 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Quantity" class="control-label"><strong>Quantity</strong>*</label>
-                <input asp-for="Quantity" class="form-control" />
-                <span asp-validation-for="Quantity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Date" class="control-label"><strong>Date</strong>*</label>
                 <input asp-for="Date" class="form-control" />
                 <span asp-validation-for="Date" class="text-danger"></span>
@@ -59,6 +54,7 @@
                     </table>
                 </div>
             </div>
+            <hr />
 
             <div id="divQuantity"></div>
             <div class="form-group">
@@ -107,7 +103,7 @@ $(document).ready(function() {
         console.log(filteredArray);
 
         //creates the select list based on a viewData sent from the get method
-        let selectString = '<select name="locations">';
+        let selectString = '<select name="locations" class="form-select">';
         let locations = @Html.Raw(Json.Serialize(ViewBag.Locations));
         console.log(locations[0]);
         for (let i = 0; i < locations.length; i++) {
@@ -119,7 +115,7 @@ $(document).ready(function() {
         let aux = "";
         for(let i = 0; i < selectedValues.length; i++){
            aux += '<label><strong>' + filteredArray[i].displayText + '</strong></label><br/>' +
-                  '<input type="number" name="Quantitties"/>' + selectString + '<br/>';
+                  '<input class="form-control" type="number" name="quan"/>' + '<label><strong>Taken from:</strong></label>' + selectString + '<br/><hr/><br/>';
         }
 
         //Sets the .InnerHTML jquery property

@@ -1074,7 +1074,8 @@ namespace CAA_TestApp.Controllers
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City");
             ViewData["done"] = true;
 
-            return View(inventoryToSend);
+            //if successful - take the user to the ReceivedInv page (which is In Transit)
+            return RedirectToAction("ItemTransfered");
         }
         public IActionResult ItemTransfered()
         {
@@ -1102,9 +1103,9 @@ namespace CAA_TestApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ReceiveInv(int id, string codeForISBN)
+        public async Task<IActionResult> ReceiveInv(int id)
         {
-            string[] qrValidator = codeForISBN.Split(' ');
+            //string[] qrValidator = codeForISBN.Split(' ');
 
             var inventoryToReceive = await _context.Inventories
                 .Include(i => i.Location)
@@ -1145,10 +1146,10 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            if (qrValidator[0] != validateISBN[0] || qrValidator[1] != validateISBN[1])
-            {
-                throw new Exception("Wrong qr, make sure you are scanning the right package");
-            }
+            //if (qrValidator[0] != validateISBN[0] || qrValidator[1] != validateISBN[1])
+            //{
+            //    throw new Exception("Wrong qr, make sure you are scanning the right package");
+            //}
 
             List<int> aux =  new List<int>();
             for(int i = 0;i < receive.Count; i++)

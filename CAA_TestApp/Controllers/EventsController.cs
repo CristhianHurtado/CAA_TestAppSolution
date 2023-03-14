@@ -69,12 +69,23 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Quantity,Date,EventLocation,Notes")] Event @event, string[] selectedOptions)
+        public async Task<IActionResult> Create([Bind("ID,Name,Date,EventLocation,Notes")] Event @event, string[] selectedOptions, int[] quan, string[] locations)
         {
+            /*
+             * 1). loop through selectedOptions to get the products from inventory
+             * 2). Filter them with locations to get the inventory to get the items out
+             * 3). use the same code for create a copy of the item as I did in sendInv in invetoriesController to create the In use inv
+             * 4). add them to DB, update Existing inv, and saveChanges
+             * 5). Filter the context for inventory that its in use and its related to the @event name
+             * 6). add totalQuantity to @event looping through the quan array and add its values
+             * 7). execute the foreach loop after the comment of @event.quantity... using the IDs filtered in step 5 as iterable
+             * 8). add and savechanges
+            */
             try
             {
                 if(selectedOptions != null)
                 {
+                        //@event.Quantity = the sum of all values inside quan;
                     foreach(var item in selectedOptions)
                     {
                         var itemToAdd = new EventInventory { EventID = @event.ID, InventoryID = int.Parse(item)};
