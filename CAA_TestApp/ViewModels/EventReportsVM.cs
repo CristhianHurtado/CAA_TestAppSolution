@@ -11,6 +11,9 @@ namespace CAA_TestApp.ViewModels
         [StringLength(50, ErrorMessage = "Event name cannot be longer than 50 characters.")]
         public string Name { get; set; }
 
+        [Display(Name = "Title")]
+        public string Title { get; set; }
+
         [Display(Name = "Quantity")]
         [Required(ErrorMessage = "Quantity cannot be left blank.")]
         public int Quantity { get; set; }
@@ -19,9 +22,6 @@ namespace CAA_TestApp.ViewModels
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime Date { get; set; }
-
-        [Display(Name = "Event Inventories")]
-        public string EventInventories { get; set; }
 
         [Display(Name = "Location")]
         [Required(ErrorMessage = "Event location cannot be left blank.")]

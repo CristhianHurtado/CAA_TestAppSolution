@@ -309,7 +309,7 @@ namespace CAA_TestApp.Data
                     context.Events.AddRange(
                         new Event
                         {
-                            Name = "Niagara College Career Fair",
+                            Title = "Niagara College Career Fair",
                             Quantity= 45,
                             Date = DateTime.Now,
                             EventLocation = "100 Niagara College Blvd",
@@ -317,7 +317,7 @@ namespace CAA_TestApp.Data
                         },
                         new Event
                         {
-                            Name = "Rankin Cancer Run",
+                            Title = "Rankin Cancer Run",
                             Quantity= 100,
                             Date = DateTime.Now,
                             EventLocation = "St. Catharines",
@@ -333,17 +333,17 @@ namespace CAA_TestApp.Data
                         new EventInventory
                         {
                             InventoryID = context.Inventories.FirstOrDefault(i => i.Product.Name.Contains("Bracelet")).ID,
-                            EventID = context.Events.FirstOrDefault(i => i.Name == "Niagara College Career Fair").ID
+                            EventID = context.Events.FirstOrDefault(i => i.Title == "Niagara College Career Fair").ID
                         },
                         new EventInventory
                         {
                             InventoryID = context.Inventories.FirstOrDefault(i => i.Product.Name.Contains("Cap")).ID,
-                            EventID = context.Events.FirstOrDefault(i => i.Name == "Niagara College Career Fair").ID
+                            EventID = context.Events.FirstOrDefault(i => i.Title == "Niagara College Career Fair").ID
                         },
                         new EventInventory
                         {
                             InventoryID = context.Inventories.FirstOrDefault(i => i.Product.Name.Contains("Cap")).ID,
-                            EventID = context.Events.FirstOrDefault(i => i.Name == "Rankin Cancer Run").ID
+                            EventID = context.Events.FirstOrDefault(i => i.Title == "Rankin Cancer Run").ID
                         });
 
                     context.SaveChanges();

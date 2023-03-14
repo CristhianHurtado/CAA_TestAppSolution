@@ -20,6 +20,9 @@ namespace CAA_TestApp.Controllers
     {
         private readonly CaaContext _context;
 
+        private Random _random = new Random();
+
+        private int InUseToken;
         public EventsController(CaaContext context)
         {
             _context = context;
@@ -61,6 +64,9 @@ namespace CAA_TestApp.Controllers
             var @event = new Event();
             PopulateAssignedInventoryData(@event);
 
+            ViewData["conText"] = _context.Inventories.Include(i => i.Product).Include(i => i.Location).OrderBy(i => i.ProductID).ToList();
+            ViewData["caa"] = _context;
+
             return View();
         }
 
@@ -69,7 +75,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Date,EventLocation,Notes")] Event @event, string[] selectedOptions, int[] quan, string[] locations)
+        public async Task<IActionResult> Create([Bind("ID,Title,Date,EventLocation,Notes")] Event @event, string[] selectedOptions, int[] quan, string[] locations)
         {
             /*
              * 1). loop through selectedOptions to get the products from inventory
@@ -85,6 +91,60 @@ namespace CAA_TestApp.Controllers
             {
                 if(selectedOptions != null)
                 {
+                    //converts arrays to numbers for filtering
+                    int[] selectOptInNumbers = selectedOptions.Select(int.Parse).ToArray();
+                    int[] locationsIDinNumber = locations.Select(int.Parse).ToArray();
+                    int isInStock = _context.statuses.FirstOrDefault(i => i.status == "In stock").ID;
+
+                    //gets all inv
+                    List<Inventory> inv = _context.Inventories.ToList();
+
+                    //filters inventory
+                    List<Inventory> productFilter = inv.Where(i => selectOptInNumbers.Contains(i.ProductID)).ToList();
+                    List<Inventory> locationFilter = productFilter.Where(i => locationsIDinNumber.Contains(i.LocationID)).ToList();
+                    List<Inventory> statusFilter = locationFilter.Where(i => i.statusID == isInStock).ToList();
+
+                    //checks for no matching values
+                    var unmatchedProduct = selectOptInNumbers.Except(productFilter.Select(i => i.ProductID)).ToArray();
+                    var unmatchedLocation = locationsIDinNumber.Except(locationFilter.Select(i => i.LocationID)).ToArray();
+
+                    if(statusFilter.Count <= 0) 
+                    {
+                        return NotFound();
+                    }
+
+                    foreach(Inventory invInEvent in statusFilter)
+                    {
+                        InUseToken = _random.Next(201, 1000);
+
+                        string auxISBN = GenerateISBN();
+
+                        int iterable = 0;
+
+                        //if(invInEvent.Quantity - quan[iterable] < 0)
+                        //{
+                        //    ViewData[]
+                        //}
+
+                        Inventory send = new Inventory
+                        {
+                            ISBN = $"{invInEvent.ISBN} {auxISBN} {InUseToken}",
+                            ProductID = invInEvent.ProductID,
+                            LocationID = invInEvent.LocationID,
+                            Notes = $"Taken from {invInEvent.Location.City}",
+                            ShelfOn = "In use",
+                            Cost = invInEvent.Cost,
+                            DateReceived = @event.Date,
+                            Quantity = quan[iterable],
+                            ItemPhoto = invInEvent.ItemPhoto,
+                            ItemThumbnail = invInEvent.ItemThumbnail,
+                            QRImage = invInEvent.QRImage,
+                            EventInventories = invInEvent.EventInventories,
+                            statusID = _context.statuses.FirstOrDefault(i => i.status == "In use").ID,
+                        };
+
+                        iterable++;
+                    }
                         //@event.Quantity = the sum of all values inside quan;
                     foreach(var item in selectedOptions)
                     {
@@ -157,7 +217,7 @@ namespace CAA_TestApp.Controllers
 
             //try updating with values posted
             if(await TryUpdateModelAsync<Event>(eventToUpdate, "",
-                i => i.Name, i => i.Quantity, i => i.Date, i => i.EventLocation, i => i.Notes)) 
+                i => i.Title, i => i.Quantity, i => i.Date, i => i.EventLocation, i => i.Notes)) 
             {
                 try
                 {
@@ -291,11 +351,11 @@ namespace CAA_TestApp.Controllers
                 .ThenInclude(a=> a.Inventory)
                 .ThenInclude(a=> a.Product)
 
-                .GroupBy(c => new { c.ID, c.Name, c.Quantity , c.Date, c.EventLocation, c.Notes })
+                .GroupBy(c => new { c.ID, c.Title, c.Quantity , c.Date, c.EventLocation, c.Notes })
                 .Select(grp => new EventReportsVM
                 {
                     ID = grp.Key.ID,
-                    Name = grp.Key.Name,
+                    Name = grp.Key.Title,
                     Quantity = grp.Key.Quantity,
                     Date = grp.Key.Date,
                     EventLocation = grp.Key.EventLocation,
@@ -320,10 +380,10 @@ namespace CAA_TestApp.Controllers
             var intory = from a in _context.Events
                 .Include(a => a.EventInventories)
                 .ThenInclude(a => a.Inventory)
-                         orderby a.Name descending
+                         orderby a.Title descending
                          select new
                          {
-                             Name = a.Name,
+                             Name = a.Title,
                              Quantity = a.Quantity,
                              Date = a.Date.ToShortDateString(),
                              EventLocation = a.EventLocation,
@@ -391,6 +451,30 @@ namespace CAA_TestApp.Controllers
                 }
             }
             return NotFound("No data. ");
+        }
+
+        private string GenerateISBN()
+        {
+            Random random = new Random();
+
+            string newISBN;
+            bool Exist = false;
+
+            do
+            {
+                newISBN = random.Next(10000, 99999).ToString();
+
+                foreach (var item in _context.Inventories)
+                {
+                    if (item.ISBN == newISBN)
+                    {
+                        Exist = true;
+                    }
+                }
+            }
+            while (Exist);
+
+            return newISBN;
         }
     }
 }

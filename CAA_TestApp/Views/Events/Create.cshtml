@@ -1,7 +1,11 @@
-﻿@model CAA_TestApp.Models.Event
+﻿@using CAA_TestApp.Data;
+@using CAA_TestApp.Models;
+@model CAA_TestApp.Models.Event
 
 @{
     ViewData["Title"] = "Create";
+    var caa = ViewBag.conText;
+    CaaContext _context = ViewBag.caa;
 }
 
 <h1>Create New Event</h1>
@@ -9,13 +13,14 @@
 <div id="dataDiv" data-chkData="@ViewBag.InventoryOptions"></div>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="locations" class="hidden-locations-input" />
+        <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"><strong> Event Name</strong>*</label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="Title" class="control-label"><strong> Event Name</strong>*</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Date" class="control-label"><strong>Date</strong>*</label>
@@ -57,75 +62,152 @@
                 </div>
             </div>
             <hr />
-
-            <div id="divQuantity"></div>
             <div class="form-group">
                 <label asp-for="Notes" class="control-label"><strong>Notes</strong></label>
                 <span asp-validation-for="Notes" class="text-danger"></span>
                 @Html.TextAreaFor(i => i.Notes, new { @class = "form-control" })
             </div>
             <br />
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-outline-primary btn-style" />
-            </div>
-        </form>
-    </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+        </div>
+        <hr />
+        <div>
+            <table class="table-bordered" id="product-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Location</th>
+                        <th>Take Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{var invs = caa;}
+                    @foreach(Inventory item in invs)
+                    {
+                        @if (item.statusID != _context.statuses.FirstOrDefault(i => i.status == "Archived").ID)
+                        {
+                            @if (item.statusID != _context.statuses.FirstOrDefault(i => i.status == "On transit").ID)
+                            {
+                                <tr class="filterable" data-id="@item.Product.ID">
+                                    @if(item.Quantity == 0)
+                                    {
+                                         <td colspan="4">no items for @item.Product.Name</td>
+                                    }
+                                    else
+                                    {
+                                        <td>
+                                            @item.Product.Name
+                                        </td>
+                                        <td>
+                                            @item.Quantity
+                                        </td>
+                                        <td>
+                                            <input type="text" readonly name="locations" value="@item.Location.City"/>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="quan" min="0">
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <hr />
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-outline-primary btn-style" />
+        </div>
+    </form>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-//Using JQUERY for retrieve data
 $(document).ready(function() {
-    //checks for all checkboxes and get the value (in this case would be the productID) returns as string
-    $('.checkbox').change(function() {
-        var selectedValues = [];
-        $('.checkbox:checked').each(function() {
-            selectedValues.push($(this).val());
-        });
+  $("#product-table").hide();
+  var visibleLocations = [];
 
-        console.log(selectedValues);
-
-        //turns the selected IDs into ints
-        var numberArray = $.map(selectedValues, function(str) {
-            return parseInt(str, 10);
-        });
-        console.log(numberArray);
-
-        //gets the array from the viewbag of all data for InvOptions
-        let myArray = @Html.Raw(Json.Serialize(ViewBag.InventoryOptions));
-        console.log(myArray);
-
-        //filters all the objects that matches the ones selected
-        var filteredArray = myArray.filter(function(item) {
-            return numberArray.includes(item.id);
-        });
-        console.log(filteredArray);
-
-        //creates the select list based on a viewData sent from the get method
-        let selectString = '<select name="locations" class="form-select">';
-        let locations = @Html.Raw(Json.Serialize(ViewBag.Locations));
-        console.log(locations[0]);
-        for (let i = 0; i < locations.length; i++) {
-          selectString += '<option value="' + locations[i].value + '">' + locations[i].text + '</option>';
-        }
-        selectString += '</select>';
-
-        //creates the string that is going to be passed into a div (equivalent as InnerHTML)
-        let aux = "";
-        for(let i = 0; i < selectedValues.length; i++){
-           aux += '<label><strong>' + filteredArray[i].displayText + '</strong></label><br/>' +
-                  '<input class="form-control" type="number" name="quan"/>' + '<label><strong>Taken from:</strong></label>' + selectString + '<br/><hr/><br/>';
-        }
-
-        //Sets the .InnerHTML jquery property
-        $('#divQuantity').html(aux);
+  $('.checkbox').change(function() {
+    var selectedValues = [];
+    visibleLocations = [];
+    $('.checkbox:checked').each(function() {
+      selectedValues.push($(this).val());
     });
+
+    $("#product-table tbody tr.filterable").each(function() {
+      if ($.inArray($(this).attr("data-id"), selectedValues) !== -1) {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+
+    var noItems = false;
+    $('.checkbox:checked').each(function() {
+      var checkboxId = $(this).val();
+      var itemsCount = $("#product-table tr.filterable[data-id='" + checkboxId + "']").length;
+      if (itemsCount === 0) {
+        noItems = true;
+        var rowExists = $("#product-table tbody tr[data-checkbox='" + checkboxId + "']").length > 0;
+        if (!rowExists) {
+          $("#product-table tbody").append(`<tr data-checkbox="${checkboxId}"><td colspan='4'>There are no items for ${$(this).parent().text().trim()}.</td></tr>`);
+        }
+      } else {
+        $("#product-table tbody tr[data-checkbox='" + checkboxId + "']").remove();
+      }
+    });
+
+    $("#product-table tbody tr.filterable").each(function() {
+      if ($.inArray($(this).attr("data-id"), selectedValues) !== -1) {
+        $(this).show();
+        // If the row is visible, add its location to the array
+        visibleLocations.push($(this).find("input[name='locations']").val());
+      } else {
+        $(this).hide();
+      }
+    });
+
+    // Hide the table header if no items are selected
+    if (selectedValues.length == 0) {
+      $("#product-table thead").hide();
+    } else {
+      $("#product-table thead").show();
+    }
+
+    let uniqueArr = [...new Set(visibleLocations)];
+    
+    var dictionary = {};
+
+    $("#product-table tbody tr.filterable:visible").each(function() {
+      var productId = $(this).attr("data-id");
+      var quantity = $(this).find("input[name='quan']").val();
+      if (!dictionary[productId]) {
+        dictionary[productId] = [quantity];
+      } else {
+        dictionary[productId].push(quantity);
+      }
+    console.log(dictionary);
+    });
+
+    
+
+    // Hide the "no items" row if the checkbox is unchecked
+    $('.checkbox:not(:checked)').each(function() {
+      var checkboxId = $(this).val();
+      $("#product-table tbody tr[data-checkbox='" + checkboxId + "']").remove();
+    });
+    $('.hidden-locations-input').val(uniqueArr.join(','));
+    $("#product-table").show();
+  });
+
 });
+
 </script>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
 
 @section Scripts {
 

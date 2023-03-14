@@ -57,7 +57,7 @@ namespace CAA_TestApp.Controllers
                 .Include(i => i.Status)
                 .Include(i => i.Product)
                 .ThenInclude(c => c.Category)
-                .Include(i=> i.ItemThumbnail)
+                .Include(i => i.ItemThumbnail).OrderBy(i => i.Product.Name).ThenBy(i => i.Location.City)
                 .AsNoTracking();
 
             if (CategoryID.HasValue)
@@ -113,17 +113,18 @@ namespace CAA_TestApp.Controllers
             }
             else if (sortField == "Product")
             {
-                if (sortDirection == "asc")
-                {
-                    inventories = inventories
-                        .OrderBy(i => i.Product.Name)
-                        .ThenBy(i => i.Location.City);
-                }
-                else
+                if (sortDirection == "desc")
                 {
                     inventories = inventories
                         .OrderByDescending(i => i.Product.Name)
                         .ThenByDescending(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                    .OrderBy(i => i.Product.Name)
+                    .ThenBy(i => i.Location.City);
+
                 }
             }
             else if (sortField == "Quantity")
@@ -138,21 +139,6 @@ namespace CAA_TestApp.Controllers
                 {
                     inventories = inventories
                         .OrderBy(i => i.Quantity)
-                        .ThenBy(i => i.Location.City);
-                }
-            }
-            else if (sortField == "Cost")
-            {
-                if (sortDirection == "asc")
-                {
-                    inventories = inventories
-                        .OrderByDescending(i => i.Cost)
-                        .ThenBy(i => i.Location.City);
-                }
-                else
-                {
-                    inventories = inventories
-                        .OrderBy(i => i.Cost)
                         .ThenBy(i => i.Location.City);
                 }
             }
@@ -688,7 +674,7 @@ namespace CAA_TestApp.Controllers
                 .Include(i => i.Location)
                 .Include(i => i.Product)
                 .FirstOrDefaultAsync(i => i.ID == id);
-            
+
             if (inventory == null)
             {
                 return NotFound();
@@ -910,7 +896,7 @@ namespace CAA_TestApp.Controllers
                 .Include(i => i.Location)
                 .Include(i => i.Product)
                 .FirstOrDefaultAsync(i => i.ID == id);
-            
+
             if (inventory == null)
             {
                 return NotFound();
@@ -1016,7 +1002,7 @@ namespace CAA_TestApp.Controllers
             try
             {
                 string To = _context.Locations.FirstOrDefault(i => i.ID == Convert.ToInt32(locationTo)).City;
-                
+
                 Inventory send = new Inventory
                 {
                     ISBN = $"{inventoryToSend.ISBN} {SendToken}",
@@ -1045,7 +1031,7 @@ namespace CAA_TestApp.Controllers
                     return View(inventoryToSend);
                 }
 
-                if(!ValidatePreventBelowZero(inventoryToSend.Quantity, quantity))
+                if (!ValidatePreventBelowZero(inventoryToSend.Quantity, quantity))
                 {
                     ViewData["OverQuan"] = "• You can't send more items than existing in inventory";
                     ViewData["LocFrom"] = _context.Locations.FirstOrDefault(i => i.ID == inventoryToSend.LocationID).City;
@@ -1119,7 +1105,7 @@ namespace CAA_TestApp.Controllers
 
             string[] filterLocation = inventoryToReceive.Notes.Split(' ');
             string addToLocation = "";
-            for(int i = 1; i < filterLocation.Length; i++)
+            for (int i = 1; i < filterLocation.Length; i++)
             {
                 addToLocation += $"{filterLocation[i]} ";
             }
@@ -1151,8 +1137,8 @@ namespace CAA_TestApp.Controllers
             //    throw new Exception("Wrong qr, make sure you are scanning the right package");
             //}
 
-            List<int> aux =  new List<int>();
-            for(int i = 0;i < receive.Count; i++)
+            List<int> aux = new List<int>();
+            for (int i = 0; i < receive.Count; i++)
             {
                 if (receive[i].LocationID == To && receive[i].statusID == _context.statuses.FirstOrDefault(i => i.status == "In stock").ID)
                 {
@@ -1161,7 +1147,7 @@ namespace CAA_TestApp.Controllers
             }
 
             Dictionary<int, Inventory> dic = new Dictionary<int, Inventory>();
-            foreach(int i in aux)
+            foreach (int i in aux)
             {
                 dic.Add(i, receive[i]);
             }
@@ -1177,7 +1163,7 @@ namespace CAA_TestApp.Controllers
             }
             else
             {
-                Inventory updateInv = (Inventory) dic.FirstOrDefault().Value;
+                Inventory updateInv = (Inventory)dic.FirstOrDefault().Value;
                 updateInv.Quantity += inventoryToReceive.Quantity;
                 updateInv.DateReceived = DateTime.Now;
                 _context.Inventories.Remove(inventoryToReceive);
@@ -1481,7 +1467,7 @@ namespace CAA_TestApp.Controllers
             return NotFound("No data. ");
         }
 
-        public string GenerateISBN()
+        private string GenerateISBN()
         {
             Random random = new Random();
 
@@ -1986,6 +1972,122 @@ namespace CAA_TestApp.Controllers
             return NotFound("No data. ");
         }
 
+        public async Task<IActionResult> EventReports(int? page, int? pageSizeID)
+        {
+
+
+            var sumQ = _context.EventInventories
+                .Include(a => a.Event)
+                .Include(a => a.Inventory)
+                .ThenInclude(a => a.Product)
+
+
+                .GroupBy(c => new { c.ID, c.Inventory.Product.Name, c.Inventory.Quantity, c.Event.Title,c.Event.Date, c.Event.EventLocation, c.Event.Notes })
+                .Select(grp => new EventReportsVM
+                {
+                    ID = grp.Key.ID,
+                    Title = grp.Key.Title,
+                    Name = grp.Key.Name,
+                    Quantity = grp.Key.Quantity,
+                    Date = grp.Key.Date,
+                    EventLocation = grp.Key.EventLocation,
+                    Notes = grp.Key.Notes
+
+
+                }).OrderBy(s => s.Name);
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "EventReports");
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<EventReportsVM>.CreateAsync(sumQ.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+
+        }
+
+        public IActionResult DownloadEventReports()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            var intory = from a in _context.EventInventories
+                .Include(a => a.Event)
+                .Include(a => a.Inventory)
+                .ThenInclude(a => a.Product)
+                         orderby a.Event.Title descending
+                         select new
+                         {
+                             Title = a.Event.Title,
+                             Name = a.Inventory.Product.Name,
+                             Quantity = a.Inventory.Quantity,
+                             Date = a.Event.Date.ToShortDateString(),
+                             EventLocation = a.Event.EventLocation,
+                             Notes = a.Event.Notes
+
+                         };
+            int numRows = intory.Count();
+
+
+            if (numRows > 0) //We have data
+            {
+                //Create a new spreadsheet from scratch.
+                using (ExcelPackage excel = new ExcelPackage())
+                {
+
+                    var workSheet = excel.Workbook.Worksheets.Add("Events");
+
+                    workSheet.Cells[3, 1].LoadFromCollection(intory, true);
+
+
+                    workSheet.Cells[4, 1, numRows + 4, 1].Style.Font.Bold = true;
+
+                    using (ExcelRange headings = workSheet.Cells[3, 1, 3, 5])
+                    {
+                        headings.Style.Font.Bold = true;
+                        var fill = headings.Style.Fill;
+                        fill.PatternType = ExcelFillStyle.Solid;
+                        fill.BackgroundColor.SetColor(Color.LightBlue);
+                    }
+
+                    workSheet.Cells.AutoFitColumns();
+
+                    workSheet.Cells[1, 1].Value = "Event Report";
+                    using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 5])
+                    {
+                        Rng.Merge = true; //Merge columns start and end range
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 18;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    }
+
+                    DateTime utcDate = DateTime.UtcNow;
+                    TimeZoneInfo esTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                    DateTime localDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, esTimeZone);
+                    using (ExcelRange Rng = workSheet.Cells[2, 5])
+                    {
+                        Rng.Value = "Created: " + localDate.ToShortTimeString() + " on " +
+                            localDate.ToShortDateString();
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 12;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+
+                    try
+                    {
+                        Byte[] theData = excel.GetAsByteArray();
+                        string filename = "Event.xlsx";
+                        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        return File(theData, mimeType, filename);
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest("Could not build and download the file.");
+                    }
+                }
+            }
+            return NotFound("No data. ");
+        }
+
+
         private bool ValidateLocationFromAndTo(string locationFrom, string locationTo)
         {
             if (locationFrom == locationTo)
@@ -2027,7 +2129,7 @@ namespace CAA_TestApp.Controllers
                         if (inventory.ItemPhoto != null)
                         {
                             //We already have pictures so just replace the Byte[]
-                            inventory.ItemPhoto.Content = ResizeImage.shrinkImageWebp(pictureArray, 500, 600);
+                            inventory.ItemPhoto.Content = ResizeImage.shrinkImageWebp(pictureArray, 300, 400);
 
                             //Get the Thumbnail so we can update it.  Remember we didn't include it
                             inventory.ItemThumbnail = _context.ItemsThumbnails.Where(p => p.invID == inventory.ID).FirstOrDefault();
@@ -2037,7 +2139,7 @@ namespace CAA_TestApp.Controllers
                         {
                             inventory.ItemPhoto = new ItemPhoto
                             {
-                                Content = ResizeImage.shrinkImageWebp(pictureArray, 500, 600),
+                                Content = ResizeImage.shrinkImageWebp(pictureArray, 300, 400),
                                 MimeType = "image/webp"
                             };
                             inventory.ItemThumbnail = new ItemThumbnail
