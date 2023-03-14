@@ -152,4 +152,8 @@ body {
         padding: 8px;
     }
 
-
+/*-----------Image not found image-----------*/
+.noimg {
+    max-width: 300px;
+    min-height: 300px;
+}
