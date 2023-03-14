@@ -13,6 +13,7 @@ using CAA_TestApp.Utilities;
 using OfficeOpenXml.Style;
 using OfficeOpenXml;
 using System.Drawing;
+using Newtonsoft.Json;
 
 namespace CAA_TestApp.Controllers
 {
@@ -75,7 +76,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,Date,EventLocation,Notes")] Event @event, string[] selectedOptions, int[] quan, string[] locations)
+        public async Task<IActionResult> Create([Bind("ID,Title,Date,EventLocation,Notes")] Event @event, string[] selectedOptions, string dataInfo, string[] locations)
         {
             /*
              * 1). loop through selectedOptions to get the products from inventory
@@ -89,11 +90,13 @@ namespace CAA_TestApp.Controllers
             */
             try
             {
-                if(selectedOptions != null)
+                Dictionary<string, List<List<string>>> Info = JsonConvert.DeserializeObject<Dictionary<string, List<List<string>>>>(dataInfo);
+                string[] ActualLocations = locations.Take(1).ToArray();
+                if (selectedOptions != null)
                 {
                     //converts arrays to numbers for filtering
                     int[] selectOptInNumbers = selectedOptions.Select(int.Parse).ToArray();
-                    int[] locationsIDinNumber = locations.Select(int.Parse).ToArray();
+                    int[] locationsIDinNumber = ActualLocations.Select(int.Parse).ToArray();
                     int isInStock = _context.statuses.FirstOrDefault(i => i.status == "In stock").ID;
 
                     //gets all inv
@@ -135,7 +138,7 @@ namespace CAA_TestApp.Controllers
                             ShelfOn = "In use",
                             Cost = invInEvent.Cost,
                             DateReceived = @event.Date,
-                            Quantity = quan[iterable],
+                            Quantity = 0,
                             ItemPhoto = invInEvent.ItemPhoto,
                             ItemThumbnail = invInEvent.ItemThumbnail,
                             QRImage = invInEvent.QRImage,
