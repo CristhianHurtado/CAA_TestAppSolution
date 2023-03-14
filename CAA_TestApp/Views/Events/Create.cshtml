@@ -12,8 +12,9 @@
 
 <div id="dataDiv" data-chkData="@ViewBag.InventoryOptions"></div>
 <hr />
-<div class="row">
     <form asp-action="Create" method="post" enctype="multipart/form-data">
+
+<div class="row">
         <input type="hidden" name="locations" class="hidden-locations-input" />
         <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -32,7 +33,6 @@
                 <input asp-for="EventLocation" class="form-control" />
                 <span asp-validation-for="EventLocation" class="text-danger"></span>
             </div>
-
 
             <div class="form-group">
                 <label class="control-label" style="margin-top:5px;"><strong>Products Needed</strong>*</label>
@@ -70,8 +70,7 @@
             <br />
 
         </div>
-        <hr />
-        <div>
+        <div class="col-md-4">
             <table class="table-bordered" id="product-table">
                 <thead>
                     <tr>
@@ -119,9 +118,12 @@
         <hr />
         <div class="form-group">
             <input type="submit" value="Create" class="btn btn-outline-primary btn-style" />
+                <a asp-action="Index">Back to List</a>
+
         </div>
-    </form>
 </div>
+    </form>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
@@ -206,7 +208,6 @@ $(document).ready(function() {
 
 </script>
 <div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
