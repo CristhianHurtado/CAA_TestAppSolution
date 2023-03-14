@@ -56,7 +56,7 @@ namespace CAA_TestApp.Controllers
                 .Include(i => i.Status)
                 .Include(i => i.Product)
                 .ThenInclude(c => c.Category)
-                .Include(i=> i.ItemThumbnail)
+                .Include(i => i.ItemThumbnail).OrderBy(i => i.Product.Name).ThenBy(i => i.Location.City)
                 .AsNoTracking();
 
             if (CategoryID.HasValue)
@@ -112,17 +112,18 @@ namespace CAA_TestApp.Controllers
             }
             else if (sortField == "Product")
             {
-                if (sortDirection == "asc")
-                {
-                    inventories = inventories
-                        .OrderBy(i => i.Product.Name)
-                        .ThenBy(i => i.Location.City);
-                }
-                else
+                if (sortDirection == "desc")
                 {
                     inventories = inventories
                         .OrderByDescending(i => i.Product.Name)
                         .ThenByDescending(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                    .OrderBy(i => i.Product.Name)
+                    .ThenBy(i => i.Location.City);
+
                 }
             }
             else if (sortField == "Quantity")
@@ -137,21 +138,6 @@ namespace CAA_TestApp.Controllers
                 {
                     inventories = inventories
                         .OrderBy(i => i.Quantity)
-                        .ThenBy(i => i.Location.City);
-                }
-            }
-            else if (sortField == "Cost")
-            {
-                if (sortDirection == "asc")
-                {
-                    inventories = inventories
-                        .OrderByDescending(i => i.Cost)
-                        .ThenBy(i => i.Location.City);
-                }
-                else
-                {
-                    inventories = inventories
-                        .OrderBy(i => i.Cost)
                         .ThenBy(i => i.Location.City);
                 }
             }
@@ -687,7 +673,7 @@ namespace CAA_TestApp.Controllers
                 .Include(i => i.Location)
                 .Include(i => i.Product)
                 .FirstOrDefaultAsync(i => i.ID == id);
-            
+
             if (inventory == null)
             {
                 return NotFound();
@@ -909,7 +895,7 @@ namespace CAA_TestApp.Controllers
                 .Include(i => i.Location)
                 .Include(i => i.Product)
                 .FirstOrDefaultAsync(i => i.ID == id);
-            
+
             if (inventory == null)
             {
                 return NotFound();
@@ -1015,7 +1001,7 @@ namespace CAA_TestApp.Controllers
             try
             {
                 string To = _context.Locations.FirstOrDefault(i => i.ID == Convert.ToInt32(locationTo)).City;
-                
+
                 Inventory send = new Inventory
                 {
                     ISBN = $"{inventoryToSend.ISBN} {SendToken}",
@@ -1044,7 +1030,7 @@ namespace CAA_TestApp.Controllers
                     return View(inventoryToSend);
                 }
 
-                if(!ValidatePreventBelowZero(inventoryToSend.Quantity, quantity))
+                if (!ValidatePreventBelowZero(inventoryToSend.Quantity, quantity))
                 {
                     ViewData["OverQuan"] = "• You can't send more items than existing in inventory";
                     ViewData["LocFrom"] = _context.Locations.FirstOrDefault(i => i.ID == inventoryToSend.LocationID).City;
@@ -1114,7 +1100,7 @@ namespace CAA_TestApp.Controllers
 
             string[] filterLocation = inventoryToReceive.Notes.Split(' ');
             string addToLocation = "";
-            for(int i = 1; i < filterLocation.Length; i++)
+            for (int i = 1; i < filterLocation.Length; i++)
             {
                 addToLocation += $"{filterLocation[i]} ";
             }
@@ -1146,8 +1132,8 @@ namespace CAA_TestApp.Controllers
             //    throw new Exception("Wrong qr, make sure you are scanning the right package");
             //}
 
-            List<int> aux =  new List<int>();
-            for(int i = 0;i < receive.Count; i++)
+            List<int> aux = new List<int>();
+            for (int i = 0; i < receive.Count; i++)
             {
                 if (receive[i].LocationID == To && receive[i].statusID == _context.statuses.FirstOrDefault(i => i.status == "In stock").ID)
                 {
@@ -1156,7 +1142,7 @@ namespace CAA_TestApp.Controllers
             }
 
             Dictionary<int, Inventory> dic = new Dictionary<int, Inventory>();
-            foreach(int i in aux)
+            foreach (int i in aux)
             {
                 dic.Add(i, receive[i]);
             }
@@ -1172,7 +1158,7 @@ namespace CAA_TestApp.Controllers
             }
             else
             {
-                Inventory updateInv = (Inventory) dic.FirstOrDefault().Value;
+                Inventory updateInv = (Inventory)dic.FirstOrDefault().Value;
                 updateInv.Quantity += inventoryToReceive.Quantity;
                 updateInv.DateReceived = DateTime.Now;
                 _context.Inventories.Remove(inventoryToReceive);

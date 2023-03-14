@@ -17,6 +17,7 @@ body {
   margin-bottom: 60px;
 }
 
+/*************************BUTTON**************************************/
 .btn-style {
     border-radius: 25px;
     border: 2px solid #185dbd;
@@ -28,6 +29,19 @@ body {
         background-color: #1820bd;
         color: white;
         border: 2px solid black;
+    }
+
+.btn-style2 {
+    border-radius: 25px;
+    border: 2px solid #185dbd;
+    background-color: #185dbd;
+    color: white;
+}
+
+    .btn-style2:hover {
+        background-color: #fff;
+        color: white;
+        border: 2px #185dbd;
     }
 
 .addButton {
@@ -56,6 +70,7 @@ body {
     color: white;
 }
 
+
 /****************HOMEPAGE***********************/
 .action-home {
     background-image: url('/images/background-home.jpg');
@@ -78,7 +93,7 @@ body {
 .images {
     max-width: 100%;
     height: 275px;
-} 
+}
 
 .action-title {
     text-align: center;
@@ -98,22 +113,43 @@ body {
     height: 130px;
 }
 
-/*image*/
-.deimage {
-    flex-basis: 50%;
-    margin-right: auto;
-    margin-left: auto;
-    text-align: center
+/************************************************TOOLTIP*************************************/
+
+
+
+.help-tip {
+    text-decoration: none;
+    position: relative;
 }
 
-.data-container {
-    display: flex;
-    justify-content: space-between;
-}
+    .help-tip span {
+        display: none;
+        -moz-border-radius: 6px;
+        -webkit-border-radius: 6px;
+        border-radius: 6px;
+        color: black;
+        background: white;
+    }
 
-.data-item {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-right: 10px;
-    flex-basis: 50%;
-}
+        .help-tip span img {
+            float: left;
+            margin: 0px 8px 8px 0;
+        }
+
+    .help-tip:hover span {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        width: auto;
+        max-width: 320px;
+        min-height: 128px;
+        border: 1px solid black;
+        margin-top: 12px;
+        margin-left: 32px;
+        overflow: hidden;
+        padding: 8px;
+    }
+
+
