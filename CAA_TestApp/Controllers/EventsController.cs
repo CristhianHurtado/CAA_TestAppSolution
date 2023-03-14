@@ -351,11 +351,11 @@ namespace CAA_TestApp.Controllers
                 .ThenInclude(a=> a.Inventory)
                 .ThenInclude(a=> a.Product)
 
-                .GroupBy(c => new { c.ID, c.Name, c.Quantity , c.Date, c.EventLocation, c.Notes })
+                .GroupBy(c => new { c.ID, c.Title, c.Quantity , c.Date, c.EventLocation, c.Notes })
                 .Select(grp => new EventReportsVM
                 {
                     ID = grp.Key.ID,
-                    Name = grp.Key.Name,
+                    Name = grp.Key.Title,
                     Quantity = grp.Key.Quantity,
                     Date = grp.Key.Date,
                     EventLocation = grp.Key.EventLocation,
@@ -380,10 +380,10 @@ namespace CAA_TestApp.Controllers
             var intory = from a in _context.Events
                 .Include(a => a.EventInventories)
                 .ThenInclude(a => a.Inventory)
-                         orderby a.Name descending
+                         orderby a.Title descending
                          select new
                          {
-                             Name = a.Name,
+                             Name = a.Title,
                              Quantity = a.Quantity,
                              Date = a.Date.ToShortDateString(),
                              EventLocation = a.EventLocation,
