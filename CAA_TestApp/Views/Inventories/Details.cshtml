@@ -5,8 +5,9 @@
 }
 
 <h1>@Html.DisplayFor(model => model.Product.Name)</h1>
+
 <div>
-    <hr />
+    <hr /> 
         @{
         if (Model.ItemPhoto?.Content != null)
         {
@@ -16,8 +17,9 @@
                 <img src="@imageSrc" alt="Profile Picture of @Model.Product.Name" title="Profile Picture of @Model.Product.Name" class="img-fluid rounded" />
             @:</div><hr />
         }
+       
     }
-    
+
     <dl class="row">
       <!--  <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ISBN)
