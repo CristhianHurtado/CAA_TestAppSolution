@@ -303,7 +303,7 @@ namespace CAA_TestApp.Controllers
                 {
                     ID = option.ID,
                     DisplayText = option.Name,
-                    Assigned = currentOptionsIDs.Contains(option.ID),
+                    Assigned = currentOptionsIDs.Contains(option.ID)
                 });
             }
             ViewData["Locations"] = new SelectList(_context.Locations, "ID", "City");
