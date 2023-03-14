@@ -14,6 +14,10 @@ using OfficeOpenXml.Style;
 using OfficeOpenXml;
 using System.Drawing;
 using Newtonsoft.Json;
+using Microsoft.CodeAnalysis;
+using Location = CAA_TestApp.Models.Location;
+using NuGet.Packaging;
+using System.Runtime.InteropServices;
 
 namespace CAA_TestApp.Controllers
 {
@@ -91,7 +95,22 @@ namespace CAA_TestApp.Controllers
             try
             {
                 Dictionary<string, List<List<string>>> Info = JsonConvert.DeserializeObject<Dictionary<string, List<List<string>>>>(dataInfo);
-                string[] ActualLocations = locations.Take(1).ToArray();
+
+                //var myArray = _context.Locations;
+                //int i = 0;
+                //foreach (var l in myArray)
+                //{
+                //    locations[i] = l.City;
+
+                //}
+
+                var myArray = _context.Locations;
+
+                var filteredArray = myArray.Where(i => locations.Contains(i.City)).ToArray();
+
+                //string[] ActualLocations = locations.Take(1).ToArray();
+
+
                 if (selectedOptions != null)
                 {
                     //info is a dictionary taht the key is the productID and then has an array as valuea that contains [locations, quantityTotake]
@@ -102,7 +121,8 @@ namespace CAA_TestApp.Controllers
 
                     //converts arrays to numbers for filtering
                     int[] selectOptInNumbers = selectedOptions.Select(int.Parse).ToArray();
-                    int[] locationsIDinNumber = ActualLocations.Select(int.Parse).ToArray();
+                    //int[] locationsIDinNumber = ActualLocations.Select(int.Parse).ToArray();
+                    int[] locationsIDinNumber = filteredArray.Select(i => i.ID).ToArray();
                     int isInStock = _context.statuses.FirstOrDefault(i => i.status == "In stock").ID;
 
                     //gets all inv
