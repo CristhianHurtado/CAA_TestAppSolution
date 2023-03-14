@@ -64,7 +64,7 @@ namespace CAA_TestApp.Controllers
             var @event = new Event();
             PopulateAssignedInventoryData(@event);
 
-            ViewData["conText"] = _context.Inventories.Include(i => i.Product).Include(i => i.Location).ToArray();
+            ViewData["conText"] = _context.Inventories.Include(i => i.Product).Include(i => i.Location).OrderBy(i => i.ProductID).ToList();
             ViewData["caa"] = _context;
 
             return View();
