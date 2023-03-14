@@ -52,7 +52,7 @@ namespace CAA_TestApp.Data
                         },
                         new Status
                         {
-                            status = "In transit"
+                            status = "On transit"
                         },
                         new Status
                         {
@@ -234,7 +234,7 @@ namespace CAA_TestApp.Data
                     {
                         Quantity = 14,
                         ISBN = numbers[2].ToString(),
-                        Cost = 3.99,
+                        Cost = 100,
                         DateReceived = DateTime.Now,
                         Notes = "",
                         ShelfOn = "S002-01",
@@ -248,7 +248,7 @@ namespace CAA_TestApp.Data
                     {
                         Quantity = 4,
                         ISBN = numbers[3].ToString(),
-                        Cost = 15.99,
+                        Cost = 250,
                         DateReceived = DateTime.Now,
                         Notes = "",
                         ShelfOn = "S002-02",
@@ -262,7 +262,7 @@ namespace CAA_TestApp.Data
                     {
                         Quantity = 500,
                         ISBN = numbers[4].ToString(),
-                        Cost = 5.99,
+                        Cost = 120,
                         DateReceived = DateTime.Now,
                         Notes = "",
                         ShelfOn = "S003-01",
@@ -276,7 +276,7 @@ namespace CAA_TestApp.Data
                     {
                         Quantity = 3,
                         ISBN = numbers[5].ToString(),
-                        Cost = 7.99,
+                        Cost = 110.99,
                         DateReceived = DateTime.Now,
                         Notes = "",
                         ShelfOn = "S003-02",
@@ -288,9 +288,9 @@ namespace CAA_TestApp.Data
                     },
                     new Inventory
                     {
-                        Quantity = 10,
+                        Quantity = 0,
                         ISBN = numbers[6].ToString(),
-                        Cost = 54.99,
+                        Cost = 99.99,
                         DateReceived = DateTime.Now,
                         Notes = "",
                         ShelfOn = "S004-01",

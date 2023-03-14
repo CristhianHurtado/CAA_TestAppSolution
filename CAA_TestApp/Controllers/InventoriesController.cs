@@ -350,7 +350,7 @@ namespace CAA_TestApp.Controllers
                 .Include(i => i.Status)
                 .Include(i => i.Product)
                 .ThenInclude(c => c.Category)
-                .Where(i => i.statusID == _context.statuses.FirstOrDefault(i => i.status == "In transit").ID)
+                .Where(i => i.statusID == _context.statuses.FirstOrDefault(i => i.status == "On transit").ID)
                 .AsNoTracking();
 
             if (CategoryID.HasValue)
@@ -527,7 +527,7 @@ namespace CAA_TestApp.Controllers
         // GET: Inventories/Create
         public IActionResult Create()
         {
-            var excludedItem = _context.Locations.FirstOrDefault(i => i.City == "In transit");
+            var excludedItem = _context.Locations.FirstOrDefault(i => i.City == "On transit");
             var locations = _context.Locations.Where(i => i != excludedItem);
 
             ViewData["LocationID"] = new SelectList(locations, "ID", "City");
@@ -901,7 +901,7 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            var excludedItem = _context.Locations.FirstOrDefault(i => i.City == "In transit");
+            var excludedItem = _context.Locations.FirstOrDefault(i => i.City == "On transit");
             var locations = _context.Locations.Where(i => i != excludedItem);
 
             ViewData["LocFrom"] = _context.Locations.FirstOrDefault(i => i.ID == inventory.LocationID).City;
@@ -1016,7 +1016,7 @@ namespace CAA_TestApp.Controllers
                     ItemThumbnail = inventoryToSend.ItemThumbnail,
                     QRImage = inventoryToSend.QRImage,
                     EventInventories = inventoryToSend.EventInventories,
-                    statusID = _context.statuses.FirstOrDefault(i => i.status == "In transit").ID,
+                    statusID = _context.statuses.FirstOrDefault(i => i.status == "On transit").ID,
                 };
 
                 int preventNegative = inventoryToSend.Quantity - quantity;
