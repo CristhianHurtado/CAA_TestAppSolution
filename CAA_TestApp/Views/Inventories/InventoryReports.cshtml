@@ -16,21 +16,6 @@
         <div class="collapse" id="collapseFilter">
             <div class="card card-body bg-light">
                 <div class="row">
-                    <div class="d-block d-lg-none">
-                        <div class="form-group">
-                            <label class="control-label">Sort By:</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <input type="checkbox" class="" value="desc"
-                                               @((ViewData["sortDirection"].ToString() != "asc" ? "checked=\"checked\"" : ""))
-                                               name="sortDirectionCheck" />&nbsp;&nbsp;Descending
-                                    </div>
-                                </div>
-                                <select name="sortFieldID" class="form-control" asp-items="ViewBag.sortFieldID"></select>
-                            </div>
-                        </div>
-                    </div>
                     <div class="form-group col-md-4">
                         <label class="control-label">Search Item Name:</label>
                         @Html.TextBox("SearchName", null, new { @class = "form-control" })
@@ -83,7 +68,6 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Cost)
                 </td>
-
                 <td>
                     @Html.DisplayFor(modelItem => item.Location)
                 </td>

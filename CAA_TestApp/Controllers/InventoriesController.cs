@@ -23,6 +23,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Security.Policy;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CAA_TestApp.Controllers
 {
@@ -1491,9 +1492,9 @@ namespace CAA_TestApp.Controllers
             return newISBN;
         }
 
-        public async Task<IActionResult> InventoryReports(int? page, int? pageSizeID)
+        public async Task<IActionResult> InventoryReports(int? page, int? pageSizeID, string SearchName, int[] LocationID)
         {
-
+            PopulateDropDownListsLocations();
 
             var sumQ = _context.Inventories
                 .Include(a => a.Products)
@@ -1516,6 +1517,15 @@ namespace CAA_TestApp.Controllers
 
 
                 }).OrderBy(s => s.Product);
+
+            if (LocationID.Length > 0)
+            {
+                sumQ = (IOrderedQueryable<InventoryReportsVM>)sumQ.Where(i => LocationID.Contains(i.LocationID));
+            }
+            if (!String.IsNullOrEmpty(SearchName))
+            {
+                sumQ = (IOrderedQueryable<InventoryReportsVM>)sumQ.Where(i => i.Product.ToUpper().Contains(SearchName.ToUpper()));
+            }
 
             //Handle paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "InventoryReports");
