@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace CAA_TestApp.Models
 {
@@ -55,8 +56,10 @@ namespace CAA_TestApp.Models
 
         public QrImage QRImage { get; set; }
 
+        [JsonIgnore]
         public ICollection<Product> Products { get; set; } = new HashSet<Product>();
 
+        [JsonIgnore]
         public ICollection<EventInventory> EventInventories { get; set; } = new HashSet<EventInventory>();
         
         [Display(Name = "Status")]

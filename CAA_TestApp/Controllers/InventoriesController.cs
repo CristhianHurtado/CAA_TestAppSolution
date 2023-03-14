@@ -1462,7 +1462,7 @@ namespace CAA_TestApp.Controllers
             return NotFound("No data. ");
         }
 
-        public string GenerateISBN()
+        private string GenerateISBN()
         {
             Random random = new Random();
 

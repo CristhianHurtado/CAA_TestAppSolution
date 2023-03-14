@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Policy;
+using System.Text.Json.Serialization;
 
 namespace CAA_TestApp.Models
 {
@@ -53,6 +54,7 @@ namespace CAA_TestApp.Models
             }
         }
 
+        [JsonIgnore]
         public ICollection<Inventory> Inventories { get; set; } = new HashSet<Inventory>();
     }
 }

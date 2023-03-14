@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace CAA_TestApp.Models
 {
@@ -28,6 +29,7 @@ namespace CAA_TestApp.Models
         [Display(Name = "Notes")]
         public string Notes { get; set; }
 
+        [JsonIgnore]
         public ICollection<EventInventory> EventInventories { get; set; } = new HashSet<EventInventory>();
 
     }

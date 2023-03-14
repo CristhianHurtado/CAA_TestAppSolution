@@ -20,6 +20,9 @@ namespace CAA_TestApp.Controllers
     {
         private readonly CaaContext _context;
 
+        private Random _random = new Random();
+
+        private int InUseToken;
         public EventsController(CaaContext context)
         {
             _context = context;
@@ -61,6 +64,9 @@ namespace CAA_TestApp.Controllers
             var @event = new Event();
             PopulateAssignedInventoryData(@event);
 
+            ViewData["conText"] = _context.Inventories.Include(i => i.Product).Include(i => i.Location).ToArray();
+            ViewData["caa"] = _context;
+
             return View();
         }
 
@@ -85,6 +91,60 @@ namespace CAA_TestApp.Controllers
             {
                 if(selectedOptions != null)
                 {
+                    //converts arrays to numbers for filtering
+                    int[] selectOptInNumbers = selectedOptions.Select(int.Parse).ToArray();
+                    int[] locationsIDinNumber = locations.Select(int.Parse).ToArray();
+                    int isInStock = _context.statuses.FirstOrDefault(i => i.status == "In stock").ID;
+
+                    //gets all inv
+                    List<Inventory> inv = _context.Inventories.ToList();
+
+                    //filters inventory
+                    List<Inventory> productFilter = inv.Where(i => selectOptInNumbers.Contains(i.ProductID)).ToList();
+                    List<Inventory> locationFilter = productFilter.Where(i => locationsIDinNumber.Contains(i.LocationID)).ToList();
+                    List<Inventory> statusFilter = locationFilter.Where(i => i.statusID == isInStock).ToList();
+
+                    //checks for no matching values
+                    var unmatchedProduct = selectOptInNumbers.Except(productFilter.Select(i => i.ProductID)).ToArray();
+                    var unmatchedLocation = locationsIDinNumber.Except(locationFilter.Select(i => i.LocationID)).ToArray();
+
+                    if(statusFilter.Count <= 0) 
+                    {
+                        return NotFound();
+                    }
+
+                    foreach(Inventory invInEvent in statusFilter)
+                    {
+                        InUseToken = _random.Next(201, 1000);
+
+                        string auxISBN = GenerateISBN();
+
+                        int iterable = 0;
+
+                        //if(invInEvent.Quantity - quan[iterable] < 0)
+                        //{
+                        //    ViewData[]
+                        //}
+
+                        Inventory send = new Inventory
+                        {
+                            ISBN = $"{invInEvent.ISBN} {auxISBN} {InUseToken}",
+                            ProductID = invInEvent.ProductID,
+                            LocationID = invInEvent.LocationID,
+                            Notes = $"Taken from {invInEvent.Location.City}",
+                            ShelfOn = "In use",
+                            Cost = invInEvent.Cost,
+                            DateReceived = @event.Date,
+                            Quantity = quan[iterable],
+                            ItemPhoto = invInEvent.ItemPhoto,
+                            ItemThumbnail = invInEvent.ItemThumbnail,
+                            QRImage = invInEvent.QRImage,
+                            EventInventories = invInEvent.EventInventories,
+                            statusID = _context.statuses.FirstOrDefault(i => i.status == "In use").ID,
+                        };
+
+                        iterable++;
+                    }
                         //@event.Quantity = the sum of all values inside quan;
                     foreach(var item in selectedOptions)
                     {
@@ -243,7 +303,7 @@ namespace CAA_TestApp.Controllers
                 {
                     ID = option.ID,
                     DisplayText = option.Name,
-                    Assigned = currentOptionsIDs.Contains(option.ID)
+                    Assigned = currentOptionsIDs.Contains(option.ID),
                 });
             }
             ViewData["Locations"] = new SelectList(_context.Locations, "ID", "City");
@@ -282,6 +342,139 @@ namespace CAA_TestApp.Controllers
             }
         }
 
-      
+        public async Task<IActionResult> EventReports(int? page, int? pageSizeID)
+        {
+
+
+            var sumQ = _context.Events
+                .Include(a=> a.EventInventories)
+                .ThenInclude(a=> a.Inventory)
+                .ThenInclude(a=> a.Product)
+
+                .GroupBy(c => new { c.ID, c.Name, c.Quantity , c.Date, c.EventLocation, c.Notes })
+                .Select(grp => new EventReportsVM
+                {
+                    ID = grp.Key.ID,
+                    Name = grp.Key.Name,
+                    Quantity = grp.Key.Quantity,
+                    Date = grp.Key.Date,
+                    EventLocation = grp.Key.EventLocation,
+                    Notes = grp.Key.Notes
+
+
+                }).OrderBy(s => s.Name);
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "EventReports");
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<EventReportsVM>.CreateAsync(sumQ.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+
+        }
+
+        public IActionResult DownloadEventReports()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            var intory = from a in _context.Events
+                .Include(a => a.EventInventories)
+                .ThenInclude(a => a.Inventory)
+                         orderby a.Name descending
+                         select new
+                         {
+                             Name = a.Name,
+                             Quantity = a.Quantity,
+                             Date = a.Date.ToShortDateString(),
+                             EventLocation = a.EventLocation,
+                             Notes = a.Notes
+
+                         };
+            int numRows = intory.Count();
+
+
+            if (numRows > 0) //We have data
+            {
+                //Create a new spreadsheet from scratch.
+                using (ExcelPackage excel = new ExcelPackage())
+                {
+
+                    var workSheet = excel.Workbook.Worksheets.Add("Events");
+
+                    workSheet.Cells[3, 1].LoadFromCollection(intory, true);
+
+
+                    workSheet.Cells[4, 1, numRows + 4, 1].Style.Font.Bold = true;
+
+                    using (ExcelRange headings = workSheet.Cells[3, 1, 3, 5])
+                    {
+                        headings.Style.Font.Bold = true;
+                        var fill = headings.Style.Fill;
+                        fill.PatternType = ExcelFillStyle.Solid;
+                        fill.BackgroundColor.SetColor(Color.LightBlue);
+                    }
+
+                    workSheet.Cells.AutoFitColumns();
+
+                    workSheet.Cells[1, 1].Value = "Event Report";
+                    using (ExcelRange Rng = workSheet.Cells[1, 1, 1, 5])
+                    {
+                        Rng.Merge = true; //Merge columns start and end range
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 18;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    }
+
+                    DateTime utcDate = DateTime.UtcNow;
+                    TimeZoneInfo esTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                    DateTime localDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, esTimeZone);
+                    using (ExcelRange Rng = workSheet.Cells[2, 5])
+                    {
+                        Rng.Value = "Created: " + localDate.ToShortTimeString() + " on " +
+                            localDate.ToShortDateString();
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 12;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+
+                    try
+                    {
+                        Byte[] theData = excel.GetAsByteArray();
+                        string filename = "Event.xlsx";
+                        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        return File(theData, mimeType, filename);
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest("Could not build and download the file.");
+                    }
+                }
+            }
+            return NotFound("No data. ");
+        }
+
+        private string GenerateISBN()
+        {
+            Random random = new Random();
+
+            string newISBN;
+            bool Exist = false;
+
+            do
+            {
+                newISBN = random.Next(10000, 99999).ToString();
+
+                foreach (var item in _context.Inventories)
+                {
+                    if (item.ISBN == newISBN)
+                    {
+                        Exist = true;
+                    }
+                }
+            }
+            while (Exist);
+
+            return newISBN;
+        }
     }
 }

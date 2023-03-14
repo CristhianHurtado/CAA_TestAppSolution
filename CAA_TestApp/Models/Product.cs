@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using System.Xml.Linq;
 
 namespace CAA_TestApp.Models
@@ -30,6 +31,7 @@ namespace CAA_TestApp.Models
         [Timestamp]
         public Byte[] RowVersion { get; set; }//Added for concurrency
 
+        [JsonIgnore]
         public ICollection<Inventory> Inventories { get; set; } = new HashSet<Inventory>();
 
     }
