@@ -106,9 +106,9 @@ namespace CAA_TestApp.Controllers
 
                 var myArray = _context.Locations;
 
-                var filteredArray = myArray.Where(i => locations.Contains(i.City)).ToArray();
+                string[] ActualLocations = locations.Take(1).ToArray();
 
-                //string[] ActualLocations = locations.Take(1).ToArray();
+                var filteredArray = myArray.Where(i => ActualLocations.Contains(i.City)).ToArray();
 
 
                 if (selectedOptions != null)
