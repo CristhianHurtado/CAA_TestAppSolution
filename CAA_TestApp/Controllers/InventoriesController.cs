@@ -140,21 +140,6 @@ namespace CAA_TestApp.Controllers
                         .ThenBy(i => i.Location.City);
                 }
             }
-            else if (sortField == "Cost")
-            {
-                if (sortDirection == "asc")
-                {
-                    inventories = inventories
-                        .OrderByDescending(i => i.Cost)
-                        .ThenBy(i => i.Location.City);
-                }
-                else
-                {
-                    inventories = inventories
-                        .OrderBy(i => i.Cost)
-                        .ThenBy(i => i.Location.City);
-                }
-            }
             if (sortField == "Category") //sort by category
             {
                 if (sortDirection == "asc")
