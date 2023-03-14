@@ -18,6 +18,12 @@
                 <img src="@imageSrc" alt="Profile Picture of @Model.Product.Name" title="Profile Picture of @Model.Product.Name" class="img-fluid rounded" />
             @:</div><hr />
         }
+        else
+            {
+                @:<div ><br/>
+                    <img src="~/images/img_not_found .png" alt="Image not available" title="Image not found"  class="noimg" />
+                @:</div><br/>
+            }
     }
     </div>
     <div class="col-md-4">
