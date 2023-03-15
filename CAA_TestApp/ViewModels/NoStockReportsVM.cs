@@ -31,5 +31,7 @@ namespace CAA_TestApp.ViewModels
 
         [Display(Name = "Location")]
         public string Location { get; set; }
+
+
     }
 }

@@ -6,7 +6,29 @@
 <h1>Low Stock Report</h1>
 <form asp-controller="Inventories" asp-action="LowStockReports" method="get">
     <a asp-action="DownloadLowStockReports" class="btn btn-info float-end btn-style">Download Low Stock Report</a>
-
+    <div class="form-horizontal">
+        <button class=" btn @(ViewData["Filtering"]) " type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" style="border-radius: 25px;">
+            Filter/Search
+        </button>
+        <div class="collapse" id="collapseFilter">
+            <div class="card card-body bg-light">
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Search Item Name:</label>
+                        @Html.TextBox("SearchName", null, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Filter by Branches: (Ctrl + Click to Select Multiple)</label>
+                        @Html.ListBox("LocationID", null, htmlAttributes: new { @class = "form-control" })
+                    </div>
+                    <div class="form-group col-md-4 align-self-end" style="margin-top:5px;">
+                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary btn-style" />
+                        <a asp-action="LowStock Reports" class="btn btn-outline-dark btn-style ">Clear</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <table class="table">
         <thead>
             <tr>

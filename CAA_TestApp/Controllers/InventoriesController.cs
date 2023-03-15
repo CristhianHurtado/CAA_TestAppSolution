@@ -40,6 +40,46 @@ namespace CAA_TestApp.Controllers
             _context = context;
         }
 
+
+        /*// GET: InventoriesFilter
+        public async Task<IActionResult> InventoryRFilter(string SearchName, int? CategoryID, int[] LocationID,
+            int? page, string actionButton, int? pageSizeID)
+        {
+            PopulateDropDownListsLocations();
+
+            ViewData["Context"] = _context;
+
+            ViewData["Filtering"] = "btn-outline-secondary ";
+
+            var inventories = _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Product)
+                .ThenInclude(c => c.Category)
+                .AsNoTracking();
+
+           
+            if (LocationID.Length > 0)
+            {
+                inventories = inventories.Where(p => LocationID.Contains(p.LocationID));
+                ViewData["Filtering"] = "  btn-danger ";
+            }
+            if (!String.IsNullOrEmpty(SearchName))
+            {
+                inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()));
+                ViewData["Filtering"] = " btn-danger";
+            }
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
+            }
+
+                int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "inventories");
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<Inventory>.CreateAsync(inventories.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+        }*/
+        
         // GET: Inventories
         public async Task<IActionResult> Index(string sortDirectionCheck, string sortFieldID, string SearchName, int? CategoryID, int[] LocationID,
             int? page, string actionButton, int? pageSizeID, string sortDirection = "asc", string sortField = "Inventory")
@@ -1492,7 +1532,7 @@ namespace CAA_TestApp.Controllers
             return newISBN;
         }
 
-        public async Task<IActionResult> InventoryReports(int? page, int? pageSizeID, string SearchName, int[] LocationID)
+        public async Task<IActionResult> InventoryReports(int? page, int? pageSizeID, string actionButton, string SearchName, int[] LocationID)
         {
             PopulateDropDownListsLocations();
 
@@ -1503,10 +1543,12 @@ namespace CAA_TestApp.Controllers
                 .ThenInclude(a => a.Organize)
                 .Include(a => a.Location)
 
-                .GroupBy(c => new { c.ID, c.Product.Category.Classification, c.Product.Name, c.Location.City, c.Quantity, c.Cost })
+                .GroupBy(c => new { c.ID, LocID = c.Location.ID ,c.Product.Category.Classification, c.Product.Name, c.Location.City, c.Quantity, c.Cost })
+                
                 .Select(grp => new InventoryReportsVM
                 {
                     ID = grp.Key.ID,
+                    LocationID = grp.Key.LocID,
                     Category = grp.Key.Classification,
                     Product = grp.Key.Name,
                     Location = grp.Key.City,
@@ -1518,13 +1560,22 @@ namespace CAA_TestApp.Controllers
 
                 }).OrderBy(s => s.Product);
 
+            ViewData["Context"] = _context;
+            ViewData["Filtering"] = "btn-outline-secondary ";
+
             if (LocationID.Length > 0)
             {
                 sumQ = (IOrderedQueryable<InventoryReportsVM>)sumQ.Where(i => LocationID.Contains(i.LocationID));
+                ViewData["Filtering"] = "  btn-danger ";
             }
             if (!String.IsNullOrEmpty(SearchName))
             {
                 sumQ = (IOrderedQueryable<InventoryReportsVM>)sumQ.Where(i => i.Product.ToUpper().Contains(SearchName.ToUpper()));
+                ViewData["Filtering"] = "  btn-danger ";
+            }
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
             }
 
             //Handle paging
@@ -1621,9 +1672,9 @@ namespace CAA_TestApp.Controllers
             return NotFound("No data. ");
         }
 
-        public async Task<IActionResult> CostReports(int? page, int? pageSizeID)
+        public async Task<IActionResult> CostReports(int? page, int? pageSizeID, string SearchName, int[] LocationID, string actionButton)
         {
-
+            PopulateDropDownListsLocations();
 
             var sumQ = _context.Inventories
                 .Include(a => a.Products)
@@ -1632,10 +1683,11 @@ namespace CAA_TestApp.Controllers
                 .ThenInclude(a => a.Organize)
                 .Include(a => a.Location)
 
-                .GroupBy(c => new { c.ID, c.Product.Name, c.Quantity, c.Cost })
+                .GroupBy(c => new { c.ID, LocID = c.Location.ID, c.Product.Name, c.Quantity, c.Cost })
                 .Select(grp => new CostReportsVM
                 {
                     ID = grp.Key.ID,
+                    LocationID = grp.Key.LocID,
                     Product = grp.Key.Name,
                     Quantity = grp.Key.Quantity,
                     Cost = grp.Key.Cost,
@@ -1643,6 +1695,24 @@ namespace CAA_TestApp.Controllers
 
 
                 }).OrderBy(s => s.Product);
+
+            ViewData["Context"] = _context;
+            ViewData["Filtering"] = "btn-outline-secondary ";
+
+            if (LocationID.Length > 0)
+            {
+                sumQ = (IOrderedQueryable<CostReportsVM>)sumQ.Where(i => LocationID.Contains(i.LocationID));
+                ViewData["Filtering"] = "  btn-danger ";
+            }
+            if (!String.IsNullOrEmpty(SearchName))
+            {
+                sumQ = (IOrderedQueryable<CostReportsVM>)sumQ.Where(i => i.Product.ToUpper().Contains(SearchName.ToUpper()));
+                ViewData["Filtering"] = "  btn-danger ";
+            }
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
+            }
 
             //Handle paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "CostReports");
@@ -1738,9 +1808,9 @@ namespace CAA_TestApp.Controllers
             return NotFound("No data. ");
         }
 
-        public async Task<IActionResult> LowStockReports(int? page, int? pageSizeID)
+        public async Task<IActionResult> LowStockReports(int? page, int? pageSizeID, string SearchName, int[] LocationID, string actionButton)
         {
-
+            PopulateDropDownListsLocations();
 
             var sumQ = _context.Inventories
                 .Include(a => a.Products)
@@ -1751,10 +1821,11 @@ namespace CAA_TestApp.Controllers
                 .Where(a => a.Quantity < a.Product.ParLevel)
                 .Where(a => a.Quantity != 0)
 
-                .GroupBy(c => new { c.ID, c.Product.Category.Classification, c.Product.Name, c.Product.ParLevel, c.Location.City, c.Quantity, c.Cost })
+                .GroupBy(c => new { c.ID, LocID = c.Location.ID, c.Product.Category.Classification, c.Product.Name, c.Product.ParLevel, c.Location.City, c.Quantity, c.Cost })
                 .Select(grp => new LowStockReportsVM
                 {
                     ID = grp.Key.ID,
+                    LocationID = grp.Key.LocID,
                     Category = grp.Key.Classification,
                     Product = grp.Key.Name,
                     Quantity = grp.Key.Quantity,
@@ -1763,6 +1834,21 @@ namespace CAA_TestApp.Controllers
                     Cost = grp.Key.Cost,
 
                 }).OrderBy(s => s.Product);
+
+            if (LocationID.Length > 0)
+            {
+                sumQ = (IOrderedQueryable<LowStockReportsVM>)sumQ.Where(i => LocationID.Contains(i.LocationID));
+                ViewData["Filtering"] = "  btn-danger ";
+            }
+            if (!String.IsNullOrEmpty(SearchName))
+            {
+                sumQ = (IOrderedQueryable<LowStockReportsVM>)sumQ.Where(i => i.Product.ToUpper().Contains(SearchName.ToUpper()));
+                ViewData["Filtering"] = "  btn-danger ";
+            }
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
+            }
 
             //Handle paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "LowStockReports");
@@ -1861,9 +1947,9 @@ namespace CAA_TestApp.Controllers
             return NotFound("No data. ");
         }
 
-        public async Task<IActionResult> NoStockReports(int? page, int? pageSizeID)
+        public async Task<IActionResult> NoStockReports(int? page, int? pageSizeID, string SearchName, int[] LocationID, string actionButton)
         {
-
+            PopulateDropDownListsLocations();
 
             var sumQ = _context.Inventories
                 .Include(a => a.Products)
@@ -1873,10 +1959,11 @@ namespace CAA_TestApp.Controllers
                 .Include(a => a.Location)
                 .Where(a => a.Quantity == 0)
 
-                .GroupBy(c => new { c.ID, c.Product.Category.Classification, c.Product.Name, c.Product.ParLevel, c.Location.City, c.Quantity, c.Cost })
+                .GroupBy(c => new { c.ID, LocID = c.Location.ID, c.Product.Category.Classification, c.Product.Name, c.Product.ParLevel, c.Location.City, c.Quantity, c.Cost })
                 .Select(grp => new NoStockReportsVM
                 {
                     ID = grp.Key.ID,
+                    LocationID = grp.Key.LocID,
                     Category = grp.Key.Classification,
                     Product = grp.Key.Name,
                     Quantity = grp.Key.Quantity,
@@ -1885,6 +1972,21 @@ namespace CAA_TestApp.Controllers
                     Cost = grp.Key.Cost,
 
                 }).OrderBy(s => s.Product);
+
+            if (LocationID.Length > 0)
+            {
+                sumQ = (IOrderedQueryable<NoStockReportsVM>)sumQ.Where(i => LocationID.Contains(i.LocationID));
+                ViewData["Filtering"] = "  btn-danger ";
+            }
+            if (!String.IsNullOrEmpty(SearchName))
+            {
+                sumQ = (IOrderedQueryable<NoStockReportsVM>)sumQ.Where(i => i.Product.ToUpper().Contains(SearchName.ToUpper()));
+                ViewData["Filtering"] = "  btn-danger ";
+            }
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
+            }
 
             //Handle paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "NoStockReports");

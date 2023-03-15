@@ -29,6 +29,7 @@ namespace CAA_TestApp.ViewModels
         [Required(ErrorMessage = "Select the location for this inventory record.")]
         public int LocationID { get; set; }
 
+
         [Display(Name = "Location")]
         public string Location { get; set; }
 

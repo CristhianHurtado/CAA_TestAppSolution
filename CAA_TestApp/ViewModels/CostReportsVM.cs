@@ -19,5 +19,9 @@ namespace CAA_TestApp.ViewModels
 
         [DataType(DataType.Currency)]
         public double CostTotal { get; set; }
+
+        [Display(Name = "Location")]
+        [Required(ErrorMessage = "Select the location for this inventory record.")]
+        public int LocationID { get; set; }
     }
 }
