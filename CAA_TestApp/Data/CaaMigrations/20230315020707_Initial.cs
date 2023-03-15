@@ -347,6 +347,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                 onDelete: ReferentialAction.Restrict);
 
             ExtraMigration.Steps(migrationBuilder);
+
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

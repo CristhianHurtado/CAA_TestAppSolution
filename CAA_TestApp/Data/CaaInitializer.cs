@@ -206,7 +206,7 @@ namespace CAA_TestApp.Data
                     {
                         Quantity = 30,
                         ISBN = numbers[0].ToString(),
-                        Cost = 499.99,
+                        Cost = 499,
                         DateReceived = DateTime.Now,
                         Notes = "",
                         ShelfOn = "S001-01",
@@ -219,7 +219,7 @@ namespace CAA_TestApp.Data
                     new Inventory
                     {
                         ISBN = numbers[1].ToString(),
-                        Cost = 299.99,
+                        Cost = 299,
                         DateReceived = DateTime.Now,
                         Quantity = 0,
                         Notes = "",
@@ -234,7 +234,7 @@ namespace CAA_TestApp.Data
                     {
                         Quantity = 14,
                         ISBN = numbers[2].ToString(),
-                        Cost = 100,
+                        Cost = 4,
                         DateReceived = DateTime.Now,
                         Notes = "",
                         ShelfOn = "S002-01",
@@ -248,7 +248,7 @@ namespace CAA_TestApp.Data
                     {
                         Quantity = 4,
                         ISBN = numbers[3].ToString(),
-                        Cost = 250,
+                        Cost = 18,
                         DateReceived = DateTime.Now,
                         Notes = "",
                         ShelfOn = "S002-02",
@@ -262,7 +262,7 @@ namespace CAA_TestApp.Data
                     {
                         Quantity = 500,
                         ISBN = numbers[4].ToString(),
-                        Cost = 120,
+                        Cost = 2,
                         DateReceived = DateTime.Now,
                         Notes = "",
                         ShelfOn = "S003-01",
@@ -276,7 +276,7 @@ namespace CAA_TestApp.Data
                     {
                         Quantity = 3,
                         ISBN = numbers[5].ToString(),
-                        Cost = 110.99,
+                        Cost = 1.50,
                         DateReceived = DateTime.Now,
                         Notes = "",
                         ShelfOn = "S003-02",
@@ -290,7 +290,7 @@ namespace CAA_TestApp.Data
                     {
                         Quantity = 0,
                         ISBN = numbers[6].ToString(),
-                        Cost = 99.99,
+                        Cost = 75,
                         DateReceived = DateTime.Now,
                         Notes = "",
                         ShelfOn = "S004-01",
