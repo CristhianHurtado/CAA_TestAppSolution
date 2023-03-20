@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CAA_TestApp.Data;
 using CAA_TestApp.Models;
-using QRCoder;
 using System.Drawing.Imaging;
 using System.Drawing;
 using CAA_TestApp.Utilities;
@@ -24,6 +23,9 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Security.Policy;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.IO;
+using QRCoder;
+using ZXing;
 
 namespace CAA_TestApp.Controllers
 {
@@ -1363,7 +1365,7 @@ namespace CAA_TestApp.Controllers
                 .Include(i => i.Product)
                 .FirstOrDefaultAsync(m => m.ID == id);
             //string code = ViewData["ISBN"].ToString();
-
+            
             QRCodeGenerator qrCodeGen = new QRCodeGenerator();
             //           QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.Product.Name}{inventory.Location}", QRCodeGenerator.ECCLevel.Q);
             QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.ISBN}", QRCodeGenerator.ECCLevel.Q);
@@ -1377,7 +1379,7 @@ namespace CAA_TestApp.Controllers
                     ViewBag.QRCodeImage = "data:image/png;base64," + Convert.ToBase64String(ms.ToArray());
                 }
             }
-         
+            
             return View(inventory);
         }
 

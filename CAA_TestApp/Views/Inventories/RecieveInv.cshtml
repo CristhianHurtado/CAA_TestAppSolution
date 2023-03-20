@@ -6,16 +6,35 @@
 
 <h1>Complete Transfer</h1>
 
+<style>
+    .video-mask {
+        border-radius: 10px;
+        overflow: hidden;
+        object-fit: cover;
+        border: 5px #146C94 solid
+    }
+
+    .textInput{
+        color: green;
+        justify-content:center;
+        width: 25%;
+        height: 50px;
+        font-weight:700;
+    }
+</style>
+
 
 <form asp-action="ReceiveInv" method="post">
     <div>
         <div>
             <br />
         </div>
-@*        <div class="col-lg-6 col-lg-offset-3">
+        <div class="col-lg-6 col-lg-offset-3">
             <p>Scan Qr Code:</p>
-            <input type="text" name="codeForISBN" placeholder="@Model.ISBN" />
-        </div>*@
+                <video class="video-mask" id="video" width="350" height="350"></video> <br />
+            <input type="text" class="textInput" id="qrCodeValue" name="codeForISBN" placeholder="@Model.ISBN" />
+        </div>
+        
         <h2 style="font-size: 16px; color:red;">Are you sure you want to complete this transfer?</h2>
         <input type="hidden" asp-for="ID" />
         <br />
@@ -23,3 +42,28 @@
         <a asp-action="ReceivedInv">Back to List</a>
     </div>
 </form>
+
+<!-- Include the instascan library -->
+<script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+
+<script>
+    // Create a new instance of the scanner
+    let scanner = new Instascan.Scanner({ video: document.getElementById('video') });
+
+    // Add a listener for the scan event
+    scanner.addListener('scan', function (content) {
+        // Set the value of the text input element with the scanned code
+        document.getElementById('qrCodeValue').value = content;
+    });
+
+    // Start the scanner
+    Instascan.Camera.getCameras().then(function (cameras) {
+        if (cameras.length > 0) {
+            scanner.start(cameras[0]);
+        } else {
+            console.error('No cameras found.');
+        }
+    }).catch(function (e) {
+        console.error(e);
+    });
+</script>
