@@ -1357,15 +1357,17 @@ namespace CAA_TestApp.Controllers
             return View(inventory);
         }
 
-        public async Task<IActionResult> GenerateQrForSendInv(int? id)
+        public async Task<IActionResult> SendInvQr(int? id)
         {
+            //Random r = new Random();
+            //int isbn = r.Next(10, 50);
 
             var inventory = await _context.Inventories
                 .Include(i => i.Location)
                 .Include(i => i.Product)
                 .FirstOrDefaultAsync(m => m.ID == id);
             //string code = ViewData["ISBN"].ToString();
-            
+
             QRCodeGenerator qrCodeGen = new QRCodeGenerator();
             //           QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.Product.Name}{inventory.Location}", QRCodeGenerator.ECCLevel.Q);
             QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.ISBN}", QRCodeGenerator.ECCLevel.Q);
@@ -1379,10 +1381,9 @@ namespace CAA_TestApp.Controllers
                     ViewBag.QRCodeImage = "data:image/png;base64," + Convert.ToBase64String(ms.ToArray());
                 }
             }
-            
+
             return View(inventory);
         }
-
         [HttpGet]
         public JsonResult GetProducts(int? id)
         {

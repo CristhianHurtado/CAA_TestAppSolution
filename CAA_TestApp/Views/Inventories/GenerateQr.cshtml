@@ -8,18 +8,23 @@
 
 <div id="parentDiv">
 
-@if(ViewBag.QRCodeImage != null)
-{
-    <div class="alert alert-info">Qr Code Created!</div>
-    <img src="@ViewBag.QRCodeImage" style="height:200px; width:200px;">
-}
-else
-{
-    <div class="alert alert-info">Qr Code not created</div>
-}
+    @if(ViewBag.QRCodeImage != null)
+    {
+        <div class="alert alert-info">Qr Code Created!</div>
+        <img id="qr-code-image" src="@ViewBag.QRCodeImage" style="height:200px; width:200px;"><br/>
+        <button class="btn-primary" style="border-radius:10px" id="print-button">Print</button>
+    }
+    else
+    {
+        <div class="alert alert-info">Qr Code not created</div>
+    }
 </div>
 
 <div>
-    <a id="printQR" class="btn btn-primary" asp-controller="Qrs" asp-action="DownloadPDF">Print</a>
     <a asp-action="Index">Back to Inventory</a>
 </div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/printQR.js"></script>
+}
