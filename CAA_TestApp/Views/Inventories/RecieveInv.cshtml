@@ -33,6 +33,7 @@
             <p>Scan Qr Code:</p>
                 <video class="video-mask" id="video" width="350" height="350"></video> <br />
             <input type="text" class="textInput" id="qrCodeValue" name="codeForISBN" placeholder="@Model.ISBN" />
+            <audio src="~/sounds/notification.mp3" id="notificationSound"></audio>
         </div>
         
         <h2 style="font-size: 16px; color:red;">Are you sure you want to complete this transfer?</h2>
@@ -54,6 +55,8 @@
     scanner.addListener('scan', function (content) {
         // Set the value of the text input element with the scanned code
         document.getElementById('qrCodeValue').value = content;
+
+        document.getElementById('notificationSound').play();
     });
 
     // Start the scanner
