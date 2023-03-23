@@ -10,7 +10,7 @@
     .video-mask {
         border-radius: 10px;
         overflow: hidden;
-        object-fit: cover;
+        object-fit:cover;
         border: 5px #146C94 solid
     }
 
@@ -25,13 +25,40 @@
 
 
 <form asp-action="ReceiveInv" method="post">
-    <div>
-        <div>
-            <br />
+    @*
+    <div id="app">
+        <div class="sidebar">
+            <section class="cameras">
+                <h2>Cameras</h2>
+                <ul>
+                    <li v-if="cameras.length === 0" class="empty">No cameras found</li>
+                    <li v-for="camera in cameras">
+                        <span v-if="camera.id == activeCameraId" :title="formatName(camera.name)" class="active">{{ formatName(camera.name) }}</span>
+                        <span v-if="camera.id != activeCameraId" :title="formatName(camera.name)">
+                            <a click.stop="selectCamera(camera)">{{ formatName(camera.name) }}</a>
+                        </span>
+                    </li>
+                </ul>
+            </section>
+            <section class="scans">
+                <h2>Scans</h2>
+                <ul v-if="scans.length === 0">
+                    <li class="empty">No scans yet</li>
+                </ul>
+                <transition-group name="scans" tag="ul">
+                    <li v-for="scan in scans" :key="scan.date" :title="scan.content">{{ scan.content }}</li>
+                </transition-group>
+            </section>
         </div>
+        <div class="preview-container">
+            <video id="preview"></video>
+        </div>
+    </div>*@
+    <div>
+
         <div class="col-lg-6 col-lg-offset-3">
             <p>Scan Qr Code:</p>
-                <video class="video-mask" id="video" width="350" height="350"></video> <br />
+                <video class="video-mask" id="preview" width="350" height="350"></video> <br />
             <input type="text" class="textInput" id="qrCodeValue" name="codeForISBN" placeholder="@Model.ISBN" />
             <audio src="~/sounds/notification.mp3" id="notificationSound"></audio>
         </div>
@@ -45,11 +72,54 @@
 </form>
 
 <!-- Include the instascan library -->
-<script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+<script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+@*<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            scanner: null,
+            activeCameraId: null,
+            cameras: [],
+        },
+        mounted: function () {
+            var self = this;
+            self.scanner = new Instascan.Scanner({ video: document.getElementById('preview'), scanPeriod: 5 });
+            self.scanner.addListener('scan', function (content, image) {
+                document.getElementById('qrCodeValue').value = content;
+
+                document.getElementById('notificationSound').play();
+            });
+            Instascan.Camera.getCameras().then(function (cameras) {
+                self.cameras = cameras;
+                if (cameras.length > 0) {
+                    self.activeCameraId = cameras[0].id;
+                    self.scanner.start(cameras[0]);
+                } else {
+                    console.error('No cameras found.');
+                }
+            }).catch(function (e) {
+                console.error(e);
+            });
+        },
+        methods: {
+            formatName: function (name) {
+                return name || '(unknown)';
+            },
+            selectCamera: function (camera) {
+                this.activeCameraId = camera.id;
+                this.scanner.start(camera);
+            }
+        }
+    });
+
+</script>*@
 
 <script>
+    
     // Create a new instance of the scanner
-    let scanner = new Instascan.Scanner({ video: document.getElementById('video') });
+    let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
 
     // Add a listener for the scan event
     scanner.addListener('scan', function (content) {
@@ -61,10 +131,11 @@
 
     // Start the scanner
     Instascan.Camera.getCameras().then(function (cameras) {
-        if (cameras.length > 0) {
-            scanner.start(cameras[0]);
-        } else {
-            console.error('No cameras found.');
+        if(cameras.length > 0){
+           scanner.start(cameras[0]);
+        }
+        else{
+            alert("not cameras found");
         }
     }).catch(function (e) {
         console.error(e);
