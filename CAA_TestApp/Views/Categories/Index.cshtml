@@ -7,7 +7,7 @@
 <h1>Categories</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" title=" Click here to create a new record">Create New</a>
 </p>
 
 <table class="table">
@@ -26,9 +26,9 @@
                     @Html.DisplayFor(modelItem => item.Classification)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> 
-                    <a asp-action="Details" asp-route-id="@item.ID" hidden>Details</a>
-                <a asp-action="Delete" asp-route-id="@item.ID"hidden>Delete</a>
+                <a asp-action="Edit" title=" Click here to edit" asp-route-id="@item.ID">Edit</a> 
+                    <a asp-action="Details" title=" Click here to open details " asp-route-id="@item.ID" hidden>Details</a>
+                <a asp-action="Delete" title=" Click here to delete record" asp-route-id="@item.ID"hidden>Delete</a>
             </td>
         </tr>
 }

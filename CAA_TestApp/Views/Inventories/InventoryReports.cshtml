@@ -6,9 +6,10 @@
 
 <h1>Inventory Report</h1>
 <form asp-controller="Inventories" method="get">
-<a asp-action="DownloadInventoriesReports" class="btn btn-info float-end btn-style">Download Inventory Report</a>
+<a asp-action="DownloadInventoriesReports" title=" Click here to download the Invetory Report" class="btn btn-info float-end btn-style">Download Inventory Report</a>
     <div class="form-horizontal">
-        <button class=" btn @(ViewData["Filtering"]) " type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" style="border-radius: 25px;">
+        <button class=" btn @(ViewData["Filtering"]) " type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" 
+               title=" Click here to filter or search records" aria-expanded="false" aria-controls="collapseFilter" style="border-radius: 25px;">
             Filter/Search
         </button>
         <div class="collapse" id="collapseFilter">
@@ -23,8 +24,8 @@
                         @Html.ListBox("LocationID", null, htmlAttributes: new { @class = "form-control" })
                     </div>
                     <div class="form-group col-md-4 align-self-end" style="margin-top:5px;">
-                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary btn-style" />
-                        <a asp-action="InventoryReports" class="btn btn-outline-dark btn-style ">Clear</a>
+                        <input type="submit" title=" Click here to filter records" name="actionButton" value="Filter" class="btn btn-outline-primary btn-style" />
+                        <a asp-action="InventoryReports" title=" Click here to clear the filter" class="btn btn-outline-dark btn-style ">Clear</a>
                     </div>
                 </div>
             </div>

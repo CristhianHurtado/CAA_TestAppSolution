@@ -8,14 +8,15 @@
 <h1>Inventory In Transit</h1>
 
 <p>
-    <a asp-action="Index">Back to Inventory</a>
+    <a asp-action="Index" title=" Click here to go back to main Inventory page">Back to Inventory</a>
     @*<a asp-action="DownloadInventories" class="btn btn-info float-end btn-style">Download Inventory</a>*@
 </p>
 <form asp-action="ReceivedInv" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <div class="form-horizontal">
-        <button class=" btn @(ViewData["Filtering"]) " type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" style="border-radius: 25px;">
+        <button class=" btn @(ViewData["Filtering"]) " type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" 
+               title=" Click here to filter or search records" aria-expanded="false" aria-controls="collapseFilter" style="border-radius: 25px;">
             Filter/Search
         </button>
         <div class="collapse" id="collapseFilter">
@@ -53,8 +54,8 @@
                     @Html.TextBox("SearchStringISBN", null, new { @class = "form-control" })
                     </div>*@
                     <div class="form-group col-md-4 align-self-end" style="margin-top:5px;">
-                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary btn-style" />
-                        <a asp-action="Index" class="btn btn-outline-dark btn-style ">Clear</a>
+                        <input type="submit" title=" Click here to filter records" name="actionButton" value="Filter" class="btn btn-outline-primary btn-style" />
+                        <a asp-action="Index" title=" Click here to clear the filter" class="btn btn-outline-dark btn-style ">Clear</a>
                     </div>
                 </div>
             </div>
@@ -137,9 +138,9 @@
                             @Html.DisplayFor(modelItem => item.Status.status)
                         </td>
                         <td>
-                            <a asp-action="RecieveInv" asp-route-id="@item.ID">Transfer</a> |
-                            <a asp-action="NoActionDetails" asp-route-id="@item.ID">Details</a> |
-                            <a asp-action="SendInvQr" asp-route-id="@item.ID">Reprint label</a>
+                            <a asp-action="RecieveInv" title=" Click here to transfer" asp-route-id="@item.ID">Transfer</a> |
+                            <a asp-action="NoActionDetails" title=" Click here to see details " asp-route-id="@item.ID">Details</a> |
+                            <a asp-action="SendInvQr" title=" Click here to Print label" asp-route-id="@item.ID">Reprint label</a>
                         </td>
                     </tr>
 

@@ -66,15 +66,14 @@
             </div>
             <br />
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-outline-primary btn-style" style="margin-top:10px;"  />
+                <input type="submit" title=" Click here to save the changes " value="Save" class="btn btn-outline-primary btn-style" style="margin-top:10px;"  />
+                    <a asp-action="Index" title=" Click here to go back to main List">Back to List</a>
+
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

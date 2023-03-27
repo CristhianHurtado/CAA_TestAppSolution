@@ -15,7 +15,8 @@
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <div class="form-horizontal">
-        <button class=" btn @(ViewData["Filtering"]) " type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter" style="border-radius: 25px;">
+        <button class=" btn @(ViewData["Filtering"]) " type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" 
+               title="Click here to filter and search options" aria-expanded="false" aria-controls="collapseFilter" style="border-radius: 25px;">
             Filter/Search
         </button>
         <div class="collapse" id="collapseFilter">
@@ -135,9 +136,9 @@
                             @Html.DisplayFor(modelItem => item.Status.status)
                         </td>
                         <td>
-                            <a asp-action="Restore" asp-route-id="@item.ID">Restore</a> 
+                            <a asp-action="Restore" title="Click here to restore the items" asp-route-id="@item.ID">Restore</a> 
                             <a asp-action="NoActionDetails" asp-route-id="@item.ID"hidden>Details</a>  
-                            <a asp-action="Delete" asp-route-id="@item.ID"hidden>Delete</a>
+                            <a asp-action="Delete" title="Click here to delete the record" asp-route-id="@item.ID"hidden>Delete</a>
                         </td>
                     </tr>
 
