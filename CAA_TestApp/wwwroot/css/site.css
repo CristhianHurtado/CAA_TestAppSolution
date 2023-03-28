@@ -70,6 +70,16 @@ body {
     color: white;
 }
 
+.btn-align {
+    background-color: transparent;
+    border: none;
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
+    text-align: left;
+    padding: 0;
+    margin: 0; 
+}
 
 /****************HOMEPAGE***********************/
 .action-home {
