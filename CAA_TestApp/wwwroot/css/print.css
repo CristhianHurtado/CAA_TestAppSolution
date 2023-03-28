@@ -1,0 +1,6 @@
+﻿@media print {
+    #qr-code-image {
+        height: 100px;
+        width: 100px;
+    }
+}

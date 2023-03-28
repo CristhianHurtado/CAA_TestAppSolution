@@ -8,11 +8,13 @@
 
 <div id="parentDiv">
 
-    @if(ViewBag.QRCodeImage != null)
+    @if (ViewBag.QRCodeImage != null)
     {
         <div class="alert alert-info">Qr Code Created!</div>
-        <img id="qr-code-image" src="@ViewBag.QRCodeImage" style="height:200px; width:200px;"><br/>
-        <button class="btn-primary" style="border-radius:10px" onclick="printQRCode()">Print</button>
+        <img id="qr-code-image" src="@ViewBag.QRCodeImage" style="height:200px; width:200px;">
+
+        <br />
+        <button class="btn-primary" style="border-radius:10px" id="print-button">Print</button>
     }
     else
     {
@@ -20,22 +22,13 @@
     }
 </div>
 
+
+
 <div>
     <a asp-action="Index">Back to Inventory</a>
 </div>
 
 @section Scripts {
-    <script>
-        function printQRCode() {
-            var qrCodeImage = document.getElementById("qr-code-image");
-            var printWindow = window.open('', '', 'height=400,width=800');
-            printWindow.document.write('<html><head><title>QR Code Image</title></head><body>');
-            printWindow.document.write('<img src="' + qrCodeImage.src + '">');
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.focus();
-            printWindow.print();
-            printWindow.close();
-        }
-    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/printQR.js"></script>
 }
