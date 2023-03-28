@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Help Centre";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<style type="text/css">
+
+    .faq-body {
+        display: none;
+        margin-top: 30px;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="faq-wrapper">
+                <div class="header">
+                    <h1>Help Centre</h1>
+                </div>
+                <div class="faq-inner">
+                    <div class="faq-item">
+                        <h3>
+                            Where can I find our inventory records?
+                            <span class="faq-plus">&plus;</span>
+                        </h3>
+                        <div class="faq-body">
+                            Select 'Inventory' in the navigation menu, then 'Inventory Records'. There you will be able to Create, Edit, Filter, Sort, Archive, & Transfer inventory!
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="faq-item">
+                        <h3>
+                            Oops! I added an inventory record but I entered in the wrong information for the product (Quantity Limit, Category, Organization Method)... What do I do?
+                            <span class="faq-plus">&plus;</span>
+                        </h3>
+                        <div class="faq-body">
+                            Select 'Inventory' in the navigation menu, then 'Edit Products'. Filter through the list of Products by clicking the 'Filter/Search' button. Once you have found your product, click the
+                            'Edit' button. You will now be able to make any changes that you need!
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="faq-item">
+                        <h3>
+                            How can I transfer inventory between branches?
+                            <span class="faq-plus">&plus;</span>
+                        </h3>
+                        <div class="faq-body">
+                            Select 'Inventory' in the navigation menu, then 'Inventory Records'. Filter through the records by clicking the 'Filter/Search' button. Once you have found the inventory you would like
+                            to transfer, click the 'Transfer' button beside the record. This will then direct you to a page where you must select the branch where you will be transferring the inventory,
+                            and input the quantity. <br /><br />
+
+                            Then you will navigate to the 'In Transit' page & filter through the records in transit by clicking the 'Filter/Search' button. Once you have found the record,
+                            you will click the 'Transfer' button beside the record. Next, you will scan the QR Code label that you have printed - confirming your transfer!
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="faq-item">
+                        <h3>
+                            What is 'Admin Tools'?
+                            <span class="faq-plus">&plus;</span>
+                        </h3>
+                        <div class="faq-body">
+                            This is where you can access CAA Niagara's locations, product categorization, & product organization. You will be able to add & edit the information within these pages.
+                            <br /><br />For example, if CAA Niagara opens a brand-new location, you would navigate to the 'Locations' page & click 'Create New' and fill out the corresponding information.
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    $(".faq-plus").on('click', function () {
+        $(this).parent().parent().find('.faq-body').slideToggle();
+    });
+</script>

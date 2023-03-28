@@ -29,5 +29,11 @@ namespace CAA_TestApp.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        //this is for the Help Centre page 
+        public ActionResult NavigateHome()
+        {
+            return View("HelpCentre");
+        }
     }
 }
