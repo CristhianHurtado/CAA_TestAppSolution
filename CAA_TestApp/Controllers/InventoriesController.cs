@@ -26,9 +26,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.IO;
 using QRCoder;
 using ZXing;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CAA_TestApp.Controllers
 {
+    [Authorize]
     public class InventoriesController : Controller
     {
         private readonly CaaContext _context;
@@ -569,6 +571,7 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Inventories/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             var excludedItem = _context.Locations.FirstOrDefault(i => i.City == "On transit");
@@ -587,6 +590,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("ID,ISBN,Quantity,Notes,ShelfOn,Cost,DateReceived," +
             "LocationID,ProductID, statusID")] Inventory inventory, IFormFile thePicture)
         {
@@ -662,6 +666,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProduct([Bind("ID,Name,ParLevel,CategoryID,OrganizeID")] Product product)
         {
             try
@@ -699,6 +704,7 @@ namespace CAA_TestApp.Controllers
 
 
         // GET: Inventories/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Inventories == null)
@@ -734,6 +740,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, Inventory inventory,
             string chkRemoveImage, IFormFile thePicture, Byte[] RowVersion)
         {
@@ -1027,6 +1034,7 @@ namespace CAA_TestApp.Controllers
         //POST : Inventories/SendInv/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> SendInv(int id, string locationFrom, string locationTo, int quantity)
         {
             SendToken = r.Next(200);
@@ -1218,6 +1226,7 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Inventories/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Inventories == null)
@@ -1311,6 +1320,7 @@ namespace CAA_TestApp.Controllers
         // POST: Inventories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Inventories == null)

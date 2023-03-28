@@ -47,7 +47,7 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Locations/Create
-        [Authorize(Roles = "Admin,Supervisor")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -58,7 +58,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Supervisor")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("ID,City,Phone,Address,PostalCode")] Location location)
         {
             try
@@ -104,7 +104,7 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Locations/Edit/5
-        [Authorize(Roles = "Admin,Supervisor")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Locations == null)
@@ -125,7 +125,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Supervisor")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, Byte[] RowVersion)
         {
             var locationToUpdate = await _context.Locations
@@ -196,7 +196,7 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Locations/Delete/5
-        [Authorize(Roles = "Admin,Supervisor")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Locations == null)
@@ -217,7 +217,7 @@ namespace CAA_TestApp.Controllers
         // POST: Locations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Supervisor")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Locations == null)

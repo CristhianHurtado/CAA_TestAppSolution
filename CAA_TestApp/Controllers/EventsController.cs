@@ -18,9 +18,11 @@ using Microsoft.CodeAnalysis;
 using Location = CAA_TestApp.Models.Location;
 using NuGet.Packaging;
 using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CAA_TestApp.Controllers
 {
+    [Authorize]
     public class EventsController : Controller
     {
         private readonly CaaContext _context;
@@ -64,6 +66,7 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Events/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             var @event = new Event();
@@ -202,6 +205,7 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Events/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Events == null)
@@ -228,6 +232,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, string[] selectedOptions)
         {
             var eventToUpdate = await _context.Events
@@ -279,6 +284,7 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Events/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Events == null)
@@ -299,6 +305,7 @@ namespace CAA_TestApp.Controllers
         // POST: Events/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Events == null)

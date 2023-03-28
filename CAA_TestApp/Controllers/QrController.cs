@@ -6,9 +6,11 @@ using QRCoder;
 using DinkToPdf;
 using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CAA_TestApp.Controllers
 {
+    [Authorize]
     public class QrController : Controller
     {
 
