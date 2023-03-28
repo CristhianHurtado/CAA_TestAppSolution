@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using CAA_TestApp.Data;
 using CAA_TestApp.Models;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CAA_TestApp.Controllers
 {
+    [Authorize]
     public class LocationsController : Controller
     {
         private readonly CaaContext _context;
@@ -45,6 +47,7 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Locations/Create
+        [Authorize(Roles = "Admin,Supervisor")]
         public IActionResult Create()
         {
             return View();
@@ -55,6 +58,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Supervisor")]
         public async Task<IActionResult> Create([Bind("ID,City,Phone,Address,PostalCode")] Location location)
         {
             try
@@ -100,6 +104,7 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Locations/Edit/5
+        [Authorize(Roles = "Admin,Supervisor")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Locations == null)
@@ -120,6 +125,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Supervisor")]
         public async Task<IActionResult> Edit(int id, Byte[] RowVersion)
         {
             var locationToUpdate = await _context.Locations
@@ -190,6 +196,7 @@ namespace CAA_TestApp.Controllers
         }
 
         // GET: Locations/Delete/5
+        [Authorize(Roles = "Admin,Supervisor")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Locations == null)
@@ -210,6 +217,7 @@ namespace CAA_TestApp.Controllers
         // POST: Locations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Supervisor")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Locations == null)
