@@ -51,19 +51,6 @@
 
         let uniqueArr = [...new Set(visibleLocations)];
 
-        /*var dictionary = {};
-
-        $("#product-table tbody tr.filterable:visible").each(function () {
-            var productId = $(this).attr("data-id");
-            var location = $(this).find("input[name='locations']").val();
-            var quantity = $(this).find("input[name='quan']").val();
-            if (!dictionary[productId]) {
-                dictionary[productId] = [[location, quantity]];
-            } else {
-                dictionary[productId].push([location, quantity]);
-            }
-        });
-        */
         // Hide the "no items" row if the checkbox is unchecked
         $('.checkbox:not(:checked)').each(function () {
             var checkboxId = $(this).val();
