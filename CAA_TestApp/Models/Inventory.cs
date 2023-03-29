@@ -31,9 +31,9 @@ namespace CAA_TestApp.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime DateReceived { get; set; }
 
-        [ScaffoldColumn(false)]
+        /*[ScaffoldColumn(false)]
         [Timestamp]
-        public Byte[] RowVersion { get; set; }//Added for concurrency
+        public Byte[] RowVersion { get; set; }//Added for concurrency*/
 
 
         [Display(Name = "Location")]

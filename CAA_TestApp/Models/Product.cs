@@ -26,10 +26,10 @@ namespace CAA_TestApp.Models
         [Required(ErrorMessage = "You must select how you will be tracking the count for this product.")]
         public int OrganizeID { get; set; }
         public Organize Organize { get; set; }
-
+        /*
         [ScaffoldColumn(false)]
         [Timestamp]
-        public Byte[] RowVersion { get; set; }//Added for concurrency
+        public Byte[] RowVersion { get; set; }//Added for concurrency*/
 
         [JsonIgnore]
         public ICollection<Inventory> Inventories { get; set; } = new HashSet<Inventory>();

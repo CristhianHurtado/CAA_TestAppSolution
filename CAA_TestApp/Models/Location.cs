@@ -39,10 +39,10 @@ namespace CAA_TestApp.Models
         [DataType(DataType.PostalCode)]
         [StringLength(6)]
         public string PostalCode { get; set; }
-
+        /*
         [ScaffoldColumn(false)]
         [Timestamp]
-        public Byte[] RowVersion { get; set; }//Added for concurrency
+        public Byte[] RowVersion { get; set; }//Added for concurrency*/
 
 
         [Display(Name ="Phone")]

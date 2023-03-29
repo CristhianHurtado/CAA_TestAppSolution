@@ -138,7 +138,9 @@
                         {
                             @if (item.statusID != _context.statuses.FirstOrDefault(i => i.status == "On transit").ID)
                             {
-                                <tr class="filterable" style="color:black; justify-content:center" data-id="@item.Product.ID">
+                                @if(item.statusID != _context.statuses.FirstOrDefault(i => i.status == "In use").ID)
+                                {
+                                    <tr class="filterable" style="color:black; justify-content:center" data-id="@item.Product.ID">
                                     @if(item.Quantity == 0)
                                     {
                                          <td style="justify-content:center; color:orangered; height:45px;" colspan="4"><img src="~/images/warning.png" style="height:10px; width:10px;" /> no items for @item.Product.Name</td>
@@ -158,7 +160,9 @@
                                             <input class="form-control" type="number" value="0" name="quan" min="0">
                                         </td>
                                     }
-                                </tr>
+                                    </tr>
+                                }
+                                
                             }
                         }
                     }
