@@ -212,3 +212,49 @@ body {
 hr {
     background-color: #9b9b9b;
 }
+
+
+
+/************************************************LOGIN/REGISTER*************************************/
+
+
+
+
+
+.login-body {
+    background-image: url('/images/blue-background.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.login-card {
+    height: 400px;
+    width: 600px;
+    background-color: whitesmoke;
+    border-radius: 10px;
+}
+
+.login-info {
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-top: 30px;
+}
+
+.register-body {
+    background-image: url('/images/blue-background.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.register-card {
+    height: 350px;
+    width: 600px;
+    background-color: whitesmoke;
+    border-radius: 10px;
+}
+
+.register-info {
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-top: 30px;
+}

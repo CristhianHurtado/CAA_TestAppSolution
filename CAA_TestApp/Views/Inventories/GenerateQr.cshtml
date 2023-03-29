@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>GenerateQr</h1>
+
 
 <div id="parentDiv">
 
@@ -12,7 +12,7 @@
     {
         <div class="alert alert-info">Qr Code Created!</div>
         <img id="qr-code-image" src="@ViewBag.QRCodeImage" style="height:200px; width:200px;"><br/>
-        <button class="btn-primary" style="border-radius:10px" id="print-button">Print</button>
+        <input class="btn btn-primary btn-style" style="width: 150px;" value="Print Code" id="print-button" />
     }
     else
     {
@@ -20,7 +20,7 @@
     }
 </div>
 
-<div>
+<div style="margin-top:10px;">
     <a asp-action="Index">Back to Inventory</a>
 </div>
 

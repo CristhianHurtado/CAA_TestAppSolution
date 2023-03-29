@@ -1,0 +1,52 @@
+﻿@page
+@model LoginModel
+
+<h1>@ViewData["Title"]</h1>
+
+<body class="login-body">
+
+
+    <div class="login-card" style="margin:auto; margin-top:30px;">
+
+
+        <div class="login-info">
+            <h1 style="text-align:center;">CAA Login</h1>
+            <form id="account" method="post">
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-floating" style="margin-top:10px;">
+                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" />
+                    <label asp-for="Input.Email" class="form-label"></label>
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="form-floating" style="margin-top:10px;">
+                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" />
+                    <label asp-for="Input.Password" class="form-label"></label>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                <div>
+                    <div class="checkbox" style="margin-top:10px;">
+                        <label asp-for="Input.RememberMe" class="form-label">
+                            <input class="form-check-input" asp-for="Input.RememberMe" />
+                            @Html.DisplayNameFor(m => m.Input.RememberMe)
+                        </label>
+                        <a id="forgot-password" asp-page="./ForgotPassword" style="margin-top:10px; float:right;">Forgot your password?</a>
+
+                    </div>
+                </div>
+                <div>
+                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary btn-style" style="margin-top:10px;">Log in</button>
+                </div>
+                <div>
+                    <p>
+                        <button class="w-100 btn btn-lg btn-primary btn-style" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" style="margin-top:10px;">Register</button>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
