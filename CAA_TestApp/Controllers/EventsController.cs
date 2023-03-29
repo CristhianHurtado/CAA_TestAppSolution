@@ -99,14 +99,6 @@ namespace CAA_TestApp.Controllers
             {
                 Dictionary<string, List<List<string>>> Info = JsonConvert.DeserializeObject<Dictionary<string, List<List<string>>>>(dataInfo);
 
-                //var myArray = _context.Locations;
-                //int i = 0;
-                //foreach (var l in myArray)
-                //{
-                //    locations[i] = l.City;
-
-                //}
-
                 var myArray = _context.Locations;
 
                 string[] ActualLocations = locations.Take(1).ToArray();

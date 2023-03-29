@@ -62,7 +62,7 @@
 
 <div id="dataDiv" data-chkData="@ViewBag.InventoryOptions"></div>
 <hr />
-    <form asp-action="Create" method="post" enctype="multipart/form-data">
+    <form asp-action="Create" method="post" id="form" enctype="multipart/form-data">
 
 <div class="row">
         <input type="hidden" name="locations" class="hidden-locations-input" />
@@ -132,8 +132,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @{var invs = caa;}
-                    @foreach(Inventory item in invs)
+                    @foreach(Inventory item in caa)
                     {
                         @if (item.statusID != _context.statuses.FirstOrDefault(i => i.status == "Archived").ID)
                         {
@@ -153,10 +152,10 @@
                                             @item.Quantity
                                         </td>
                                         <td>
-                                            <input type="text" readonly name="locations" value="@item.Location.City" style="border:none; background-color:transparent;" disabled/>
+                                            <input type="text" readonly name="locations" value="@item.Location.City" disabled style="border: 0px; background-color:transparent;"/>
                                         </td>
                                         <td>
-                                            <input class="form-control" type="number" name="quan" min="0">
+                                            <input class="form-control" type="number" value="0" name="quan" min="0">
                                         </td>
                                     }
                                 </tr>
@@ -173,90 +172,43 @@
 
         </div>
 </div>
-    </form>
+</form>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+<script src="~/js/itemTableEvents.js"></script>
 <script>
-$(document).ready(function() {
-  $("#product-table").hide();
-  var visibleLocations = [];
+$("#form").submit(function(event) {
 
-  $('.checkbox').change(function() {
-    var selectedValues = [];
-    visibleLocations = [];
-    $('.checkbox:checked').each(function() {
-      selectedValues.push($(this).val());
-    });
+  var dictionary = {};
+  var errors = [];
 
-    $("#product-table tbody tr.filterable").each(function() {
-      if ($.inArray($(this).attr("data-id"), selectedValues) !== -1) {
-        $(this).show();
-      } else {
-        $(this).hide();
-      }
-    });
+  $("#product-table tbody tr.filterable:visible").each(function () {
+    var productId = $(this).attr("data-id");
+    var location = $(this).find("input[name='locations']").val();
+    var quantity = $(this).find("input[name='quan']").val();
+    var availableQuantity = parseInt($(this).find("td:eq(1)").text());
 
-    var noItems = false;
-    $('.checkbox:checked').each(function() {
-      var checkboxId = $(this).val();
-      var itemsCount = $("#product-table tr.filterable[data-id='" + checkboxId + "']").length;
-      if (itemsCount === 0) {
-        noItems = true;
-        var rowExists = $("#product-table tbody tr[data-checkbox='" + checkboxId + "']").length > 0;
-        if (!rowExists) {
-          $("#product-table tbody").append(`<tr data-checkbox="${checkboxId}"><td colspan='4'>There are no items for ${$(this).parent().text().trim()}.</td></tr>`);
-        }
-      } else {
-        $("#product-table tbody tr[data-checkbox='" + checkboxId + "']").remove();
-      }
-    });
-
-    $("#product-table tbody tr.filterable").each(function() {
-      if ($.inArray($(this).attr("data-id"), selectedValues) !== -1) {
-        $(this).show();
-        // If the row is visible, add its location to the array
-        visibleLocations.push($(this).find("input[name='locations']").val());
-      } else {
-        $(this).hide();
-      }
-    });
-
-    // Hide the table header if no items are selected
-    if (selectedValues.length == 0) {
-      $("#product-table thead").hide();
+    if (!dictionary[productId]) {
+      dictionary[productId] = [[location, quantity]];
     } else {
-      $("#product-table thead").show();
+      dictionary[productId].push([location, quantity]);
     }
 
-    let uniqueArr = [...new Set(visibleLocations)];
-    
-    var dictionary = {};
-
-    $("#product-table tbody tr.filterable:visible").each(function() {
-      var productId = $(this).attr("data-id");
-      var location = $(this).find("input[name='locations']").val();
-      var quantity = $(this).find("input[name='quan']").val();
-      if (!dictionary[productId]) {
-        dictionary[productId] = [[location, quantity]];
-      } else {
-        dictionary[productId].push([location, quantity]);
+    if (parseInt(quantity) > availableQuantity) {
+      event.preventDefault();
+      errors.push(`Quantity of ${quantity} exceeds available quantity of ${availableQuantity} for product ${productId}`);
+      if ($(this).find(".alert-span").length === 0) {
+        $(this).append(`<td><span class="alert-span" style="color:red;">Quantity exceeds available quantity</span></td>`);
       }
-    });
-
-    // Hide the "no items" row if the checkbox is unchecked
-    $('.checkbox:not(:checked)').each(function() {
-      var checkboxId = $(this).val();
-      $("#product-table tbody tr[data-checkbox='" + checkboxId + "']").remove();
-    });
-    $('.hidden-locations-input').val(uniqueArr.join(','));
-    $('.hidden-dataInfo-input').val(JSON.stringify(dictionary));
-    console.log(dictionary);
-    $("#product-table").show();
+    } else {
+      $(this).find(".alert-span").remove();
+    }
   });
 
-});
+  $('.hidden-dataInfo-input').val(JSON.stringify(dictionary));
+  console.log(dictionary);
 
+});
 </script>
 
 @section Scripts {
