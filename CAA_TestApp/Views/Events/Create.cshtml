@@ -129,6 +129,7 @@
                         <th>Quantity</th>
                         <th>Location</th>
                         <th>Take Quantity</th>
+                        <th id="span-header" hidden></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -199,19 +200,33 @@ $("#form").submit(function(event) {
     }
 
     if (parseInt(quantity) > availableQuantity) {
+      $('#span-header').removeAttr('hidden');
+      $(this).find(".alert-span").remove();
+      $('#span-cell').remove();
       event.preventDefault();
       errors.push(`Quantity of ${quantity} exceeds available quantity of ${availableQuantity} for product ${productId}`);
       if ($(this).find(".alert-span").length === 0) {
-        $(this).append(`<td><span class="alert-span" style="color:red;">Quantity exceeds available quantity</span></td>`);
+        $(this).append(`<td id="span-cell"><span class="alert-span" style="color:red;">Quantity exceeds available quantity</span></td>`);
       }
-    } else {
+    }
+    else if(parseInt(quantity) < 0){
+      $('#span-header').removeAttr('hidden');
       $(this).find(".alert-span").remove();
+      $('#span-cell').remove();
+      event.preventDefault();
+      errors.push(`Quantity can't be negative'`);
+      if ($(this).find(".alert-span").length === 0) {
+        $(this).append(`<td id="span-cell"><span class="alert-span" style="color:red;">Quantity taken cannot be negative</span></td>`);
+      }
+    }
+    else {
+      $(this).find(".alert-span").remove();
+      $('#span-header').remove();
+      $('#span-cell').remove();
     }
   });
 
   $('.hidden-dataInfo-input').val(JSON.stringify(dictionary));
-  console.log(dictionary);
-
 });
 </script>
 

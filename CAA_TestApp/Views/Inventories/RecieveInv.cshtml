@@ -25,48 +25,19 @@
 
 
 <form asp-action="ReceiveInv" method="post">
-    @*
-    <div id="app">
-        <div class="sidebar">
-            <section class="cameras">
-                <h2>Cameras</h2>
-                <ul>
-                    <li v-if="cameras.length === 0" class="empty">No cameras found</li>
-                    <li v-for="camera in cameras">
-                        <span v-if="camera.id == activeCameraId" :title="formatName(camera.name)" class="active">{{ formatName(camera.name) }}</span>
-                        <span v-if="camera.id != activeCameraId" :title="formatName(camera.name)">
-                            <a click.stop="selectCamera(camera)">{{ formatName(camera.name) }}</a>
-                        </span>
-                    </li>
-                </ul>
-            </section>
-            <section class="scans">
-                <h2>Scans</h2>
-                <ul v-if="scans.length === 0">
-                    <li class="empty">No scans yet</li>
-                </ul>
-                <transition-group name="scans" tag="ul">
-                    <li v-for="scan in scans" :key="scan.date" :title="scan.content">{{ scan.content }}</li>
-                </transition-group>
-            </section>
-        </div>
-        <div class="preview-container">
-            <video id="preview"></video>
-        </div>
-    </div>*@
     <div>
 
         <div class="col-lg-6 col-lg-offset-3">
             <p>Scan Qr Code:</p>
-                <video playsinline="true" autoplay controls="true  " class="video-mask" id="preview" width="350" height="350"></video> <br />
+                <video playsinline="true" autoplay class="video-mask" id="preview" width="350" height="350"></video> <br />
             <input type="text" class="textInput" id="qrCodeValue" name="codeForISBN" placeholder="@Model.ISBN" />
-            <audio src="~/sounds/notification.mp3" id="notificationSound"></audio>
+            <audio type="audio/mpeg" preload="auto" mediagroup="audio/mpeg" src="~/sounds/notification.mp3" id="notificationSound" ></audio>
         </div>
         
         <h2 style="font-size: 16px; color:red;">Are you sure you want to complete this transfer?</h2>
         <input type="hidden" asp-for="ID" />
         <br />
-        <input type="submit" title=" Click here to Transfer the inventory" value="Transfer" class="btn btn-danger btn-style" /> |
+        <input type="submit" title=" Click here to Transfer the inventory" value="Confirm" class="btn btn-danger btn-style" /> |
         <a asp-action="ReceivedInv" title=" Click here to go back to main Inventory List">Back to List</a>
     </div>
 </form>
@@ -76,46 +47,6 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
 <script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 <script src="~/js/instascan.min.js"></script>
-@*<script>
-    var app = new Vue({
-        el: '#app',
-        data: {
-            scanner: null,
-            activeCameraId: null,
-            cameras: [],
-        },
-        mounted: function () {
-            var self = this;
-            self.scanner = new Instascan.Scanner({ video: document.getElementById('preview'), scanPeriod: 5 });
-            self.scanner.addListener('scan', function (content, image) {
-                document.getElementById('qrCodeValue').value = content;
-
-                document.getElementById('notificationSound').play();
-            });
-            Instascan.Camera.getCameras().then(function (cameras) {
-                self.cameras = cameras;
-                if (cameras.length > 0) {
-                    self.activeCameraId = cameras[0].id;
-                    self.scanner.start(cameras[0]);
-                } else {
-                    console.error('No cameras found.');
-                }
-            }).catch(function (e) {
-                console.error(e);
-            });
-        },
-        methods: {
-            formatName: function (name) {
-                return name || '(unknown)';
-            },
-            selectCamera: function (camera) {
-                this.activeCameraId = camera.id;
-                this.scanner.start(camera);
-            }
-        }
-    });
-
-</script>*@
 
 <script>
 
@@ -132,7 +63,7 @@
 
         // Whether to horizontally mirror the video preview. This is helpful when trying to
         // scan a QR code with a user-facing camera. Default true.
-        mirror: true,
+        mirror: false,
 
         // Whether to include the scanned image data as part of the scan result. See the "scan" event
         // for image format details. Default false.
