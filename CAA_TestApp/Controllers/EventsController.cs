@@ -19,6 +19,7 @@ using Location = CAA_TestApp.Models.Location;
 using NuGet.Packaging;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CAA_TestApp.Controllers
 {
@@ -100,6 +101,8 @@ namespace CAA_TestApp.Controllers
                 Dictionary<string, List<List<string>>> Info = JsonConvert.DeserializeObject<Dictionary<string, List<List<string>>>>(dataInfo);
 
                 var myArray = _context.Locations;
+
+                ModelState.SetModelValue("locations", new ValueProviderResult(locations));
 
                 string[] ActualLocations = locations.Split(',');
 

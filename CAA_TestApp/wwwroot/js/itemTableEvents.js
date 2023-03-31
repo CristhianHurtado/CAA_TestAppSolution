@@ -9,6 +9,10 @@
             selectedValues.push($(this).val());
         });
 
+        if (selectedValues.length != 0) {
+            console.log(selectedValues, selectedValues.length)
+        }
+
         $("#product-table tbody tr.filterable").each(function () {
             if ($.inArray($(this).attr("data-id"), selectedValues) !== -1) {
                 $(this).show();
