@@ -957,6 +957,7 @@ namespace CAA_TestApp.Controllers
 
             ViewData["LocFrom"] = _context.Locations.FirstOrDefault(i => i.ID == inventory.LocationID).City;
             ViewData["LocationID"] = new SelectList(locations, "ID", "City");
+            ViewData["quanValue"] = 0;
             return View(inventory);
         }
         /*
@@ -1037,6 +1038,8 @@ namespace CAA_TestApp.Controllers
 
         public async Task<IActionResult> SendInv(int id, string locationFrom, string locationTo, int quantity)
         {
+            
+
             SendToken = r.Next(200);
 
             var inventoryToSend = await _context.Inventories
@@ -1079,6 +1082,7 @@ namespace CAA_TestApp.Controllers
                     // Return the view with errors if validation fails
                     ViewData["LocFrom"] = _context.Locations.FirstOrDefault(i => i.ID == inventoryToSend.LocationID).City;
                     ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City");
+                    ViewData["quanValue"] = quantity;
                     return View(inventoryToSend);
                 }
 
@@ -1087,6 +1091,7 @@ namespace CAA_TestApp.Controllers
                     ViewData["OverQuan"] = "• You can't send more items than existing in inventory";
                     ViewData["LocFrom"] = _context.Locations.FirstOrDefault(i => i.ID == inventoryToSend.LocationID).City;
                     ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "City");
+                    ViewData["quanValue"] = quantity;
                     return View(inventoryToSend);
                 }
                 

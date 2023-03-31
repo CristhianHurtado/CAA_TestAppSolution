@@ -64,6 +64,7 @@
         ViewData["IsbnCode"] = ViewBag.ISBN;
      }
 
+
 </div>
 
 
@@ -81,7 +82,7 @@
         <div class="col-lg-6 col-lg-offset-3" style="margin-top:20px;">
             <label><strong>Quantity:</strong></label><br />
             <span style="color:red">@ViewBag.OverQuan</span><br />
-            <input type="number" name="quantity" min="0" required/>
+            <input type="number" name="quantity" value="@ViewBag.quanValue" min="0" required/>
         </div>
         <br />
     </div>
@@ -90,8 +91,6 @@
          <input name="submit" value="Transfer"  type="submit"  class="btn btn-primary btn-style" href="@Url.Action("ItemTransfered","Inventories")" type="button" data-toggle="modal" data-target="#exampleModal">
         <a asp-action="Index">Back to List</a>
     </div>
+
  </form>
  <br/>
-
-
-

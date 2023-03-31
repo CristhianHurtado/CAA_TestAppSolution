@@ -38,7 +38,10 @@ scanner.addListener('scan', function (content) {
     document.getElementById('qrCodeValue').value = content;
     navigator.vibrate(1000);
     var Newaudio = new Audio('~/sounds/notification.mp3');
-    document.getElementById('notificationSound').play();
+    var audio = document.getElementById('notificationSound');
+    Newaudio.volume = 1.0;
+    audio.volume = 1.0;
+    audio.play();
     Newaudio.play();
 });
 
