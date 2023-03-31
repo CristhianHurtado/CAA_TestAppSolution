@@ -1344,6 +1344,20 @@ namespace CAA_TestApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> QuickScan()
+        {
+            return  View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> QuickScan(string codeForISBN)
+        {
+            Inventory inventoryScaned = _context.Inventories.FirstOrDefault(i => i.ISBN == codeForISBN);
+
+            return RedirectToAction("Details", new { inventoryScaned.ID });
+        }
+
         public async Task<IActionResult> GenerateQr(int? id)
         {
             //Random r = new Random();

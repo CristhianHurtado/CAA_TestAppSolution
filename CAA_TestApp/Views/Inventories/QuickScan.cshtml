@@ -1,0 +1,52 @@
+﻿
+@{
+    ViewData["Title"] = "QuickScan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .video-mask {
+        border-radius: 10px;
+        overflow: hidden;
+        object-fit:cover;
+        border: 5px #146C94 solid
+    }
+
+    .textInput{
+        color: green;
+        justify-content:center;
+        width: 25%;
+        height: 50px;
+        font-weight:700;
+    }
+</style>
+
+
+<form id="form" asp-action="QuickScan" method="post">
+    <div>
+
+        <div class="col-lg-6 col-lg-offset-3">
+            <h1>Scan Qr Code:</h1>
+            <p></p>
+                <video playsinline="true" autoplay class="video-mask" id="preview" width="350" height="350"></video> <br />
+            <input type="text" class="textInput" id="qrCodeValue" name="codeForISBN" />
+            <audio type="audio/mpeg" touchstart preload="auto" mediagroup="audio/mpeg" id="notificationSound" >
+                <source src="~/sounds/notification.mp3" type="audio/mp3" />    
+            </audio>
+        </div>
+        <br />
+        <a asp-action="Index" asp-controller="Home" title=" Go back to home page">Return</a>
+    </div>
+</form>
+
+<!-- Include the instascan library -->
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/3.3.3/adapter.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+<script type="text/javascript" src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/Scanning.js"></script>
+<script>
+    scanner.addListener('scan', function (content) {
+        document.getElementById('form').submit();
+    });
+</script>
