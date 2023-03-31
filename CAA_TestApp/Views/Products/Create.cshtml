@@ -13,33 +13,32 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"><strong>Name</strong>*</label>
+                <label asp-for="Name" class="control-label"><strong>Name</strong>(Required)*</label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ParLevel" class="control-label"><strong>Par Level</strong>*</label>
+                <label asp-for="ParLevel" class="control-label"><strong>Par Level</strong>(Required)*</label>
                 <input asp-for="ParLevel" class="form-control" />
                 <span asp-validation-for="ParLevel" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CategoryID" class="control-label"><strong>Category</strong>*</label>
+                <label asp-for="CategoryID" class="control-label"><strong>Category</strong>(Required)*</label>
                 <select asp-for="CategoryID" class ="form-control" asp-items="ViewBag.CategoryID"></select>
             </div>
             <div class="form-group">
-                <label asp-for="OrganizeID" class="control-label"><strong>Organized By</strong>*</label>
+                <label asp-for="OrganizeID" class="control-label"><strong>Organized By</strong>(Required)*</label>
                 <select asp-for="OrganizeID" class="form-control" asp-items="ViewBag.OrganizeID"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary btn-style" style="margin-top:10px;" />
+                <a asp-action="Index">Back to List</a>
+
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -70,23 +70,23 @@
         <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Title" class="control-label"><strong> Event Name</strong>*</label>
+                <label asp-for="Title" class="control-label"><strong> Event Name</strong>(Required)*</label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger" title=" Enter your title here "></span>
             </div>
             <div class="form-group">
-                <label asp-for="Date" class="control-label"><strong>Date</strong>*</label>
+                <label asp-for="Date" class="control-label"><strong>Date</strong>(Required)*</label>
                 <input asp-for="Date" class="form-control" />
                 <span asp-validation-for="Date" class="text-danger" title=" Select the date for the event"></span>
             </div>
             <div class="form-group">
-                <label asp-for="EventLocation" class="control-label"><strong>Event Location</strong>*</label>
+                <label asp-for="EventLocation" class="control-label"><strong>Event Location</strong>(Required)*</label>
                 <input asp-for="EventLocation" class="form-control" />
                 <span asp-validation-for="EventLocation" class="text-danger" title=" Enter the Location here "></span>
             </div>
 
             <div class="form-group">
-                <label class="control-label" style="margin-top:5px;"><strong>Products Needed</strong>*</label>
+                <label class="control-label" style="margin-top:5px;"><strong>Products Needed</strong>(Required)*</label>
                 <div class="m-2">
                     <table>
                         <tr>

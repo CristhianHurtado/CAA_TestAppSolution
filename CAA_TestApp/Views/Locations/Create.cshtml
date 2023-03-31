@@ -13,25 +13,25 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="City" class="control-label"><strong>City</strong>*</label>
+                <label asp-for="City" class="control-label"><strong>City</strong>(Required)*</label>
                 <input asp-for="City" class="form-control" />
                 <span asp-validation-for="City" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Phone" class="control-label"><strong>Phone</strong>*</label>
+                <label asp-for="Phone" class="control-label"><strong>Phone</strong>(Required)*</label>
                 <input asp-for="Phone" class="form-control" />
                 <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Address" class="control-label"><strong>Address</strong>*</label>
+                <label asp-for="Address" class="control-label"><strong>Address</strong>(Required)*</label>
                 <input asp-for="Address" class="form-control" />
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="PostalCode" class="control-label"><strong>Postal Code</strong>*</label>
+                <label asp-for="PostalCode" class="control-label"><strong>Postal Code</strong>(Required)*</label>
                 <input asp-for="PostalCode" class="form-control" />
                 <span asp-validation-for="PostalCode" class="text-danger"></span>
             </div>
