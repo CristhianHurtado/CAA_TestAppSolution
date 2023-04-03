@@ -242,9 +242,9 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.EventInventories
-                .Include(i => i.Event)
-                .Include(i => i.Inventory)
+            var @event = await _context.Events
+                .Include(i => i.EventInventories)
+                .ThenInclude(i => i.Inventory)
                 .ThenInclude(i => i.Product)
                 .FirstOrDefaultAsync(i => i.ID == id);
 
@@ -261,12 +261,10 @@ namespace CAA_TestApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int id, Event @event)
         {
             var eventToUpdate = await _context.Events
-                .Include(i => i.EventInventories)
-                .ThenInclude(i => i.Inventory)
-                .ThenInclude(i => i.Product)
+                .Include(e => e.EventInventories)
                 .FirstOrDefaultAsync(i => i.ID == id);
 
             if (id != eventToUpdate.ID)
@@ -276,7 +274,7 @@ namespace CAA_TestApp.Controllers
 
             //try updating with values posted
             if (await TryUpdateModelAsync<Event>(eventToUpdate, "",
-                i => i.Title, i => i.Quantity, i => i.Date, i => i.EventLocation, i => i.Notes))
+                i => i.Title , i => i.Quantity, i => i.Date, i => i.EventLocation, i => i.Notes))
             {
                 try
                 {
@@ -303,8 +301,6 @@ namespace CAA_TestApp.Controllers
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists contacts an Administrator");
                 }
             }
-
-            PopulateAssignedInventoryData(eventToUpdate);
             return View(eventToUpdate);
         }
 
