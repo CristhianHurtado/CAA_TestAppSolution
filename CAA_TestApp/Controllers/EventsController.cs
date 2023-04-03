@@ -260,7 +260,7 @@ namespace CAA_TestApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, string[] selectedOptions)
+        public async Task<IActionResult> Edit(int id)
         {
             var eventToUpdate = await _context.Events
                 .Include(i =>i.EventInventories)
@@ -272,9 +272,6 @@ namespace CAA_TestApp.Controllers
             {
                 return NotFound();
             }
-
-            //Update inventory items
-            UpdateEventInventory(selectedOptions, eventToUpdate);
 
             //try updating with values posted
             if(await TryUpdateModelAsync<Event>(eventToUpdate, "",
@@ -371,38 +368,6 @@ namespace CAA_TestApp.Controllers
             }
             ViewData["Locations"] = new SelectList(_context.Locations, "ID", "City");
             ViewData["InventoryOptions"] = checkBoxes;
-        }
-
-        private void UpdateEventInventory(string[] selectedOptions, Event eventToUpdate)
-        {
-            if(selectedOptions == null)
-            {
-                eventToUpdate.EventInventories = new List<EventInventory>();
-                return;
-            }
-
-            var selectedOptionsHS = new HashSet<string>(selectedOptions);
-            var eventOptionsHS = new HashSet<int>
-                (eventToUpdate.EventInventories.Select(i => i.InventoryID)); //id if currently selected inventory item
-
-            foreach (var option in _context.Inventories) 
-            {
-                if (selectedOptionsHS.Contains(option.ID.ToString())) //it is checked
-                {
-                    if(!eventOptionsHS.Contains(option.ID))
-                    {
-                        eventToUpdate.EventInventories.Add(new EventInventory {EventID = eventToUpdate.ID, InventoryID = option.ID});
-                    }
-                }
-                else
-                {
-                    //not checked
-                    if (eventOptionsHS.Contains(option.ID))
-                    {
-                        EventInventory inventoryToRemove = eventToUpdate.EventInventories.SingleOrDefault(i => i.InventoryID == option.ID);
-                    }
-                }
-            }
         }
 
         public async Task<IActionResult> EventReports(int? page, int? pageSizeID)
