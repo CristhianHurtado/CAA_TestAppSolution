@@ -42,8 +42,8 @@ namespace CAA_TestApp.Controllers
             var @event = _context.Events
                 .Include(i => i.EventInventories).ThenInclude(i => i.Inventory).ThenInclude(i => i.Product)
                 .AsNoTracking();
-              
-                return View(await @event.ToListAsync());
+
+            return View(await @event.ToListAsync());
         }
 
         // GET: Events/Details/5
@@ -84,6 +84,7 @@ namespace CAA_TestApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("ID,Title,Date,EventLocation,Notes")] Event @event, string[] selectedOptions, string dataInfo, string locations)
         {
             /*
@@ -120,7 +121,7 @@ namespace CAA_TestApp.Controllers
                     //gets and deparate data from dictionary
                     string[] keysFromDic = Info.Keys.ToArray();
 
-                    int[] productsFromDic = Array.ConvertAll( keysFromDic, k => int.Parse(k));
+                    int[] productsFromDic = Array.ConvertAll(keysFromDic, k => int.Parse(k));
 
                     //variaqbles for event data
                     int totalQuanInEvent = 0;
@@ -133,81 +134,82 @@ namespace CAA_TestApp.Controllers
                     int isInStock = _context.statuses.FirstOrDefault(i => i.status == "In stock").ID;
 
                     //gets all inv
-                    List<Inventory> inv = _context.Inventories.Include(i => i.Location).Include(i => i.Status).ToList();
+                    List<Inventory> inv = _context.Inventories.Include(i => i.Location).Include(i => i.Status).Where(i => selectOptInNumbers.Contains(i.ProductID) && locationsIDinNumber.Contains(i.LocationID) && i.statusID == isInStock).ToList();
 
-                    //filters inventory
+                    /*filters inventory/*
                     List<Inventory> productFilter = inv.Where(i => selectOptInNumbers.Contains(i.ProductID)).ToList();
                     List<Inventory> locationFilter = productFilter.Where(i => locationsIDinNumber.Contains(i.LocationID)).ToList();
-                    List<Inventory> statusFilter = locationFilter.Where(i => i.statusID == isInStock).ToList();
+                    List<Inventory> statusFilter = locationFilter.Where(i => i.statusID == isInStock).ToList();*/
 
                     //checks for no matching values
-                    var unmatchedProduct = selectOptInNumbers.Except(productFilter.Select(i => i.ProductID)).ToArray();
-                    var unmatchedLocation = locationsIDinNumber.Except(locationFilter.Select(i => i.LocationID)).ToArray();
+                    //var unmatchedProduct = selectOptInNumbers.Except(productFilter.Select(i => i.ProductID)).ToArray();
+                    //var unmatchedLocation = locationsIDinNumber.Except(locationFilter.Select(i => i.LocationID)).ToArray();
 
-                    if(statusFilter.Count <= 0) 
+                    if (inv.Count <= 0)
                     {
                         return NotFound();
                     }
 
-                    foreach(Inventory invInEvent in statusFilter)
+                    for (int dicPosition = 0; dicPosition < Info.Count; dicPosition++)
                     {
                         InUseToken = _random.Next(201, 1000);
 
                         string auxISBN = GenerateISBN();
 
-                        for (int dicPosition = 0; dicPosition < Info.Count; dicPosition++)
+                        int itemInUse = productsFromDic[dicPosition];
+                        List<Inventory> matchingKey = inv.Where(i => i.ProductID == itemInUse).ToList();
+
+                        //int dicAux = dicPosition + 1;
+                        List<List<string>> data = Info[keysFromDic[dicPosition].ToString()];
+
+
+                        for (int i = 0; i < data.Count; i++)
                         {
-                            int itemInUse = productsFromDic[dicPosition];
-                            List<Inventory> matchingKey = statusFilter.Where(i => i.ProductID == itemInUse).ToList();
+                            Inventory ANTinv = new Inventory();
 
-                            dicPosition += 1;
-                            List<List<string>> data = Info[dicPosition.ToString()];
-                            dicPosition -= 1;
-
-
-                            for(int i = 0; i < data.Count; i++)
+                            //[['location', 'takingquan']]
+                            string[] eachData = data[i].ToArray();
+                            if (eachData[1] == "0")
                             {
-                                //[['location', 'takingquan']]
-                                string[] eachData = data[i].ToArray();
-                                if (eachData[1] == "0")
-                                {
-                                    continue;
-                                }
-
-                                int locationTaken = _context.Locations.FirstOrDefault(i => i.City == eachData[0]).ID;
-                                Inventory invForMod = matchingKey.FirstOrDefault(i => i.LocationID == locationTaken);
-
-                                Inventory eventInv = new Inventory
-                                {
-                                    ISBN = $"{invForMod.ISBN} {auxISBN} {InUseToken}",
-                                    ProductID = invForMod.ProductID,
-                                    LocationID = invForMod.LocationID,
-                                    Notes = $"Taken from {invForMod.Location.City}",
-                                    ShelfOn = "In use",
-                                    Cost = invForMod.Cost,
-                                    DateReceived = @event.Date,
-                                    Quantity = Convert.ToInt32(eachData[1]),
-                                    ItemPhoto = invForMod.ItemPhoto,
-                                    ItemThumbnail = invForMod.ItemThumbnail,
-                                    QRImage = invForMod.QRImage,
-                                    EventInventories = invForMod.EventInventories,
-                                    statusID = _context.statuses.FirstOrDefault(i => i.status == "In use").ID,
-                                };
-                                newInventoryForEvent.Add(eventInv);
-                                invForMod.Quantity -= Convert.ToInt32(eachData[1]);
-                                totalQuanInEvent += Convert.ToInt32(eachData[1]);
-                                _context.Update(invForMod);
-                                _context.Add(eventInv);
-                                await _context.SaveChangesAsync();     
+                                continue;
                             }
 
+                            int locationTaken = _context.Locations.FirstOrDefault(i => i.City == eachData[0]).ID;
+                            Inventory invForMod = matchingKey.FirstOrDefault(i => i.LocationID == locationTaken);
+
+                            ANTinv = inv.FirstOrDefault(i => i.LocationID == invForMod.LocationID);
+
+                            Inventory eventInv = new Inventory
+                            {
+                                ISBN = $"{ANTinv.ISBN} {auxISBN} {InUseToken}",
+                                ProductID = ANTinv.ProductID,
+                                LocationID = ANTinv.LocationID,
+                                Notes = $"Taken from {ANTinv.Location.City}",
+                                ShelfOn = "In use",
+                                Cost = ANTinv.Cost,
+                                DateReceived = @event.Date,
+                                Quantity = Convert.ToInt32(eachData[1]),
+                                ItemPhoto = ANTinv.ItemPhoto,
+                                ItemThumbnail = ANTinv.ItemThumbnail,
+                                QRImage = ANTinv.QRImage,
+                                EventInventories = ANTinv.EventInventories,
+                                statusID = _context.statuses.FirstOrDefault(i => i.status == "In use").ID,
+                            };
+                            newInventoryForEvent.Add(eventInv);
+                            ANTinv.Quantity -= Convert.ToInt32(eachData[1]);
+                            totalQuanInEvent += Convert.ToInt32(eachData[1]);
+                            _context.Update(ANTinv);
+                            _context.Add(eventInv);
+                            await _context.SaveChangesAsync();
                         }
+
+
 
                     }
                     @event.Quantity = totalQuanInEvent;
-                    foreach(var item in newInventoryForEvent)
+                    foreach (var item in newInventoryForEvent)
                     {
-                        var itemToAdd = new EventInventory { EventID = @event.ID, InventoryID = int.Parse(item.ID.ToString())};
+                        var itemToAdd = new EventInventory { EventID = @event.ID, InventoryID = int.Parse(item.ID.ToString()) };
                         @event.EventInventories.Add(itemToAdd);
                     }
                 }
@@ -240,17 +242,16 @@ namespace CAA_TestApp.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Events
-                .Include(i=>i.EventInventories)
-                .ThenInclude(i=>i.Inventory)
-                .ThenInclude(i=>i.Product)
-                .FirstOrDefaultAsync(i=>i.ID == id);
-    
+            var @event = await _context.EventInventories
+                .Include(i => i.Event)
+                .Include(i => i.Inventory)
+                .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(i => i.ID == id);
+
             if (@event == null)
             {
                 return NotFound();
             }
-            PopulateAssignedInventoryData(@event);
             return View(@event);
         }
 
@@ -263,19 +264,19 @@ namespace CAA_TestApp.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var eventToUpdate = await _context.Events
-                .Include(i =>i.EventInventories)
-                .ThenInclude(i =>i.Inventory)
-                .ThenInclude(i =>i.Product)
-                .FirstOrDefaultAsync(i => i.ID== id);
+                .Include(i => i.EventInventories)
+                .ThenInclude(i => i.Inventory)
+                .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(i => i.ID == id);
 
-            if (id != eventToUpdate.ID) 
+            if (id != eventToUpdate.ID)
             {
                 return NotFound();
             }
 
             //try updating with values posted
-            if(await TryUpdateModelAsync<Event>(eventToUpdate, "",
-                i => i.Title, i => i.Quantity, i => i.Date, i => i.EventLocation, i => i.Notes)) 
+            if (await TryUpdateModelAsync<Event>(eventToUpdate, "",
+                i => i.Title, i => i.Quantity, i => i.Date, i => i.EventLocation, i => i.Notes))
             {
                 try
                 {
@@ -302,7 +303,7 @@ namespace CAA_TestApp.Controllers
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists contacts an Administrator");
                 }
             }
-           
+
             PopulateAssignedInventoryData(eventToUpdate);
             return View(eventToUpdate);
         }
@@ -341,23 +342,23 @@ namespace CAA_TestApp.Controllers
             {
                 _context.Events.Remove(@event);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool EventExists(int id)
         {
-          return _context.Events.Any(e => e.ID == id);
+            return _context.Events.Any(e => e.ID == id);
         }
 
         private void PopulateAssignedInventoryData(Event @event)
         {
             var allOptions = _context.Products;
-            var currentOptionsIDs = new HashSet<int>(@event.EventInventories.Select(i=> i.InventoryID));
+            var currentOptionsIDs = new HashSet<int>(@event.EventInventories.Select(i => i.InventoryID));
             var checkBoxes = new List<CheckOptionVM>();
 
-            foreach (var option in allOptions) 
+            foreach (var option in allOptions)
             {
                 checkBoxes.Add(new CheckOptionVM
                 {
@@ -375,11 +376,11 @@ namespace CAA_TestApp.Controllers
 
 
             var sumQ = _context.Events
-                .Include(a=> a.EventInventories)
-                .ThenInclude(a=> a.Inventory)
-                .ThenInclude(a=> a.Product)
+                .Include(a => a.EventInventories)
+                .ThenInclude(a => a.Inventory)
+                .ThenInclude(a => a.Product)
 
-                .GroupBy(c => new { c.ID, c.Title, c.Quantity , c.Date, c.EventLocation, c.Notes })
+                .GroupBy(c => new { c.ID, c.Title, c.Quantity, c.Date, c.EventLocation, c.Notes })
                 .Select(grp => new EventReportsVM
                 {
                     ID = grp.Key.ID,

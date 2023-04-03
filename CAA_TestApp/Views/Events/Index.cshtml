@@ -34,35 +34,48 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
                     @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @foreach(var i in item.EventInventories)
-                {
-                    @i.Inventory.Product.Name <br />
-                }
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Quantity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EventLocation)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Notes)
-            </td>
-            <td>
-                <a asp-action="Edit" title=" Click here to edit" asp-route-id="@item.ID">Edit</a> 
-                <a asp-action="Details" title=" Click here to open details " asp-route-id="@item.ID" hidden>Details</a> 
-                <a asp-action="Delete" title=" Click here to delete this data " asp-route-id="@item.ID" hidden>Delete</a>
-            </td>
-        </tr>
-}
+                </td>
+                <td>
+                    @{
+                        List<Inventory> items = new List<Inventory>();
+
+                        foreach (var i in item.EventInventories)
+                        {
+                            items.Add(i.Inventory);
+                        }
+
+                        List<Inventory> distinctItems = items.GroupBy(i => i.Product.Name).Select(x => x.First()).ToList();
+
+                        foreach (var it in distinctItems)
+                        {
+                            <p>•</p> @it.Product.Name;
+                            <br />
+                        }
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EventLocation)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Notes)
+                </td>
+                <td>
+                    <a asp-action="Edit" title=" Click here to edit" asp-route-id="@item.ID">Edit</a>
+                    <a asp-action="Details" title=" Click here to open details " asp-route-id="@item.ID" hidden>Details</a>
+                    <a asp-action="Delete" title=" Click here to delete this data " asp-route-id="@item.ID" hidden>Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
