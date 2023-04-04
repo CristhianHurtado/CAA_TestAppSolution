@@ -70,23 +70,23 @@
         <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Title" class="control-label"><strong> Event Name</strong>(Required)*</label>
+                <label asp-for="Title" class="control-label"><strong> Event Name </strong>(Required)*</label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger" title=" Enter your title here "></span>
             </div>
             <div class="form-group">
-                <label asp-for="Date" class="control-label"><strong>Date</strong>(Required)*</label>
+                <label asp-for="Date" class="control-label"><strong>Date </strong>(Required)*</label>
                 <input asp-for="Date" class="form-control" />
                 <span asp-validation-for="Date" class="text-danger" title=" Select the date for the event"></span>
             </div>
             <div class="form-group">
-                <label asp-for="EventLocation" class="control-label"><strong>Event Location</strong>(Required)*</label>
+                <label asp-for="EventLocation" class="control-label"><strong>Event Location </strong>(Required)*</label>
                 <input asp-for="EventLocation" class="form-control" />
                 <span asp-validation-for="EventLocation" class="text-danger" title=" Enter the Location here "></span>
             </div>
 
             <div class="form-group">
-                <label class="control-label" style="margin-top:5px;"><strong>Products Needed</strong>(Required)*</label>
+                <label class="control-label" style="margin-top:5px;"><strong>Products Needed </strong>(Required)*</label>
                 <div class="m-2">
                     <table id="products-list">
                         <tr>
@@ -97,17 +97,17 @@
                                 {
                                     if (cnt++ % 2 == 0)
                                     {
-                                    @:</tr><tr>
+                                            @:</tr><tr>
                                     }
-                                    @:<td>
-                                        <input type="checkbox" id="chk" class="checkbox"
-                                               name="selectedOptions"
-                                               value="@checkbox.ID"
-                                               @(Html.Raw(checkbox.Assigned ? "checked=\"checked\"" : "")) />
-                                        @checkbox.DisplayText @:&nbsp;&nbsp;
-                                    @:</td>
+                                            @:<td>
+                                                <input type="checkbox" id="chk" class="checkbox"
+                                                       name="selectedOptions"
+                                                       value="@checkbox.ID"
+                                                       @(Html.Raw(checkbox.Assigned ? "checked=\"checked\"" : "")) />
+                                                @checkbox.DisplayText @:&nbsp;&nbsp;
+                                            @:</td>
                                 }
-                        @:</tr>
+                                @:</tr>
                             }
                     </table>
                     <span hidden style="color:red" id="span-items">• Please select at least one item</span>
@@ -123,10 +123,10 @@
             <span style="color:red">@ViewBag.noItems</span><br />
         </div>
         <div class="col-md-5">
-            <div style="align-content:center">
+@*            <div style="align-content:center">
                 <h6><img style="margin-bottom:5px;" src="~/images/alarm.png" height="15" width="15" /> Please select the right assinged inventory into the event.</h6>
-            </div>
-            <table class="blueTable" id="product-table">
+            </div>*@
+            <table class="blueTable" id="product-table" style="margin-left:50px; margin-top:25px;">
                 <thead>
                     <tr>
                         <th>Product</th>
