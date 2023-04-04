@@ -30,6 +30,7 @@
                                     Inventory
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="QuickScan">Scan Item</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Index">Inventory Records</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="ReceivedInv">In Transit</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Inventories" asp-action="Archived">Archived</a></li>
@@ -64,9 +65,6 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="NavigateHome">Help Centre</a>
-                            </li>
-                            <li>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Inventories" asp-action="QuickScan">Scan Item</a>
                             </li>
 
                         </ul>
