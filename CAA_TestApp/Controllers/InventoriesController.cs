@@ -117,7 +117,7 @@ namespace CAA_TestApp.Controllers
             }
             if (!String.IsNullOrEmpty(SearchName))
             {
-                inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()));
+                inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()) || p.ISBN.Contains(SearchName));
                 ViewData["Filtering"] = " btn-danger";
             }
 
