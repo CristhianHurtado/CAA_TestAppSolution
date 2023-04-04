@@ -8,10 +8,13 @@
 <form asp-controller="Inventories" method="get">
 <a asp-action="DownloadInventoriesReports" title=" Click here to download the Invetory Report" class="btn btn-info float-end btn-style">Download Inventory Report</a>
     <div class="form-horizontal">
-        <button class=" btn @(ViewData["Filtering"]) " type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" 
-               title=" Click here to filter or search records" aria-expanded="false" aria-controls="collapseFilter" style="border-radius: 25px;">
+        <button class=" btn btn-style  @(ViewData["Filtering"]) " type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter"
+                title=" Click here to filter or search records" aria-expanded="false" aria-controls="collapseFilter" style="border-radius: 25px;">
             Filter/Search
         </button>
+        <br />
+        <br />
+
         <div class="collapse" id="collapseFilter">
             <div class="card card-body bg-light">
                 <div class="row">

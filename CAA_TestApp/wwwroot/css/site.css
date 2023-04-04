@@ -17,6 +17,7 @@ body {
   margin-bottom: 60px;
 }
 
+
 /*************************BUTTON**************************************/
 .btn-style {
     border-radius: 25px;
@@ -102,7 +103,9 @@ body {
 
 .images {
     max-width: 100%;
-    height: 275px;
+    height: 375px;
+    width: 300px;
+    border-radius: 20px;
 }
 
 .action-title {
