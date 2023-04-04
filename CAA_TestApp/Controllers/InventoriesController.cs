@@ -2116,7 +2116,7 @@ namespace CAA_TestApp.Controllers
             return NotFound("No data. ");
         }
 
-        public async Task<IActionResult> EventReports(int? page, int? pageSizeID)
+        public async Task<IActionResult> EventReports(int? page, int? pageSizeID, string SearchName, string actionButton)
         {
 
 
@@ -2141,6 +2141,15 @@ namespace CAA_TestApp.Controllers
                 }).OrderBy(s => s.Name);
 
             //Handle paging
+            if (!String.IsNullOrEmpty(SearchName))
+            {
+                sumQ = (IOrderedQueryable<EventReportsVM>)sumQ.Where(i => i.Title.ToUpper().Contains(SearchName.ToUpper()));
+                ViewData["Filtering"] = "  btn-danger ";
+            }
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
+            }
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "EventReports");
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
             var pagedData = await PaginatedList<EventReportsVM>.CreateAsync(sumQ.AsNoTracking(), page ?? 1, pageSize);

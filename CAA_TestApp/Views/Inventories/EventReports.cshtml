@@ -7,7 +7,28 @@
 <h1>Event Report</h1>
 <form asp-controller="Inventories" asp-action="EventReports" method="get">
     <a asp-action="DownloadEventReports" title=" Click here to Download Event report" class="btn btn-info float-end btn-style">Download Event Report</a>
-
+    <div class="form-horizontal">
+        <button class=" btn btn-style  @(ViewData["Filtering"]) " type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter"
+                title=" Click here to filter or search records " aria-expanded="false" aria-controls="collapseFilter" style="border-radius: 25px;">
+            Filter/Search
+        </button>
+        <br />
+        <br />
+        <div class="collapse" id="collapseFilter">
+            <div class="card card-body bg-light">
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Search Item Name:</label>
+                        @Html.TextBox("SearchName", null, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group col-md-4 align-self-end" style="margin-top:5px;">
+                        <input type="submit" title=" Click here to filter records" name="actionButton" value="Filter" class="btn btn-outline-primary btn-style" />
+                        <a asp-action="EventReports" title=" Click here to clear filter" class="btn btn-outline-dark btn-style ">Clear</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <table class="table">
         <thead>
             <tr>
