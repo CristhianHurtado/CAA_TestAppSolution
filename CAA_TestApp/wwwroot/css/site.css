@@ -90,10 +90,11 @@ body {
 .action-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    align-items:center;
+    align-items: center;
     grid-auto-rows: 500px;
     gap: 10px;
     padding-top: 75px;
+
 }
 
 .action-column, .action-column:visited, .action-column:hover, .action-column:active {
@@ -103,33 +104,35 @@ body {
 
 .images {
     max-width: 100%;
-    height: 375px;
+    height: 300px;
     width: 300px;
-    border-radius: 20px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
 }
 
 .action-title {
     text-align: center;
-    padding-top: 15px;
     font-weight: bold;
-    font-size: 20px;
-    text-decoration: underline;
+    font-size: 22px;
+    padding-top:10px;
 }
 
 .action-filler {
     text-align: center;
-    padding-top: 15px;
+    padding: 15px 8px 8px 5px;
+    font-size:15px;
 }
 
 .action-text {
     background-color: white;
     height: 130px;
+    margin-top: -25px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    width: 300px;
 }
 
 /************************************************TOOLTIP*************************************/
-
-
-
 .help-tip {
     text-decoration: none;
     position: relative;
