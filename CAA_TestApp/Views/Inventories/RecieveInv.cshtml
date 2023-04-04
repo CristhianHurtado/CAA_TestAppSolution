@@ -4,7 +4,7 @@
     ViewData["Title"] = "Add Inventory";
 }
 
-<h1>Complete Transfer</h1>
+<h1>Scan QR Code</h1>
 
 <style>
     .video-mask {
@@ -28,16 +28,15 @@
     <div>
 
         <div class="col-lg-6 col-lg-offset-3">
-            <h1>Scan Qr Code:</h1>
             <p></p>
                 <video playsinline="true" autoplay class="video-mask" id="preview" width="350" height="350"></video> <br />
-            <input type="text" class="textInput" id="qrCodeValue" name="codeForISBN" placeholder="@Model.ISBN" />
+            <input type="text" class="input-group-text" id="qrCodeValue" name="codeForISBN" placeholder="@Model.ISBN" style="margin-top:20px;" />
             <audio type="audio/mpeg" touchstart preload="auto" mediagroup="audio/mpeg" id="notificationSound" >
                 <source src="~/sounds/notification.mp3" type="audio/mp3" />    
             </audio>
         </div>
         
-        <h2 style="font-size: 16px; color:red;">Are you sure you want to complete this transfer?</h2>
+        <h2 style="font-size: 16px; color:red; margin-top:20px;">Are you sure you want to complete this transfer?</h2>
         <input type="hidden" asp-for="ID" />
         <br />
         <input type="submit" title=" Click here to Transfer the inventory" value="Confirm" class="btn btn-danger btn-style" /> |

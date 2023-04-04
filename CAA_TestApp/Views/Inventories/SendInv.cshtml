@@ -12,11 +12,11 @@
         @{
         if (Model.ItemPhoto?.Content != null)
         {
-            @:<div>
+                            @:<div>
                 string imageBase64 = Convert.ToBase64String(Model.ItemPhoto.Content);
                 string imageSrc = string.Format("data:" + Model.ItemPhoto.MimeType + ";base64,{0}", imageBase64);
-                <img src="@imageSrc" alt="Profile Picture of @Model.ISBN" title="Profile Picture of @Model.ISBN" class="img-fluid rounded" />
-            @:</div><hr />
+                                <img src="@imageSrc" alt="Profile Picture of @Model.ISBN" title="Profile Picture of @Model.ISBN" class="img-fluid rounded" />
+                            @:</div><hr />
 
         }
         }
@@ -88,9 +88,10 @@
     </div>
         <h2 style="font-size: 16px; color:red;">Are you sure you want to Transfer this?</h2>
 
-    <div class="form-group">
+    <div class="form-group" style="margin-top:20px;">
  
-         <input name="submit" value="Transfer"  type="submit"  class="btn btn-primary btn-style" href="@Url.Action("ItemTransfered","Inventories")" type="button" data-toggle="modal" data-target="#exampleModal">
+         <input name="submit" value="Yes"  type="submit" class="btn btn-primary btn-style" href="@Url.Action("ItemTransfered","Inventories")" data-toggle="modal" data-target="#exampleModal" 
+         style="width:75px; margin-right: 15px;">
         <a asp-action="Index">Back to List</a>
     </div>
 

@@ -10,7 +10,12 @@
 
 
         <div class="login-info">
-            <h1 style="text-align:center;">CAA Login</h1>
+            @*<h1 style="text-align:center;">CAA Login</h1>*@
+            <h1>
+                <a>
+                    <img src="~/images/CAANiagara_RGBVertLogo.png" alt="CAA Logo" width="100px" height="100px" class="login-logo"/>
+                </a>
+            </h1>
             <form id="account" method="post">
                 <hr />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -37,11 +42,11 @@
                 <div>
                     <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary btn-style" style="margin-top:10px;">Log in</button>
                 </div>
-                <div>
+@*                <div>
                     <p>
                         <button class="w-100 btn btn-lg btn-primary btn-style" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" style="margin-top:10px;">Register</button>
                     </p>
-                </div>
+                </div>*@
             </form>
         </div>
     </div>

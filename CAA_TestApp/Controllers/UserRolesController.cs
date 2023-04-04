@@ -86,6 +86,24 @@ namespace CAA_TestApp.Controllers
             return View(user);
         }
 
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(string? id)
+        {
+            if (id == null || _context.Users == null)
+            {
+                return NotFound();
+            }
+
+            var user = _context.Users.FirstOrDefaultAsync(i => i.Id == id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
+
         private void PopulateAssignedRoleData(UserVM user)
         {//Prepare checkboxes for all Roles
             var allRoles = _context.Roles;

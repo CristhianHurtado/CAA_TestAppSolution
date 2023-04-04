@@ -28,14 +28,15 @@
         <div class="col-lg-6 col-lg-offset-3">
             <h1>Scan Qr Code:</h1>
             <p></p>
-                <video playsinline="true" autoplay class="video-mask" id="preview" width="350" height="350"></video> <br />
-            <input type="text" class="textInput" id="qrCodeValue" name="codeForISBN" />
+                <video playsinline="true" autoplay class="video-mask" id="preview" width="350" height="350"></video> 
+                <br />
+            <input type="text" class="input-group-text" id="qrCodeValue" name="codeForISBN" style="margin-top:20px;" placeholder="ISBN #"/>
             <audio type="audio/mpeg" touchstart preload="auto" mediagroup="audio/mpeg" id="notificationSound" >
                 <source src="~/sounds/notification.mp3" type="audio/mp3" />    
             </audio>
         </div>
         <br />
-        <a asp-action="Index" asp-controller="Home" title=" Go back to home page">Return</a>
+        <a asp-action="Index" asp-controller="Home" title=" Go back to home page">Home</a>
     </div>
 </form>
 

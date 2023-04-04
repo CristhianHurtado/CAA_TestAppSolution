@@ -17,6 +17,10 @@ body {
   margin-bottom: 60px;
 }
 
+footer {
+    text-align: center;
+    padding: 20px;
+}
 
 /*************************BUTTON**************************************/
 .btn-style {
@@ -221,7 +225,12 @@ hr {
 /************************************************LOGIN/REGISTER*************************************/
 
 
-
+.login-logo {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 10px;
+}
 
 
 .login-body {

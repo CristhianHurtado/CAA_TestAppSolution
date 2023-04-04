@@ -1,4 +1,5 @@
 ﻿using CAA_TestApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -14,6 +15,7 @@ namespace CAA_TestApp.Controllers
             _logger = logger;
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
             return View();
