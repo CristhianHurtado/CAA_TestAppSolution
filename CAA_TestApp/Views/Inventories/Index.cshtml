@@ -9,8 +9,22 @@
 
 <p>
     <a asp-action="Create" title="Click here to create a new Inventory">Add New</a> |
-    <a asp-action="Archived" title="Click here to archieve an Inventory">Archived</a> |
-    <a asp-action="ReceivedInv" title="Click here to check Inventory in transit">Inventory In Transit</a>
+    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+        <ul class="navbar-nav flex-grow-1">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Inventory...
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a asp-action="ReceivedInv" title="Click here to check Inventory in transit">In transit</a></li>
+                    <li><a asp-action="Archived" title="Click here to check Inventory in use">In use</a></li>
+                    <li><a asp-action="Archived" title="Click here to archieve an Inventory">Reserved</a></li>
+                    <li><a asp-action="Archived" title="Click here to archieve an Inventory">Archived</a></li>
+                </ul>
+            </li>
+         </ul>
+     </div>
+
 </p>
 <form asp-action="Index" method="get" >
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
