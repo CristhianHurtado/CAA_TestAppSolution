@@ -25,6 +25,9 @@
          </ul>
      </div>
 
+    <a asp-action="Archived" title="Click here to archieve an Inventory">Archived</a> |
+    <a asp-action="ReceivedInv" title="Click here to check Inventory in transit">Inventory In Transit</a> |
+    <a asp-action="PreMassGen" title="Click here to print many QR codes">Mass QR Code Gen</a>
 </p>
 <form asp-action="Index" method="get" >
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
@@ -134,20 +137,24 @@
             {
 
                 CaaContext _context = ViewBag.Context;
-                @if (item.statusID != _context.statuses.FirstOrDefault(i => i.status == "Archived").ID)
+                if (item.statusID != _context.statuses.FirstOrDefault(i => i.status == "In use").ID)
                 {
-                    @if (item.statusID != _context.statuses.FirstOrDefault(i => i.status == "On transit").ID)
+
+
+                    @if (item.statusID != _context.statuses.FirstOrDefault(i => i.status == "Archived").ID)
                     {
-                        @if (item.Quantity == 0)
+                        @if (item.statusID != _context.statuses.FirstOrDefault(i => i.status == "On transit").ID)
                         {
-                            item.Status.status = "Out of Stock";
+                            @if (item.Quantity == 0)
+                            {
+                                item.Status.status = "Out of Stock";
 
-                            <tr class="">
+                                <tr class="">
 
-                                
-                                
-                                <td>
-                                    <img src="~/images/redSmall.png" width="30dpx" height="30px">
+
+
+                                    <td>
+                                        <img src="~/images/redSmall.png" width="30dpx" height="30px">
 
                                         @*@{
                                             if (item.ItemThumbnail?.Content != null)
@@ -157,115 +164,121 @@
                                             <img src="@imageSrc" alt="Profile Picture of @item.Product.Name" title="Profile Picture of @item.Product.Name" class="img-fluid rounded" />
                                             }
                                         }*@
-                                </td>
+                                    </td>
 
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Product.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Quantity)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Product.Category.Classification)
-                                </td>
-                                <td>
-                                    @{                                
-                                        if(item.LocationID == null)
-                                        {
-                                            @Html.Display("On transit");
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Product.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Quantity)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Product.Category.Classification)
+                                    </td>
+                                    <td>
+                                        @{
+                                            if (item.LocationID == null)
+                                            {
+                                                @Html.Display("On transit")
+                                                ;
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayFor(modelItem => item.Location.City)
+                                                ;
+                                            }
                                         }
-                                        else
-                                        {
-                                            @Html.DisplayFor(modelItem => item.Location.City);
-                                        }
-                                    }
-                                </td>
-                                <td>
+                                    </td>
+                                    <td>
 
-                                    <a asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID" title="Click here to Edit Inventory">Edit</a> |
-                                    <a asp-area="" asp-controller="Inventories" asp-action="Details" asp-route-id="@item.ID" title="Click here to check Inventory details">Details</a> |
-                                    <a asp-area="" asp-controller="Inventories" asp-action="Archive" asp-route-id="@item.ID" title="Click here to Archieve Inventory">Archive</a> |
-                                    <a asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID" title="Click here to send Inventory to transfer">Transfer</a> |
-                                    <a asp-area="" asp-controller="Inventories" asp-action="GenerateQr" asp-route-id="@item.ID" title=" Click here to generate QR code ">QRCode</a>
-                                </td>
-                            </tr>
+                                        <a asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID" title="Click here to Edit Inventory">Edit</a> |
+                                        <a asp-area="" asp-controller="Inventories" asp-action="Details" asp-route-id="@item.ID" title="Click here to check Inventory details">Details</a> |
+                                        <a asp-area="" asp-controller="Inventories" asp-action="Archive" asp-route-id="@item.ID" title="Click here to Archieve Inventory">Archive</a> |
+                                        <a asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID" title="Click here to send Inventory to transfer">Transfer</a> |
+                                        <a asp-area="" asp-controller="Inventories" asp-action="GenerateQr" asp-route-id="@item.ID" title=" Click here to generate QR code ">QRCode</a>
+                                    </td>
+                                </tr>
+                            }
+                            @if (item.Quantity < item.Product.ParLevel && item.Quantity != 0)
+                            {
+                                item.Status.status = "Order More";
+                                <tr class="">
+                                    <td>
+                                        <img src="~/images/YSmall.png" width="30dpx" height="30px">
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Product.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Quantity)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Product.Category.Classification)
+                                    </td>
+
+                                    <td>
+                                        @{
+                                            if (item.LocationID == null)
+                                            {
+                                                @Html.Display("On transit")
+                                                ;
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayFor(modelItem => item.Location.City)
+                                                ;
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+
+                                        <a asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID" title="Click here to Edit Inventory">Edit</a> |
+                                        <a asp-area="" asp-controller="Inventories" asp-action="Details" asp-route-id="@item.ID" title="Click here to check Inventory details">Details</a> |
+                                        <a asp-area="" asp-controller="Inventories" asp-action="Archive" asp-route-id="@item.ID" title="Click here to Archieve Inventory">Archive</a> |
+                                        <a asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID" title="Click here to send Inventory to transfer">Transfer</a> |
+                                        <a asp-area="" asp-controller="Inventories" asp-action="GenerateQr" asp-route-id="@item.ID" title=" Click here to generate QR code ">QRCode</a>                                 </td>
+                                </tr>
+                            }
+                            @if (item.Quantity >= item.Product.ParLevel && item.Quantity != 0)
+                            {
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Product.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Quantity)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Product.Category.Classification)
+                                    </td>
+
+                                    <td>
+                                        @{
+                                            if (item.LocationID == null)
+                                            {
+                                                @Html.Display("On transit")
+                                                ;
+                                            }
+                                            else
+                                            {
+                                                @Html.DisplayFor(modelItem => item.Location.City)
+                                                ;
+                                            }
+                                        }
+                                    </td>
+                                    <td>
+
+                                        <a asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID" title="Click here to Edit Inventory">Edit</a> |
+                                        <a asp-area="" asp-controller="Inventories" asp-action="Details" asp-route-id="@item.ID" title="Click here to check Inventory details">Details</a> |
+                                        <a asp-area="" asp-controller="Inventories" asp-action="Archive" asp-route-id="@item.ID" title="Click here to Archieve Inventory">Archive</a> |
+                                        <a asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID" title="Click here to send Inventory to transfer">Transfer</a> |
+                                        <a asp-area="" asp-controller="Inventories" asp-action="GenerateQr" asp-route-id="@item.ID" title=" Click here to generate QR code ">QRCode</a>                                 </td>
+                                </tr>
+                            }
                         }
-                        @if (item.Quantity < item.Product.ParLevel && item.Quantity != 0)
-                        {
-                            item.Status.status = "Order More";
-                            <tr class="">
-                                <td>
-                                    <img src="~/images/YSmall.png" width="30dpx" height="30px">
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Product.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Quantity)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Product.Category.Classification)
-                                </td>
 
-                                <td>
-                                    @{
-                                        if (item.LocationID == null)
-                                        {
-                                            @Html.Display("On transit");
-                                        }
-                                        else
-                                        {
-                                            @Html.DisplayFor(modelItem => item.Location.City);
-                                        }
-                                    }
-                                </td>
-                                <td>
-
-                                    <a asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID" title="Click here to Edit Inventory">Edit</a> |
-                                    <a asp-area="" asp-controller="Inventories" asp-action="Details" asp-route-id="@item.ID" title="Click here to check Inventory details">Details</a> |
-                                    <a asp-area="" asp-controller="Inventories" asp-action="Archive" asp-route-id="@item.ID" title="Click here to Archieve Inventory">Archive</a> |
-                                    <a asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID" title="Click here to send Inventory to transfer">Transfer</a> |
-                                    <a asp-area="" asp-controller="Inventories" asp-action="GenerateQr" asp-route-id="@item.ID" title=" Click here to generate QR code ">QRCode</a>                                 </td>
-                            </tr>
-                        }
-                        @if (item.Quantity >= item.Product.ParLevel && item.Quantity != 0)
-                        {
-                            <tr>
-                                <td>
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Product.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Quantity)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Product.Category.Classification)
-                                </td>
-
-                                <td>
-                                    @{
-                                        if (item.LocationID == null)
-                                        {
-                                            @Html.Display("On transit")
-                                            ;
-                                        }
-                                        else
-                                        {
-                                            @Html.DisplayFor(modelItem => item.Location.City)
-                                            ;
-                                        }
-                                    }
-                                </td>
-                                <td>
-
-                                    <a asp-area="" asp-controller="Inventories" asp-action="Edit" asp-route-id="@item.ID" title="Click here to Edit Inventory">Edit</a> |
-                                    <a asp-area="" asp-controller="Inventories" asp-action="Details" asp-route-id="@item.ID" title="Click here to check Inventory details">Details</a> |
-                                    <a asp-area="" asp-controller="Inventories" asp-action="Archive" asp-route-id="@item.ID" title="Click here to Archieve Inventory">Archive</a> |
-                                    <a asp-area="" asp-controller="Inventories" asp-action="SendInv" asp-route-id="@item.ID" title="Click here to send Inventory to transfer">Transfer</a> |
-                                    <a asp-area="" asp-controller="Inventories" asp-action="GenerateQr" asp-route-id="@item.ID" title=" Click here to generate QR code ">QRCode</a>                                 </td>
-                            </tr>
-                        }
                     }
                 }
             }

@@ -1,0 +1,67 @@
+﻿
+@{
+    ViewData["Title"] = "QR Codes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .flex-row-container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .flex-row-container > .flex-row-item {
+        flex: 1 1 30%; /*grow | shrink | basis */
+    }
+</style>
+
+
+<div id="parentDiv">
+    @if (ViewBag.ItemsNotFound.Count != 0)
+    {
+        string preDisplay = "There was no inventory for ";
+        foreach(var item in ViewBag.ItemsNotFound)
+        {
+            preDisplay += $"{item}, ";
+        }
+
+        string display = preDisplay.Remove(preDisplay.Length - 2, 2);
+
+        display += " at selected location";
+    
+        <h2 class="alert-heading">@display</h2>
+    }
+
+    @if(ViewBag.QRCodeImages != null)
+    {
+        <div class="alert alert-info">Qr Codes Created!</div>
+        <div id="qrMass" class="flex-row-container" style="display:flex">
+            @{
+                List<string> qrs = ViewBag.QRCodeImages;
+
+                for (int j = 0; j < qrs.Count; j++)
+                {
+                    <div id="singleQr" class="flex-row-item" style="border: 5px solid #aaa; justify-content:center; align-content:space-between; border-radius: 15px; padding-left: 5px;">
+                        <h3 for="qr-code-image">@ViewBag.FoundItems[j]</h3>
+                        <img id="qr-code-image" name="qr-code-image" src="@qrs[j]" style="height:400px; width:400px; margin-left:auto; margin-right:auto; display:flex;"><br />
+                    </div>
+                }
+            }
+        </div><br />
+        <input type="button" class="w-100 btn btn-lg btn-primary btn-style" style="margin-left:auto; margin-right:auto;" value="Print Codes" id="print-button" onclick="printDiv()"/>
+    }
+    else
+    {
+        <div class="alert alert-info">Qr Code not created</div>
+    }
+</div>
+
+<div style="margin-top:20px;">
+    <a asp-action="Index">Back to Inventory</a>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/MassPrintQR.js"></script>
+}

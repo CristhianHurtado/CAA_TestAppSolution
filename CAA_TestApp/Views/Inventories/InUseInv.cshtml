@@ -2,10 +2,10 @@
 @model IEnumerable<CAA_TestApp.Models.Inventory>
 
 @{
-    ViewData["Title"] = "Archived inventory";
+    ViewData["Title"] = "In use inventory";
 }
 
-<h1>Archived Inventory</h1>
+<h1>In use Inventory</h1>
 
 <p>
     <a asp-action="Index">Inventory</a>
@@ -114,7 +114,7 @@
             {
                 CaaContext _context = ViewBag.Context;
 
-                @if (item.statusID == _context.statuses.FirstOrDefault(i => i.status == "Archived").ID)
+                @if (item.statusID == _context.statuses.FirstOrDefault(i => i.status == "In use").ID)
                 {
                     <tr>
                         <td>
@@ -138,9 +138,7 @@
                             @Html.DisplayFor(modelItem => item.Status.status)
                         </td>
                         <td>
-                            <a asp-action="Restore" title="Click here to restore the items" asp-route-id="@item.ID">Restore</a> 
                             <a asp-action="NoActionDetails" asp-route-id="@item.ID"hidden>Details</a>  
-                            <a asp-action="Delete" title="Click here to delete the record" asp-route-id="@item.ID"hidden>Delete</a>
                         </td>
                     </tr>
 

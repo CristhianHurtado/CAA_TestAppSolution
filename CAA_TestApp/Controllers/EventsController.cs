@@ -193,29 +193,47 @@ namespace CAA_TestApp.Controllers
                                 ItemThumbnail = ANTinv.ItemThumbnail,
                                 QRImage = ANTinv.QRImage,
                                 EventInventories = ANTinv.EventInventories,
-                                statusID = _context.statuses.FirstOrDefault(i => i.status == "In use").ID,
+                                statusID = _context.statuses.FirstOrDefault(i => i.status == "Reserved").ID,
                             };
                             newInventoryForEvent.Add(eventInv);
-                            ANTinv.Quantity -= Convert.ToInt32(eachData[1]);
+                      
                             totalQuanInEvent += Convert.ToInt32(eachData[1]);
-                            _context.Update(ANTinv);
-                            _context.Add(eventInv);
-                            await _context.SaveChangesAsync();
+
+                            _context.Inventories.Add(eventInv);
                         }
 
-
-
                     }
+
+                    await _context.SaveChangesAsync();
+                    
                     @event.Quantity = totalQuanInEvent;
+                                        
+                    _context.Add(@event);
+                    
+                    await _context.SaveChangesAsync();
+
                     foreach (var item in newInventoryForEvent)
                     {
-                        var itemToAdd = new EventInventory { EventID = @event.ID, InventoryID = int.Parse(item.ID.ToString()) };
+                        Inventory aux = await _context.Inventories.FirstOrDefaultAsync(i => i.ID == item.ID);
+                        EventInventory itemToAdd = new EventInventory { EventID = @event.ID, InventoryID = aux.ID };
+                        _context.EventInventories.Add(itemToAdd);
                         @event.EventInventories.Add(itemToAdd);
                     }
+
+                    await _context.SaveChangesAsync();
+
+                    for (int i = 0; i < @event.EventInventories.Count; i++)
+                    {
+                        EventInventory[] invs = @event.EventInventories.Take(@event.EventInventories.Count).ToArray();
+                        invs[i].InventoryID = newInventoryForEvent[i].ID;
+                        _context.Update(invs[i]);
+                    }
+
+                    await _context.SaveChangesAsync();
                 }
+                
                 if (ModelState.IsValid)
                 {
-                    _context.Add(@event);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
@@ -340,6 +358,90 @@ namespace CAA_TestApp.Controllers
             }
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ReturnInvFromEvent(int? id)
+        {
+            if (id == null || _context.Events == null)
+            {
+                return NotFound();
+            }
+
+            var @event = await _context.Events
+                .Include(e => e.EventInventories)
+                .ThenInclude(i => i.Inventory)
+                .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(e => e.ID == id);
+
+            if (@event == null) { return NotFound(); }
+
+            var locs = _context.Locations.ToList();
+
+            ViewData["Locations"] = new SelectList(locs, "ID", "City");
+
+            return View(@event);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ReturnInvFromEvent(int? id, string[] itemsFromEvent, string[] locationsToSend, string[] quans)
+        {
+            var eventToReturn = await _context.Events.FirstOrDefaultAsync(e => e.ID == id);
+
+            if (eventToReturn == null) { return NotFound(); }
+
+            EventInventory relationshipItself = await _context.EventInventories.FirstOrDefaultAsync(e => e.EventID == eventToReturn.ID);
+
+            List<EventInventory> eventRelationship = await _context.EventInventories.Include(e => e.Inventory).Where(e => e.EventID == eventToReturn.ID).ToListAsync();
+
+            for (int index = 0; index < eventRelationship.Count; index++)
+            {
+                List<Inventory> inventoryFilteredWithEventItems = await _context.Inventories
+                                                                    .Include(i => i.Location)
+                                                                    .Include(i => i.Product)
+                                                                    .Where(i => i.Product.Name == itemsFromEvent[index] && i.Status.status == "In stock")
+                                                                    .ToListAsync();
+
+                //List<Inventory> inventoryFilteredWithStatus = inventoryFilteredWithEventItems.Where(i => i.Status.status == "In use").ToList();
+
+                Inventory inventoryFilteredWithlocation = inventoryFilteredWithEventItems.FirstOrDefault(i => i.LocationID == Convert.ToInt32(locationsToSend[index]));
+
+                if(inventoryFilteredWithlocation == null)
+                {
+                    string aux = GenerateISBN();
+
+                    Inventory newInv = new Inventory
+                    {
+                        ISBN = aux,
+                        ProductID = _context.Products.FirstOrDefault(p => p.ID == Convert.ToInt32(itemsFromEvent[index])).ID,
+                        LocationID = _context.Locations.FirstOrDefault(l => l.ID == Convert.ToInt32(locationsToSend[index])).ID,
+                        Notes = $"Add new notes, inventory returned from{eventToReturn.Title}, add new cost, add new photo",
+                        ShelfOn = "Add new Shelf",
+                        Cost = 0.00,
+                        DateReceived = DateTime.Now,
+                        Quantity = Convert.ToInt32(quans[index]),
+                        statusID = _context.statuses.FirstOrDefault(i => i.status == "In stock").ID,
+                    };
+
+                    _context.Inventories.Add(newInv);
+                }
+                else
+                {
+                    inventoryFilteredWithlocation.Quantity += eventRelationship[index].Inventory.Quantity;
+                    _context.Update(inventoryFilteredWithlocation);
+                }
+                _context.Remove(inventoryFilteredWithlocation);
+                _context.Remove(eventRelationship[index]);
+            }
+
+            _context.Remove(eventToReturn);
+            _context.Remove(relationshipItself);
+
+            await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

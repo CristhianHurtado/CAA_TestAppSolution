@@ -44,46 +44,6 @@ namespace CAA_TestApp.Controllers
             _context = context;
         }
 
-
-        /*// GET: InventoriesFilter
-        public async Task<IActionResult> InventoryRFilter(string SearchName, int? CategoryID, int[] LocationID,
-            int? page, string actionButton, int? pageSizeID)
-        {
-            PopulateDropDownListsLocations();
-
-            ViewData["Context"] = _context;
-
-            ViewData["Filtering"] = "btn-outline-secondary ";
-
-            var inventories = _context.Inventories
-                .Include(i => i.Location)
-                .Include(i => i.Product)
-                .ThenInclude(c => c.Category)
-                .AsNoTracking();
-
-           
-            if (LocationID.Length > 0)
-            {
-                inventories = inventories.Where(p => LocationID.Contains(p.LocationID));
-                ViewData["Filtering"] = "  btn-danger ";
-            }
-            if (!String.IsNullOrEmpty(SearchName))
-            {
-                inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()));
-                ViewData["Filtering"] = " btn-danger";
-            }
-            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
-            {
-                page = 1; //Reset page to start
-            }
-
-                int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "inventories");
-            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
-            var pagedData = await PaginatedList<Inventory>.CreateAsync(inventories.AsNoTracking(), page ?? 1, pageSize);
-
-            return View(pagedData);
-        }*/
-        
         // GET: Inventories
         public async Task<IActionResult> Index(string sortDirectionCheck, string sortFieldID, string SearchName, int? CategoryID, int[] LocationID,
             int? page, string actionButton, int? pageSizeID, string sortDirection = "asc", string sortField = "Inventory")
@@ -525,6 +485,298 @@ namespace CAA_TestApp.Controllers
             return View(pagedData);
         }
 
+        public async Task<IActionResult> InUseInv(string sortDirectionCheck, string sortFieldID, string SearchName, int? CategoryID, int? LocationID,
+            int? page, string actionButton, int? pageSizeID, string sortDirection = "asc", string sortField = "Inventory")
+        {
+            PopulateDropDownListsCategories();
+            PopulateDropDownListsLocations();
+
+            ViewData["Context"] = _context;
+
+            ViewData["Filtering"] = "btn-outline-secondary ";
+
+            string[] sortOptions = new[] { "Product", "Quantity", "Cost", "Location" };
+
+            var inventories = _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Status)
+                .Include(i => i.Product)
+                .ThenInclude(c => c.Category)
+                .Where(i => i.statusID == _context.statuses.FirstOrDefault(i => i.status == "In use").ID)
+                .AsNoTracking();
+
+            if (CategoryID.HasValue)
+            {
+                inventories = inventories.Where(p => p.Product.CategoryID == CategoryID);
+                ViewData["Filtering"] = " btn-danger";
+            }
+            if (LocationID.HasValue)
+            {
+                inventories = inventories.Where(p => p.LocationID == LocationID);
+                ViewData["Filtering"] = "  btn-danger ";
+            }
+            if (!String.IsNullOrEmpty(SearchName))
+            {
+                inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()));
+                ViewData["Filtering"] = " btn-danger";
+            }
+
+            //See if we have called for a change of filtering or sorting
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
+
+                if (sortOptions.Contains(actionButton)) //Change of sort is requested
+                {
+                    if (actionButton == sortField)
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton; //sort by the button clicked
+                }
+                else
+                {
+                    sortDirection = String.IsNullOrEmpty(sortDirectionCheck) ? "asc" : "desc";
+                    sortField = sortFieldID;
+                }
+            }
+            //Now we know which field and direction to sort by
+            if (sortField == "Location")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Location.City)
+                        .ThenBy(i => i.Product.Name);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Location.City)
+                        .ThenBy(i => i.Product.Name);
+                }
+            }
+            else if (sortField == "Product")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Product.Name)
+                        .ThenBy(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Product.Name)
+                        .ThenByDescending(i => i.Location.City);
+                }
+            }
+            else if (sortField == "Quantity")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Quantity)
+                        .ThenBy(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Quantity)
+                        .ThenBy(i => i.Location.City);
+                }
+            }
+            else if (sortField == "Cost")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Cost)
+                        .ThenBy(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Cost)
+                        .ThenBy(i => i.Location.City);
+                }
+            }
+            else if (sortField == "Category") //sort by category
+            {
+                if (sortDirection == "asc")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        inventories = inventories
+                            .OrderBy(i => i.Product.Category.Classification);
+                    }
+                    else
+                    {
+                        inventories = inventories
+                            .OrderByDescending(i => i.Product.Category.Classification);
+                    }
+                }
+            }
+            //Set sort for next time
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            //SelectList for sorting options
+            ViewBag.sortFieldID = new SelectList(sortOptions, sortField.ToString());
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "inventories");
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<Inventory>.CreateAsync(inventories.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+        }
+
+        public async Task<IActionResult> ReservedInv(string sortDirectionCheck, string sortFieldID, string SearchName, int? CategoryID, int? LocationID,
+            int? page, string actionButton, int? pageSizeID, string sortDirection = "asc", string sortField = "Inventory")
+        {
+            PopulateDropDownListsCategories();
+            PopulateDropDownListsLocations();
+
+            ViewData["Context"] = _context;
+
+            ViewData["Filtering"] = "btn-outline-secondary ";
+
+            string[] sortOptions = new[] { "Product", "Quantity", "Cost", "Location" };
+
+            var inventories = _context.Inventories
+                .Include(i => i.Location)
+                .Include(i => i.Status)
+                .Include(i => i.Product)
+                .ThenInclude(c => c.Category)
+                .Where(i => i.statusID == _context.statuses.FirstOrDefault(i => i.status == "Reserved").ID)
+                .AsNoTracking();
+
+            if (CategoryID.HasValue)
+            {
+                inventories = inventories.Where(p => p.Product.CategoryID == CategoryID);
+                ViewData["Filtering"] = " btn-danger";
+            }
+            if (LocationID.HasValue)
+            {
+                inventories = inventories.Where(p => p.LocationID == LocationID);
+                ViewData["Filtering"] = "  btn-danger ";
+            }
+            if (!String.IsNullOrEmpty(SearchName))
+            {
+                inventories = inventories.Where(p => p.Product.Name.ToUpper().Contains(SearchName.ToUpper()));
+                ViewData["Filtering"] = " btn-danger";
+            }
+
+            //See if we have called for a change of filtering or sorting
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1; //Reset page to start
+
+                if (sortOptions.Contains(actionButton)) //Change of sort is requested
+                {
+                    if (actionButton == sortField)
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton; //sort by the button clicked
+                }
+                else
+                {
+                    sortDirection = String.IsNullOrEmpty(sortDirectionCheck) ? "asc" : "desc";
+                    sortField = sortFieldID;
+                }
+            }
+            //Now we know which field and direction to sort by
+            if (sortField == "Location")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Location.City)
+                        .ThenBy(i => i.Product.Name);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Location.City)
+                        .ThenBy(i => i.Product.Name);
+                }
+            }
+            else if (sortField == "Product")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Product.Name)
+                        .ThenBy(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Product.Name)
+                        .ThenByDescending(i => i.Location.City);
+                }
+            }
+            else if (sortField == "Quantity")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Quantity)
+                        .ThenBy(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Quantity)
+                        .ThenBy(i => i.Location.City);
+                }
+            }
+            else if (sortField == "Cost")
+            {
+                if (sortDirection == "asc")
+                {
+                    inventories = inventories
+                        .OrderByDescending(i => i.Cost)
+                        .ThenBy(i => i.Location.City);
+                }
+                else
+                {
+                    inventories = inventories
+                        .OrderBy(i => i.Cost)
+                        .ThenBy(i => i.Location.City);
+                }
+            }
+            else if (sortField == "Category") //sort by category
+            {
+                if (sortDirection == "asc")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        inventories = inventories
+                            .OrderBy(i => i.Product.Category.Classification);
+                    }
+                    else
+                    {
+                        inventories = inventories
+                            .OrderByDescending(i => i.Product.Category.Classification);
+                    }
+                }
+            }
+            //Set sort for next time
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            //SelectList for sorting options
+            ViewBag.sortFieldID = new SelectList(sortOptions, sortField.ToString());
+
+            //Handle paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID, "inventories");
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<Inventory>.CreateAsync(inventories.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
+        }
+
         // GET: Inventories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -643,7 +895,7 @@ namespace CAA_TestApp.Controllers
                     "If the problem persists, contact your systems administrator.");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ModelState.AddModelError("", "Unable to save changes. You cannot have duplicate records with the same name and location.");
             }
@@ -1346,14 +1598,14 @@ namespace CAA_TestApp.Controllers
 
         public async Task<IActionResult> QuickScan()
         {
-            return  View();
+            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> QuickScan(string codeForISBN)
         {
-            Inventory inventoryScaned = _context.Inventories.FirstOrDefault(i => i.ISBN == codeForISBN);
+            Inventory inventoryScaned = await _context.Inventories.FirstOrDefaultAsync(i => i.ISBN == codeForISBN);
 
             return RedirectToAction("Details", new { inventoryScaned.ID });
         }
@@ -1370,7 +1622,7 @@ namespace CAA_TestApp.Controllers
             //string code = ViewData["ISBN"].ToString();
 
             QRCodeGenerator qrCodeGen = new QRCodeGenerator();
-            //           QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.Product.Name}{inventory.Location}", QRCodeGenerator.ECCLevel.Q);
+            //QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.Product.Name}{inventory.Location}", QRCodeGenerator.ECCLevel.Q);
             QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.ISBN}", QRCodeGenerator.ECCLevel.Q);
             QRCode qr = new QRCode(qrData);
 
@@ -1384,6 +1636,55 @@ namespace CAA_TestApp.Controllers
             }
             
             return View(inventory);
+        }
+
+        public async Task<IActionResult> PreMassGen()
+        {
+            PopulateAssignedInventoryData();
+
+            return View();
+        }
+
+        public async Task<IActionResult> MassQrCodeGen(int?[] selectedOptions, string locationAt)
+        {
+            List<string> pngs = new List<string>();
+            List<string> itemsNotFound = new List<string>();
+            List<string> found = new List<string>();
+            
+            for(int index = 0; index < selectedOptions.Length; index++)
+            {
+                Inventory inv = await _context.Inventories.FirstOrDefaultAsync(i => i.ProductID == selectedOptions[index] && i.LocationID == Convert.ToInt32(locationAt)); 
+                Product item = await _context.Products.FirstOrDefaultAsync(i => i.ID == selectedOptions[index]);
+                if(inv == null)
+                {
+                    string name = item.Name;
+                    itemsNotFound.Add(name);
+                    continue;
+                }
+
+                string nameFound = item.Name;
+                found.Add(nameFound);
+
+                QRCodeGenerator qrCodeGen = new QRCodeGenerator();
+                //QRCodeData qrData = qrCodeGen.CreateQrCode($"{inventory.Product.Name}{inventory.Location}", QRCodeGenerator.ECCLevel.Q);
+                QRCodeData qrData = qrCodeGen.CreateQrCode($"{inv.ISBN}", QRCodeGenerator.ECCLevel.Q);
+                QRCode qr = new QRCode(qrData);
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (Bitmap bitmap = qr.GetGraphic(20))
+                    {
+                        bitmap.Save(ms, ImageFormat.Png);
+                        pngs.Add("data:image/png;base64," + Convert.ToBase64String(ms.ToArray()));
+                    }
+                }
+            }
+            
+            ViewBag.FoundItems = found;
+            ViewBag.ItemsNotFound = itemsNotFound;
+            ViewBag.QRCodeImages = pngs;
+
+            return View();
         }
 
         public async Task<IActionResult> SendInvQr(int? id)
@@ -1417,6 +1718,25 @@ namespace CAA_TestApp.Controllers
         public JsonResult GetProducts(int? id)
         {
             return Json(ProductSelectList(id));
+        }
+
+        private void PopulateAssignedInventoryData()
+        {
+            var allOptions = _context.Products;
+            //var currentOptionsIDs = new HashSet<int>(@event.EventInventories.Select(i => i.InventoryID));
+            var checkBoxes = new List<CheckOptionVM>();
+
+            foreach (var option in allOptions)
+            {
+                checkBoxes.Add(new CheckOptionVM
+                {
+                    ID = option.ID,
+                    DisplayText = option.Name
+                    //Assigned = currentOptionsIDs.Contains(option.ID)
+                });
+            }
+            ViewData["Locations"] = new SelectList(_context.Locations, "ID", "City");
+            ViewData["InventoryOptions"] = checkBoxes;
         }
 
         private SelectList LocationSelectList(int? id)

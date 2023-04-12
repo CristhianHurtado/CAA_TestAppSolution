@@ -54,11 +54,11 @@ namespace CAA_TestApp.Data.CaaMigrations
                     Phone = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
                     Address = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     PostalCode = table.Column<string>(type: "TEXT", maxLength: 6, nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -95,9 +95,10 @@ namespace CAA_TestApp.Data.CaaMigrations
                 name: "EventInventories",
                 columns: table => new
                 {
+                    ID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     InventoryID = table.Column<int>(type: "INTEGER", nullable: false),
                     EventID = table.Column<int>(type: "INTEGER", nullable: false),
-                    ID = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -106,7 +107,7 @@ namespace CAA_TestApp.Data.CaaMigrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EventInventories", x => new { x.EventID, x.InventoryID });
+                    table.PrimaryKey("PK_EventInventories", x => x.ID);
                     table.ForeignKey(
                         name: "FK_EventInventories_Events_EventID",
                         column: x => x.EventID,
@@ -127,14 +128,14 @@ namespace CAA_TestApp.Data.CaaMigrations
                     ShelfOn = table.Column<string>(type: "TEXT", nullable: true),
                     Cost = table.Column<double>(type: "REAL", nullable: false),
                     DateReceived = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
                     LocationID = table.Column<int>(type: "INTEGER", nullable: false),
                     ProductID = table.Column<int>(type: "INTEGER", nullable: false),
                     statusID = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -205,12 +206,12 @@ namespace CAA_TestApp.Data.CaaMigrations
                     ParLevel = table.Column<int>(type: "INTEGER", nullable: false),
                     CategoryID = table.Column<int>(type: "INTEGER", nullable: false),
                     OrganizeID = table.Column<int>(type: "INTEGER", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true),
                     InventoryID = table.Column<int>(type: "INTEGER", nullable: true),
                     CreatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UpdatedBy = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
-                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true)
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    RowVersion = table.Column<byte[]>(type: "BLOB", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -258,6 +259,11 @@ namespace CAA_TestApp.Data.CaaMigrations
                 table: "Categories",
                 column: "Classification",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventInventories_EventID",
+                table: "EventInventories",
+                column: "EventID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EventInventories_InventoryID",
@@ -347,7 +353,6 @@ namespace CAA_TestApp.Data.CaaMigrations
                 onDelete: ReferentialAction.Restrict);
 
             ExtraMigration.Steps(migrationBuilder);
-
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

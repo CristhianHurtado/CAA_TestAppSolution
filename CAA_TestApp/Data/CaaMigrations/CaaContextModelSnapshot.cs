@@ -15,7 +15,7 @@ namespace CAA_TestApp.Data.CaaMigrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.14");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.15");
 
             modelBuilder.Entity("CAA_TestApp.Models.Category", b =>
                 {
@@ -87,10 +87,8 @@ namespace CAA_TestApp.Data.CaaMigrations
 
             modelBuilder.Entity("CAA_TestApp.Models.EventInventory", b =>
                 {
-                    b.Property<int>("EventID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("InventoryID")
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CreatedBy")
@@ -100,7 +98,10 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ID")
+                    b.Property<int>("EventID")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("InventoryID")
                         .HasColumnType("INTEGER");
 
                     b.Property<byte[]>("RowVersion")
@@ -115,7 +116,9 @@ namespace CAA_TestApp.Data.CaaMigrations
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("EventID", "InventoryID");
+                    b.HasKey("ID");
+
+                    b.HasIndex("EventID");
 
                     b.HasIndex("InventoryID");
 

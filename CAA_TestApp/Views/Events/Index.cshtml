@@ -70,8 +70,9 @@
                     @Html.DisplayFor(modelItem => item.Notes)
                 </td>
                 <td>
-                    <a asp-action="Edit" title=" Click here to edit" asp-route-id="@item.ID">Edit</a>
+                    <a asp-action="Edit" title=" Click here to edit" asp-route-id="@item.ID">Edit</a> | 
                     <a asp-action="Details" title=" Click here to open details " asp-route-id="@item.ID" hidden>Details</a>
+                    <a asp-action="ReturnInvFromEvent" title=" Click here to return inventory from event " asp-route-id="@item.ID">Return Inventory</a>
                     <a asp-action="Delete" title=" Click here to delete this data " asp-route-id="@item.ID" hidden>Delete</a>
                 </td>
             </tr>

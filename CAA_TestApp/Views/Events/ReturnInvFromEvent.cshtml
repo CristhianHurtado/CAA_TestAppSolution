@@ -1,0 +1,58 @@
+﻿@model CAA_TestApp.Models.Event
+
+@{
+    ViewData["Title"] = "Return Inventory From Event";
+}
+
+<h1>Return Inventory From Event</h1>
+
+<style>
+    .help_txt{
+        border: none;
+        outline:none;
+    }
+</style>
+
+<h2>@Model.Title</h2>
+<form asp-action="ReturnInvFromEvent" method="post" enctype="multipart/form-data">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Product
+                </th>
+                <th>
+                    Quantity
+                </th>
+                <th>
+                    Notes
+                </th>
+                <th>
+                    Send To
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.EventInventories)
+            {
+                <tr>
+                    <td>
+                        <input name="itemsFromEvent" readonly class="help_txt" value="@item.Inventory.Product.Name"/>
+                    </td>
+                    <td>
+                        <input name="quans" readonly class="help_txt" value="@item.Inventory.Quantity"/>
+                    </td>
+                    <td>
+                        <p readonly>@item.Inventory.Notes</p>
+                    </td>
+                    <td>
+                        <select name="locationsToSend" class="form-control" asp-items="ViewBag.Locations"></select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input type="submit" value="Return Inventory" title=" Click here to return the inventory" class="btn btn-outline-primary btn-style" />
+    <a asp-action="Index" title=" Click here to go back to main list">Back to List</a>
+
+</form>

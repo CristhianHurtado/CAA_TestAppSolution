@@ -1,0 +1,38 @@
+﻿
+@{
+    ViewData["Title"] = "Mass QR Code";
+}
+
+<h1>Mass Qr Code Generation</h1>
+
+<form asp-action="MassQrCodeGen" method="get">
+    <h2>Select the location you are in.</h2>
+    <select class="form-control" name="locationAt" asp-items="ViewBag.Locations"></select>
+    <hr />
+    <h2>Please select the items to print Qr Codes</h2>
+    <table id="products-list">
+        <tr>
+            @{
+                int cnt = 0;
+                List<CAA_TestApp.ViewModels.CheckOptionVM> checkboxes = ViewBag.InventoryOptions;
+                foreach (var checkbox in checkboxes)
+                {
+                    if (cnt++ % 2 == 0)
+                    {
+                            @:</tr><tr>
+                    }
+                            @:<td>
+                                <input type="checkbox" id="chk" class="checkbox"
+                                       name="selectedOptions"
+                                       value="@checkbox.ID"
+                                       @(Html.Raw(checkbox.Assigned ? "checked=\"checked\"" : "")) />
+                                @checkbox.DisplayText @:&nbsp;&nbsp;
+                            @:</td>
+                }
+                @:</tr>
+            }
+    </table>
+    <br />
+    <button class="btn-primary" style="border-radius: 5px;" type="submit">Create Qr Codes</button>
+</form>
+

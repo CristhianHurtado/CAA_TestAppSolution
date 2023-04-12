@@ -63,9 +63,6 @@ namespace CAA_TestApp.Data
             //many to many
 
             modelBuilder.Entity<EventInventory>()
-                .HasKey(i => new { i.EventID, i.InventoryID });
-
-            modelBuilder.Entity<EventInventory>()
                 .HasOne(i => i.Event)
                 .WithMany(i => i.EventInventories)
                 .HasForeignKey(i => i.EventID)

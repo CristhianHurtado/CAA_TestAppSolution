@@ -1,4 +1,5 @@
-﻿using CAA_TestApp.Models;
+﻿using CAA_TestApp.Data;
+using CAA_TestApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -8,16 +9,18 @@ namespace CAA_TestApp.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
+        private readonly CaaContext _context;
    
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, CaaContext context)
         {
+            _context = context;
             _logger = logger;
         }
 
         [Authorize(Roles = "Admin")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            CheckDateForTakeInvBasedOnEvent();
             return View();
         }
 
@@ -36,6 +39,12 @@ namespace CAA_TestApp.Controllers
         public ActionResult NavigateHome()
         {
             return View("HelpCentre");
+        }
+
+        public async void CheckDateForTakeInvBasedOnEvent()
+        {
+            
+
         }
     }
 }

@@ -61,6 +61,10 @@ namespace CAA_TestApp.Data
                         new Status
                         {
                             status = "In use"
+                        }, 
+                        new Status
+                        {
+                            status = "Reserved"
                         });
 
                     context.SaveChanges();
