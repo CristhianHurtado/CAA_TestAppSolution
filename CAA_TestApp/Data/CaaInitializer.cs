@@ -307,14 +307,14 @@ namespace CAA_TestApp.Data
 
                     context.SaveChanges();
                 }
-
+                /*
                 if (!context.Events.Any())
                 {
                     context.Events.AddRange(
                         new Event
                         {
                             Title = "Niagara College Career Fair",
-                            Quantity= 45,
+                            Quantity= 2,
                             Date = DateTime.Now,
                             EventLocation = "100 Niagara College Blvd",
                             Notes = ""
@@ -322,7 +322,7 @@ namespace CAA_TestApp.Data
                         new Event
                         {
                             Title = "Rankin Cancer Run",
-                            Quantity= 100,
+                            Quantity= 2,
                             Date = DateTime.Now,
                             EventLocation = "St. Catharines",
                             Notes = ""
@@ -351,7 +351,7 @@ namespace CAA_TestApp.Data
                         });
 
                     context.SaveChanges();
-                }
+                }*/
             }
             catch (Exception ex)
             {

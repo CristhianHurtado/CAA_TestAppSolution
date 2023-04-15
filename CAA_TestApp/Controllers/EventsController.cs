@@ -39,6 +39,7 @@ namespace CAA_TestApp.Controllers
         // GET: Events
         public async Task<IActionResult> Index()
         {
+            CheckDateForTakeInvBasedOnEvent();
             var @event = _context.Events
                 .Include(i => i.EventInventories).ThenInclude(i => i.Inventory).ThenInclude(i => i.Product)
                 .AsNoTracking();
@@ -185,7 +186,7 @@ namespace CAA_TestApp.Controllers
                                 ProductID = ANTinv.ProductID,
                                 LocationID = ANTinv.LocationID,
                                 Notes = $"Taken from {ANTinv.Location.City}",
-                                ShelfOn = "In use",
+                                ShelfOn = "Reserved",
                                 Cost = ANTinv.Cost,
                                 DateReceived = @event.Date,
                                 Quantity = Convert.ToInt32(eachData[1]),
@@ -602,6 +603,70 @@ namespace CAA_TestApp.Controllers
             while (Exist);
 
             return newISBN;
+        }
+
+        public async void CheckDateForTakeInvBasedOnEvent()
+        {
+            List<Event> events = await _context.Events
+                                    .Include(e => e.EventInventories)
+                                    .ThenInclude(ei => ei.Inventory)
+                                    .ToListAsync();
+
+            if (events == null)
+            {
+                return;
+            }
+
+            List<Inventory> eventInfo = new List<Inventory>();
+
+            List<Inventory> invsInDb = await _context.Inventories
+                                        .Include(i => i.Product)
+                                        .Include(i => i.Location)
+                                        .ToListAsync();
+
+            List<Inventory> invToModifyList = new List<Inventory>();
+            List<Inventory> invToModify = new List<Inventory>();
+
+            foreach (Event @event in events)
+            {
+
+                if (@event.Date <= DateTime.Now)
+                {
+                    int index = 0;
+
+                    foreach (var eventInvInfo in @event.EventInventories)
+                    {
+                        Inventory inv = await _context.Inventories.Include(i => i.Product).Include(i => i.Location).FirstOrDefaultAsync(i => i.ID == eventInvInfo.InventoryID);
+                        eventInfo.Add(inv);
+                    }
+
+                    foreach (var eventInv in eventInfo)
+                    {
+                        invToModifyList = invsInDb.Where(i => i.ProductID == eventInv.ProductID && i.LocationID == eventInv.LocationID).ToList();
+                    }
+
+                    foreach (Inventory inv in invToModifyList)
+                    {
+                        if (inv.statusID != 1)
+                        {
+                            continue;
+                        }
+                        invToModify.Add(inv);
+                    }
+
+                    foreach (var eventInv in eventInfo)
+                    {
+                        Inventory evntInvInfo = await _context.Inventories.FirstOrDefaultAsync(i => i.ID == eventInv.ID);
+                        evntInvInfo.statusID = _context.statuses.FirstOrDefault(s => s.status == "In use").ID;
+                        evntInvInfo.ShelfOn = "In use";
+                        invToModify[index].Quantity -= evntInvInfo.Quantity;
+                        _context.Update(evntInvInfo);
+                        _context.Update(invToModify[index]);
+                        index++;
+                    }
+                    await _context.SaveChangesAsync();
+                }
+            }
         }
     }
 }
