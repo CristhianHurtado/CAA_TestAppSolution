@@ -429,14 +429,18 @@ namespace CAA_TestApp.Controllers
 
                     _context.Inventories.Add(newInv);
                 }
-                else
+                else if (eventRelationship[index].Inventory.ShelfOn == "In use")
                 {
                     inventoryFilteredWithlocation.Quantity += eventRelationship[index].Inventory.Quantity;
                     _context.Update(inventoryFilteredWithlocation);
                 }
-                _context.Remove(inventoryFilteredWithlocation);
-                _context.Remove(eventRelationship[index]);
             }
+            foreach(var item in eventRelationship)
+            {
+                Inventory toDelete = _context.Inventories.FirstOrDefault(i => i.ID == item.Inventory.ID);
+                _context.Remove(toDelete);
+                _context.Remove(item);
+            }    
 
             _context.Remove(eventToReturn);
             _context.Remove(relationshipItself);
