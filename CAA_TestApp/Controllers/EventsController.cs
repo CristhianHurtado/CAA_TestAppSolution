@@ -642,7 +642,8 @@ namespace CAA_TestApp.Controllers
 
                     foreach (var eventInv in eventInfo)
                     {
-                        invToModifyList = invsInDb.Where(i => i.ProductID == eventInv.ProductID && i.LocationID == eventInv.LocationID).ToList();
+                        Inventory aux = invsInDb.FirstOrDefault(i => i.ProductID == eventInv.ProductID && i.LocationID == eventInv.LocationID);
+                        invToModifyList.Add(aux);
                     }
 
                     foreach (Inventory inv in invToModifyList)
@@ -657,6 +658,10 @@ namespace CAA_TestApp.Controllers
                     foreach (var eventInv in eventInfo)
                     {
                         Inventory evntInvInfo = await _context.Inventories.FirstOrDefaultAsync(i => i.ID == eventInv.ID);
+                        if(evntInvInfo.statusID == _context.statuses.FirstOrDefault(s => s.status == "In use").ID)
+                        {
+                            continue;
+                        }
                         evntInvInfo.statusID = _context.statuses.FirstOrDefault(s => s.status == "In use").ID;
                         evntInvInfo.ShelfOn = "In use";
                         invToModify[index].Quantity -= evntInvInfo.Quantity;
