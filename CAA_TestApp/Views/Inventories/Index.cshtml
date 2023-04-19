@@ -7,9 +7,9 @@
 
 <h1>Inventory Records</h1>
 
-<p>
+@*<p>
     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-        <a asp-action="PreMassGen" title="Click here to print many QR codes" style="margin-right: 10px;">Mass QR Code Gen </a> |
+        <a asp-action="PreMassGen" title="Click here to print many QR codes" style="margin-right: 10px;">Mass QR Code Gen </a>
 
         <ul class="navbar-nav flex-grow-1">
             <li class="nav-item dropdown">
@@ -25,7 +25,7 @@
             </li>
          </ul>
      </div>
-</p>
+</p>*@
 <form asp-action="Index" method="get" >
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
