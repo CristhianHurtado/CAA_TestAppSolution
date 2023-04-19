@@ -7,14 +7,14 @@
 
 <h1>Reserved Inventory</h1>
 
-<p>
-    <a asp-action="Index">Inventory</a>
-    @*<a asp-action="DownloadInventories" class="btn btn-info float-end btn-style">Download Inventory</a>*@
-</p>
 <form asp-action="Archived" method="get">
     <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
     <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
     <div class="form-horizontal">
+
+        <a asp-action="Index" class="btn btn-outline-dark btn-style ">Inventory</a>
+        @*<a asp-action="DownloadInventories" class="btn btn-info float-end btn-style">Download Inventory</a>*@
+
         <button class=" btn @(ViewData["Filtering"]) " type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" 
                title="Click here to filter and search options" aria-expanded="false" aria-controls="collapseFilter" style="border-radius: 25px;">
             Filter/Search
