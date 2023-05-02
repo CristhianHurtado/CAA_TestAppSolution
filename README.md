@@ -5,7 +5,7 @@ Is focused on trackiing inventory in their establishments, send inventory and cr
 
 It uses Qr codes to track and send inventory among their locations, with a camera scan functionality for mobile use as well.
 
-Collaborators:
+Collaborators:<br/>
 • Brandon - https://github.com/brandonsedman <br/>
 • Scott - https://github.com/ScottRiepert <br/>
 • Alejandro Mendoza - https://github.com/Alemenger2 <br/>
